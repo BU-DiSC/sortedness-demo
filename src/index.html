@@ -4,7 +4,75 @@
     <title>Scatter Chart Visuals</title>
   </head>
   <body>
-    <div style="width: 800px;"><canvas id="sorted_1k"></canvas></div>
-    <script type="module" src="sorted_1k.js"></script>
+    <div style="width: 800px; margin: 0 auto; padding-top: 5%;">
+        <canvas id="chartCanvas"></canvas>
+    </div>
+
+    <div style="width: 800px; margin: 0 auto; padding-top: 2%;">
+      <label for="s">Choose sorted/shuffled: </label>
+      <select id="s">
+        <option selected value="sorted">Sorted</option>
+        <option value="shuffled">Shuffled</option>
+      </select>
+
+      <div style="width: 800px; margin: 0 auto; padding-top: 2%;">
+        <label for="n">Choose data number: </label>
+        <select id="n">
+          <option selected value="1k">1000</option>
+          <option value="5k">5000</option>
+          <option value="10k">10000</option>
+        </select>
+      </div>
+
+      <script type="module">
+        import {sorted_1k} from './sorted_1k.js'; 
+        import {sorted_5k} from './sorted_5k.js'; 
+        import {sorted_10k} from './sorted_10k.js'; 
+        import {shuffled_1k} from './shuffled_1k.js'; 
+        import {shuffled_5k} from './shuffled_5k.js'; 
+        import {shuffled_10k} from './shuffled_10k.js';
+  
+        const ctx = document.getElementById('chartCanvas').getContext('2d');
+        let currentChart;
+  
+        function updateChart(chartType) {
+            const s = document.getElementById('s').value;
+            const n = document.getElementById('n').value;
+            if (currentChart) {
+                currentChart.destroy();
+            }
+    
+            if (s === 'sorted' && n === '1k') {
+                currentChart = sorted_1k(ctx);
+            } 
+            else if (s === 'sorted' && n === '5k') {
+                currentChart = sorted_5k(ctx);
+            } 
+            else if (s === 'sorted' && n === '10k') {
+                currentChart = sorted_10k(ctx);
+            } 
+            else if (s === 'shuffled' && n === '1k') {
+                currentChart = shuffled_1k(ctx);
+            } 
+            else if (s === 'shuffled' && n === '5k') {
+                currentChart = shuffled_5k(ctx);
+            } 
+            else if (s === 'shuffled' && n === '10k') {
+                currentChart = shuffled_10k(ctx);
+            } 
+            }
+    
+            updateChart('sorted_1k');
+    
+            document.getElementById('s').addEventListener('change', function() {
+            const selectedChart = this.value;
+            updateChart(selectedChart);
+            });
+            document.getElementById('n').addEventListener('change', function() {
+            const selectedChart = this.value;
+            updateChart(selectedChart);
+            });
+      </script>
+    </div>
   </body>
 </html>

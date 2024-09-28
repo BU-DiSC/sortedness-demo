@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto'
 import zoomPlugin from 'chartjs-plugin-zoom';
 Chart.register(zoomPlugin);
 
-(async function() {
+export function sorted_1k (ctx) {
     const data = {
         datasets: [{
           label: 'Sorted 1k',
@@ -11,8 +11,8 @@ Chart.register(zoomPlugin);
         }],
       };
 
-  new Chart(
-    document.getElementById('sorted_1k'),
+  return new Chart(
+    ctx,
     {
       type: 'scatter',
       data : data,
@@ -44,4 +44,4 @@ Chart.register(zoomPlugin);
       }
     }
   );
-})();
+}

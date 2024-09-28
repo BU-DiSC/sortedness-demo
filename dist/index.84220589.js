@@ -4633,7 +4633,7 @@ var _chartjsPluginZoomDefault = parcelHelpers.interopDefault(_chartjsPluginZoom)
     });
 })();
 
-},{"chart.js/auto":"d8NN9","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","chartjs-plugin-zoom":"kMtu7"}],"d8NN9":[function(require,module,exports) {
+},{"chart.js/auto":"d8NN9","chartjs-plugin-zoom":"kMtu7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"d8NN9":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _chartJs = require("../dist/chart.js");
