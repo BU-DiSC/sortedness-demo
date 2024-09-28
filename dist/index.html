@@ -4655,15 +4655,31 @@ function sorted_1k(ctx) {
                         y: 1000
                     }
                 ],
-                backgroundColor: "rgb(255, 99, 132)"
+                backgroundColor: "rgb(108, 229, 221)",
+                showLine: false
+            },
+            {
+                label: "Line",
+                data: [
+                    {
+                        x: 1,
+                        y: 1
+                    },
+                    {
+                        x: 1000,
+                        y: 1000
+                    }
+                ],
+                pointRadius: 0,
+                borderColor: "rgb(0, 0, 0)",
+                lineWidth: 0.4
             }
         ]
     };
     return new (0, _autoDefault.default)(ctx, {
-        type: "scatter",
+        type: "line",
         data: data,
         options: {
-            pointRadius: 3,
             scales: {
                 x: {
                     type: "linear",
@@ -4671,6 +4687,9 @@ function sorted_1k(ctx) {
                 }
             },
             plugins: {
+                legend: {
+                    display: false
+                },
                 zoom: {
                     zoom: {
                         wheel: {
@@ -41227,15 +41246,31 @@ function sorted_5k(ctx) {
                         y: 5000
                     }
                 ],
-                backgroundColor: "rgb(255, 99, 132)"
+                backgroundColor: "rgb(108, 229, 221)",
+                showLine: false
+            },
+            {
+                label: "Line",
+                data: [
+                    {
+                        x: 1,
+                        y: 1
+                    },
+                    {
+                        x: 5000,
+                        y: 5000
+                    }
+                ],
+                pointRadius: 0,
+                borderColor: "rgb(0, 0, 0)",
+                lineWidth: 5
             }
         ]
     };
     return new (0, _autoDefault.default)(ctx, {
-        type: "scatter",
+        type: "line",
         data: data,
         options: {
-            pointRadius: 0.5,
             scales: {
                 x: {
                     type: "linear",
@@ -41243,6 +41278,9 @@ function sorted_5k(ctx) {
                 }
             },
             plugins: {
+                legend: {
+                    display: false
+                },
                 zoom: {
                     zoom: {
                         wheel: {
@@ -81279,15 +81317,31 @@ function sorted_10k(ctx) {
                         y: 10000
                     }
                 ],
-                backgroundColor: "rgb(255, 99, 132)"
+                backgroundColor: "rgb(108, 229, 221)",
+                showLine: false
+            },
+            {
+                label: "Line",
+                data: [
+                    {
+                        x: 1,
+                        y: 1
+                    },
+                    {
+                        x: 10000,
+                        y: 10000
+                    }
+                ],
+                pointRadius: 0,
+                borderColor: "rgb(0, 0, 0)",
+                lineWidth: 5
             }
         ]
     };
     return new (0, _autoDefault.default)(ctx, {
-        type: "scatter",
+        type: "line",
         data: data,
         options: {
-            pointRadius: 0.5,
             scales: {
                 x: {
                     type: "linear",
@@ -81295,6 +81349,9 @@ function sorted_10k(ctx) {
                 }
             },
             plugins: {
+                legend: {
+                    display: false
+                },
                 zoom: {
                     zoom: {
                         wheel: {
@@ -85331,33 +85388,31 @@ function shuffled_1k(ctx) {
                         y: 191
                     }
                 ],
-                backgroundColor: "rgb(255, 99, 132)"
+                backgroundColor: "rgb(108, 229, 221)",
+                showLine: false
+            },
+            {
+                label: "Line",
+                data: [
+                    {
+                        x: 1,
+                        y: 1
+                    },
+                    {
+                        x: 1000,
+                        y: 1000
+                    }
+                ],
+                pointRadius: 0,
+                borderColor: "rgb(0, 0, 0)",
+                lineWidth: 5
             }
         ]
     };
-    const scatterArbitraryLine = {
-        id: "scatterArbitraryLine",
-        beforeDatasetsDraw (chart, args, pluginOptions) {
-            const { ctx, chartArea: { top, bottom, left, right, width, height }, scales: { x, y } } = chart;
-            ctx.save();
-            lines(1, 1000, 1, 1000, "rgba(75, 192, 192, 1)");
-            function lines(xS, xE, yS, yE, color) {
-                ctx.beginPath();
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 2;
-                ctx.moveTo(right, y.getPixelForValue(yS));
-                ctx.lineTo(x.getPixelForValue(xE), y.getPixelForValue(yE));
-                ctx.stroke();
-                ctx.closePath();
-                ctx.restore();
-            }
-        }
-    };
     return new (0, _autoDefault.default)(ctx, {
-        type: "scatter",
+        type: "line",
         data: data,
         options: {
-            pointRadius: 3,
             scales: {
                 x: {
                     type: "linear",
@@ -85365,7 +85420,9 @@ function shuffled_1k(ctx) {
                 }
             },
             plugins: {
-                scatterArbitraryLine,
+                legend: {
+                    display: false
+                },
                 zoom: {
                     zoom: {
                         wheel: {
@@ -105402,15 +105459,31 @@ function shuffled_5k(ctx) {
                         y: 4286
                     }
                 ],
-                backgroundColor: "rgb(255, 99, 132)"
+                backgroundColor: "rgb(108, 229, 221)",
+                showLine: false
+            },
+            {
+                label: "Line",
+                data: [
+                    {
+                        x: 1,
+                        y: 1
+                    },
+                    {
+                        x: 5000,
+                        y: 5000
+                    }
+                ],
+                pointRadius: 0,
+                borderColor: "rgb(0, 0, 0)",
+                lineWidth: 5
             }
         ]
     };
     return new (0, _autoDefault.default)(ctx, {
-        type: "scatter",
+        type: "line",
         data: data,
         options: {
-            pointRadius: 2.3,
             scales: {
                 x: {
                     type: "linear",
@@ -105418,6 +105491,9 @@ function shuffled_5k(ctx) {
                 }
             },
             plugins: {
+                legend: {
+                    display: false
+                },
                 zoom: {
                     zoom: {
                         wheel: {
@@ -145454,15 +145530,31 @@ function shuffled_10k(ctx) {
                         y: 5354
                     }
                 ],
-                backgroundColor: "rgb(255, 99, 132)"
+                backgroundColor: "rgb(108, 229, 221)",
+                showLine: false
+            },
+            {
+                label: "Line",
+                data: [
+                    {
+                        x: 1,
+                        y: 1
+                    },
+                    {
+                        x: 10000,
+                        y: 10000
+                    }
+                ],
+                pointRadius: 0,
+                borderColor: "rgb(0, 0, 0)",
+                lineWidth: 5
             }
         ]
     };
     return new (0, _autoDefault.default)(ctx, {
-        type: "scatter",
+        type: "line",
         data: data,
         options: {
-            pointRadius: 1.3,
             scales: {
                 x: {
                     type: "linear",
@@ -145470,6 +145562,9 @@ function shuffled_10k(ctx) {
                 }
             },
             plugins: {
+                legend: {
+                    display: false
+                },
                 zoom: {
                     zoom: {
                         wheel: {
