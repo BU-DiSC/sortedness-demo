@@ -1,5 +1,7 @@
+// Function to generate the data for the chart
 function generate_data(N, sorted = true)
 {
+  // shuffle array function for shuffled data
     const shuffleArray = array => {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -20,12 +22,13 @@ function generate_data(N, sorted = true)
     // copy data and shuffle it randomly 
     let shuffled_data = data_points.slice();
     shuffleArray(shuffled_data);
-
+    
+    // create data array
     let plot_data = [];
     plot_data.push(['Position', 'Value']);
     for(let i = 0; i < N; i++)
     {
-        plot_data.push([parseInt(data_points[i]), parseInt(sorted ? data_points[i] : shuffled_data[i])]);
+        plot_data.push([data_points[i], sorted ? data_points[i] : shuffled_data[i]]);
     }
 
     return plot_data;
