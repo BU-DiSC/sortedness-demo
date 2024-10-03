@@ -1,78 +1,68 @@
-<!doctype html>
-<html lang="en">
+<html></html>
   <head>
-    <title>Scatter Chart Visuals</title>
+    <!-- load data.js -->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    const shuffleArray = array => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+  };
+
+ function generate_data(N, sorted = true)
+{
+    // our API expects data to be an array of [key, value] pairs
+    // where key is the unique identifier for the data point
+    // and value is the value of the data point
+    let data_points = [];
+    for(let i = 1; i <= N; i++)
+    {
+        data_points.push(i);
+    }
+
+    // copy data and shuffle it randomly 
+    let shuffled_data = data_points.slice();
+    shuffleArray(shuffled_data);
+
+    let plot_data = [];
+    plot_data.push(['Position', 'Value']);
+    for(let i = 0; i < N; i++)
+    {
+        plot_data.push([parseInt(data_points[i]), parseInt(sorted ? data_points[i] : shuffled_data[i])]);
+    }
+
+    return plot_data;
+}
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var plot_data = generate_data(1000, false);
+        console.log(plot_data);
+        var data = google.visualization.arrayToDataTable(
+            plot_data
+        );
+
+        var options = {
+          title: 'position vs. value comparison',
+          hAxis: {title: 'Position', minValue: 0, maxValue: 1000},
+          vAxis: {title: 'Value', minValue: 0, maxValue: 1000},
+          legend: 'none',
+          explorer: { actions: ['dragToZoom', 'rightClickToReset'] }
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+      }
+    </script>
+
   </head>
   <body>
-    <div style="width: 800px; margin: 0 auto; padding-top: 5%;">
-        <canvas id="chartCanvas"></canvas>
-    </div>
-
-    <div style="width: 800px; margin: 0 auto; padding-top: 2%;">
-      <label for="s">Choose sorted/shuffled: </label>
-      <select id="s">
-        <option selected value="sorted">Sorted</option>
-        <option value="shuffled">Shuffled</option>
-      </select>
-
-      <div style="width: 800px; margin: 0 auto; padding-top: 2%;">
-        <label for="n">Choose data number: </label>
-        <select id="n">
-          <option selected value="1k">1000</option>
-          <option value="5k">5000</option>
-          <option value="10k">10000</option>
-        </select>
-      </div>
-
-      <script type="module">
-        import {sorted_1k} from './sorted_1k.js'; 
-        import {sorted_5k} from './sorted_5k.js'; 
-        import {sorted_10k} from './sorted_10k.js'; 
-        import {shuffled_1k} from './shuffled_1k.js'; 
-        import {shuffled_5k} from './shuffled_5k.js'; 
-        import {shuffled_10k} from './shuffled_10k.js';
-  
-        const ctx = document.getElementById('chartCanvas').getContext('2d');
-        let currentChart;
-  
-        function updateChart(chartType) {
-            const s = document.getElementById('s').value;
-            const n = document.getElementById('n').value;
-            if (currentChart) {
-                currentChart.destroy();
-            }
-    
-            if (s === 'sorted' && n === '1k') {
-                currentChart = sorted_1k(ctx);
-            } 
-            else if (s === 'sorted' && n === '5k') {
-                currentChart = sorted_5k(ctx);
-            } 
-            else if (s === 'sorted' && n === '10k') {
-                currentChart = sorted_10k(ctx);
-            } 
-            else if (s === 'shuffled' && n === '1k') {
-                currentChart = shuffled_1k(ctx);
-            } 
-            else if (s === 'shuffled' && n === '5k') {
-                currentChart = shuffled_5k(ctx);
-            } 
-            else if (s === 'shuffled' && n === '10k') {
-                currentChart = shuffled_10k(ctx);
-            } 
-            }
-    
-            updateChart('sorted_1k');
-    
-            document.getElementById('s').addEventListener('change', function() {
-            const selectedChart = this.value;
-            updateChart(selectedChart);
-            });
-            document.getElementById('n').addEventListener('change', function() {
-            const selectedChart = this.value;
-            updateChart(selectedChart);
-            });
-      </script>
-    </div>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
   </body>
 </html>
