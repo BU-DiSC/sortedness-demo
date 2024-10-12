@@ -21,6 +21,14 @@
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<script src="js/plotly.js"></script>
+	<!-- load data.js -->
+    <script type="text/javascript" src="data.js"></script>
+    <!-- load draw.js-->
+    <script type="text/javascript" src="draw.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+		google.charts.load('current', {'packages':['corechart']});
+	</script>
 
 	<style>
 		div.fixed {
@@ -130,8 +138,7 @@
 								<div class="input-group-prepend">
 									<label class="input-group-text">Other: </label>
 								</div>
-								<input id="cmp-input-E" value="" min="1" type="number" data-preval="1" class="cmp-input form-control"
-									aria-label="Entry Size">
+								<input id="manualN" type="number" min="0" step="1" class="cmp-input form-control">
 							</div>
 						</div>
 					</div>
@@ -192,8 +199,7 @@
 								<div class="input-group-prepend">
 									<label class="input-group-text">Other: </label>
 								</div>
-								<input id="cmp-input-E" value="" min="1" type="number" data-preval="1" class="cmp-input form-control"
-									aria-label="Entry Size">
+								<input id="manualK" type="number" min="0" step="1" class="cmp-input form-control">
 								<div class="input-group-append">
 									<span class="input-group-text">%</span>
 								</div>
@@ -258,8 +264,7 @@
 								<div class="input-group-prepend">
 									<label class="input-group-text">Other: </label>
 								</div>
-								<input id="cmp-input-E" value="" min="1" type="number" data-preval="1" class="cmp-input form-control"
-									aria-label="Entry Size">
+								<input id="manualL" type="number" min="0" step="1" class="cmp-input form-control">
 								<div class="input-group-append">
 									<span class="input-group-text">%</span>
 								</div>
@@ -272,7 +277,28 @@
 			</div>
 
 			
-			<!-- END of comparative configurations of Interactive Demo -->
+			<div class="row">
+				<div class="col-md-10 text-right pt-4">
+					<button onclick="drawChart()" type="button" class="btn btn-success">Run</button>
+				</div>
+			</div>
+
+			
+			<div class="container mt-5">
+				<div class="row">
+					<div class="col-md-3 equal-height" id="info-column">
+						<div id="info_div" class="equal-height">
+						</div>
+					</div>
+		
+					<div class="col-md-9 equal-height" id="chart-column">
+						<div id="chart_div" class="equal-height"></div>
+					</div>
+				</div>
+			</div>
+			
+			
+
 	</section>
 
 </body>

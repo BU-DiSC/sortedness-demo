@@ -644,7 +644,7 @@ div.row h4 {
 .team-member a:hover,
 .team-member a:hover p.text-muted,
 .team-member a:hover h4 {
-	color: #1c23a5;
+	color: #A51C30;
 	text-decoration: none;
 }
 .team-member a:hover img {
@@ -696,4 +696,29 @@ footer .footer-below {
     color:black;
     /* padding-bottom: -5px; */
     /*background-color: #ecf0f1;*/ /*#233140;*/
+}
+
+.row {
+    display: flex;
+}
+
+.equal-height {
+    height: 500px; /* Fixed height */
+}
+
+
+#chart_div {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+#info_div {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    width: 100%;
 }
