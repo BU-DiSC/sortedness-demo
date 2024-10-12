@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>LSM-Tree Compaction Visualization</title>
+	<!-- Bootswatch CSS based on Bootstrao -->
+	<!-- Theme: http://bootswatch.com/flatly/ -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<!-- Plugin CSS -->
+	<link rel="stylesheet" href="css/bootstrap-slider.min.css">
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/tooltip.css">
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400&display=swap" rel="stylesheet">
+	<!-- Google Material Icon-->
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="js/plotly.js"></script>
+
+	<style>
+		div.fixed {
+		position: fixed;
+		bottom: 50%;
+		left: 0;
+		width: 60px;
+		height: 200px;
+		}
+	</style>
+</head>
+
+<body>
+	<header id="page-top">
+		<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top bg-dark fixed-top">
+			<div class="container">
+				<a class="navbar-brand" href="#page-top">Sortedness<span class="sr-only">(current)</span></a></a>
+				<button id="navbarToggle" class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#collapsable-nav" aria-controls="collapsable-nav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div id="collapsable-nav" class="collapse navbar-collapse" id="collapsable-nav">
+					<ul class="nav navbar-nav ml-auto">
+						<!-- <li class="nav-item">
+							<a class="nav-link" href="#problem">Problem</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#research">Research</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#interactiveDemo">Compactionary</a>
+						</li> -->
+						<li class="nav-item">
+							<a class="nav-link" href="research.html#publication">Publications</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="research.html#authors">The Team</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="research.html#sponsors">Sponsors</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+
+		<!-- <div class="jumbotron">
+			<video controls width="250">
+
+				<source src="./img/test.mov"
+						type="video/mov">
+
+				Sorry, your browser doesn't support embedded videos.
+			</video>
+		</div> -->
+
+	</header>
+
+  <div class="fixed">
+		<div class="rcorners-1" style="background-color:8288B4">
+            <a href="research.html"><span class="rcorners-click"></span></a>
+            <div class="rcorners-text-1"><a href="index.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Home</a></div>
+          </div>
+    <div class="rcorners-2" style="background-color:8288B4">
+                  <a href="research.html"><span class="rcorners-click"></span></a>
+                  <div class="rcorners-text-2"><a href="background.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Background</a></div>
+                </div>
+                <div class="rcorners-3" style="background-color:8288B4">
+                        <a href="research.html#problem"><span class="rcorners-click"></span></a>
+                        <div class="rcorners-text-3"><a href="research.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a>
+            			</div>
+            			<img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" />
+                      </div>
+	</div>
+
+	<section id="problem" style="padding-top:100px">
+		<div class="container">
+			<div class="row section-title text-center">
+				<h2> What is Compactionary and Why do we need it? </h2>
+			</div>
+      <div class="row">
+        <p>
+          <img class="img-responsive img-centered" src="./img/compactionary-lsm-everywhere.png" alt="" align="left" width=20% style="margin-left:10%;margin-right:10%" />
+
+    				<i><b>Compactionary</b></i> is a dictionary for Log-structured merge (LSM)
+compactions, that helps to visualize the implications of compactions
+on performance for different workloads and LSM tunings. LSM trees offer efficient ingestion by appending incoming data, and thus, are widely used as the storage layer of production NoSQL data stores.
+              To enable competitive read performance, LSM-trees periodically re-organize data to form a tree with levels of exponentially increasing capacity, through iterative compactions.
+              However, <b> the LSM compaction design space is vast, largely unexplored, and has not been formally defined in the literature. </b>
+          </p>
+    		</div>
+
+      <hr >
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 mt-3"  >
+          <div class="row section-title text-center" style="border-width:5px;border-radius: 20px;
+    border-style:dotted;">
+    				<h3> What are the design choices of the compaction? </h3>
+    			</div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 mt-3">
+          <div class="row section-title text-center" style="border-width:5px;border-radius: 20px;
+    border-style:dotted;">
+    				<h3> How does the compaction affect performance?</h3>
+    			</div>
+        </div>
+      </div>
+      <div class="row text-center">
+        <img class="img-responsive img-centered" src="./img/compactionary-problem.png" alt="" width=70% style="margin-left:15%;margin-right:10%" />
+      </div>
+			<div class="row">
+				<div>
+          <br>
+          <p>
+            In this demo, we present <b>the design space of LSM-compactions, and animate the compaction process for various compaction strategies </b>.
+            Audiences are able to see how each compaction strategy behaves for a certain workload and compare their performance in terms of different metrics.
+            Users can also create their own compaction policy with specifying the number of tiering levels and the number of leveling levels.
+          </p>
+				</div>
+			</div>
+
+			</div>
+	</section>
+
+	<section class="bg-light">
+		<div class="container">
+			<div class="row section-title text-center">
+				<h2> LSM Background </h2>
+			</div>
+
+      <div class="row">
+        <p>
+          <img class="img-responsive img-centered" src="./img/lsm-basics.png" alt="" style="margin:0 10px" align="right" width=41%>
+          LSM-trees buffer incoming inserts, updates, and deletes (i.e., ingestion, in general) within main memory.
+            Once the memory buffer becomes full, the entries contained are sorted on the key and the buffer is flushed to the disk-component of the tree.
+            For an LSM-tree with L levels, we assume that its first level (Level 0) is an in-memory buffer and the remaining levels (Level 1 to L − 1) are disk-resident.
+            On disk, each Level i (i > 1) has a capacity that is larger than that of Level i − 1 by a factor of T , where T is the size ratio of the tree.
+        </p>
+      </div>
+
+      <div class="row text-center" style="margin:20px 0">
+        <h3>Leveling and Tiering</h3>
+        <p> <img class="img-responsive img-centered" src="./img/full-partial-compaction.png"  style="margin:0 10px" alt="" align="left" width="50%" />
+          Classically, LSM-trees support two merging policies: leveling and tiering. In leveling, each level may have at most one run, and every time a run in Level i − 1 (i ≥ 1) is moved to Level i, it is greedily sort-merged with the run from Level i, if it exists.
+          With tiering, every level must accumulate T runs before they are sort-merged.
+            Recently hybrid compaction policies (e.g., the hybrid compaction as follows) fuse leveling and tiering in a single tree to strike a balance between the read and write throughput based on workload specifications.
+        To amortize data movement, and thus, avoid latency spikes, state-of-the-art LSM-engines organize data into smaller files, and perform compactions at the granularity of files instead of levels.
+          If Level i grows beyond a threshold, a compaction is triggered and one file (or a subset of files) from Level i is chosen to be compacted with files from Level i + 1 that have an overlapping key-range.
+          This process is known as <b>partial compaction</b>.
+          </p>
+      </div>
+
+		</div>
+	</section>
+
+  <section id="research" style="margin:0 10px">
+    <div class="container">
+      <div class="row text-center">
+        <h2> Compaction Designing Space: Four Primitives </h2>
+      </div>
+      <div class="row text-center">
+        <div>
+          <p> We introduce a set of four design primitives that can formally define any compaction strategy: (i) the compaction trigger, (ii) the data
+    layout, (iii) the compaction granularity, and (iv) the data movement policy. </p>
+        </div>
+
+      </div>
+      <div class="row">
+        <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Dimension</th>
+        <th scope="col">Explanation</th>
+        <th scope="col">Sample Options</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row"><strong>Data Layout</strong></th>
+        <td><b>How</b> to organize the data on device?</td>
+        <td>Leveling/Tiering/1-Leveling/Hybrid</td>
+      </tr>
+      <tr>
+        <th scope="row"><strong>Compaction granularity</strong></th>
+        <td><b>How much</b> data to move at-a-time?</td>
+        <td>Level/Sorted run/Sorted file(s)</td>
+      </tr>
+      <tr>
+        <th scope="row"><strong>Data movement policy</strong></th>
+        <td><b>Which</b> block of data to be moved?</td>
+        <td>Round-robin/Least overlap/Oldest/Coldest</td>
+      </tr>
+      <tr>
+        <th scope="row"><strong>Trigger</strong></th>
+        <td><b>When</b> to re-organize the data layout?</td>
+          <td>Level saturation/#Sorted runs/Timestamp/Space amplification</td>
+      </tr>
+    </tbody>
+  </table>
+      <div class="row text-center">
+        <div>
+          <p> The above four design primitives provide a structured decomposition of arbitrary compaction strategies.
+        This allows us to create the taxonomy of the universe of LSM compaction strategies, including all the classical as well as new ones.
+        For example, AsterixDB has a <strong>leveled</strong>-based LSM-tree <i>(data layout)</i> that compacts <strong>whole levels</strong> at a time <i>(granularity)</i> once a <strong>level reaches a nominal size</strong> <i>(trigger)</i>.
+        This design does not implement partial compactions, and thus it does not need a data movement policy.
+      </p>
+        <p>
+        A more complex example is RocksDB which applies <strong>1-leveling</strong> (tiering for level 1 and leveling for others) <i>(data layout)</i> and compactions are performed at the
+granularity of <strong>one or more files</strong> <i>(granularity)</i> according to <strong>the level saturation, file staleness and spalce amplification </strong> <i>(trigger)</i>. RocksDB supports various <i>data movement policy</i> including <strong>Least Overlapping, Coldest, Oldest and Tombstone Density</strong>.
+</p>
+        <p>To demonstrate the operational flow of a family of state-of-the-art LSM compaction strategies, we introduce <i><b>Compactionary</b></i>. In our demo, users can better understand how each compaction happens through the compaction animation, and they can also examine the internal trade-off across different metrics (e.g., ingest, point lookup and range lookup). </p>
+        </div>
+
+      </div>
+    </div>
+    </div>
+
+	</section>
+
+
+
+  <hr>
+  <footer class="text-center">
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <a target="_blank" href="http://www.bu.edu/cs/">
+                            <img class="img-responsive img-centered img-logo" src="./img/BU-logo.png" alt="">
+                        </a>
+                        <br>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <a target="_blank" href="https://disc.bu.edu">
+                            <img class="img-responsive img-centered img-logo" src="./img/disc-logo.png" alt="">
+                        </a>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Copyright © 2021. DiSC lab. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+	<!-- jQuery (Bootstrap JS plugins depend on it) -->
+	<script src="js/jquery-3.4.1.min.js"></script>
+	<!-- <script src="js/bootstrap.min.js"></script> -->
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {preview: "none", inlineMath: [['$','$'], ['\\(','\\)']]}, "fast-preview": {disabled: true}});
+  </script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	<script src="js/bootstrap-slider.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/script.js"></script>
+	<!-- <script src="js/treeBush.js"></script> -->
+</body>
+
+</html>

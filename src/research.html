@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sortedness Demo</title>
+	<!-- Bootswatch CSS based on Bootstrap -->
+	<!-- Theme: http://bootswatch.com/flatly/ -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<!-- Plugin CSS -->
+	<link rel="stylesheet" href="css/bootstrap-slider.min.css">
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/tooltip.css">
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400&display=swap" rel="stylesheet">
+	<!-- Google Material Icon-->
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="js/plotly.js"></script>
+
+	<style>
+		div.fixed {
+			position: fixed;
+			bottom: 50%;
+			left: 0;
+			width: 60px;
+			height: 200px;
+		}
+	</style>
+</head>
+
+<body>
+	<header id="page-top">
+		<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top bg-dark fixed-top">
+			<div class="container">
+				<a class="navbar-brand" href="#page-top">Sortedness<span class="sr-only">(current)</span></a>
+				<button id="navbarToggle" class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#collapsable-nav" aria-controls="collapsable-nav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div id="collapsable-nav" class="collapse navbar-collapse" id="collapsable-nav">
+					<ul class="nav navbar-nav ml-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="#publication">Publications</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#authors">The Team</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#sponsors">Sponsors</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<div class="fixed">
+		<div class="rcorners-1" style="background-color:8288B4">
+			<a href="research.html"><span class="rcorners-click"></span></a>
+			<div class="rcorners-text-1"><a href="index.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Home</a></div>
+		</div>
+		<div class="rcorners-2" style="background-color:8288B4">
+			<a href="research.html"><span class="rcorners-click"></span></a>
+			<div class="rcorners-text-2"><a href="background.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Background</a></div>
+		</div>
+		<div class="rcorners-3" style="background-color:8288B4">
+			<a href="research.html#problem"><span class="rcorners-click"></span></a>
+			<div class="rcorners-text-3"><a href="research.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a></div>
+			<img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" />
+		</div>
+	</div>
+
+	<section id="research" style="margin:0px">
+		<section id="problem" style="padding-top:0px">
+			<div class="container">
+				<div class="row section-title text-center">
+					<h2> Sortedness </h2>
+				</div>
+			</div>
+		</section>
+
+			<div id="cmp-conf-row">
+
+
+				<div class="cmp-conf-col col-lg-3 col-md-6 col-sm-6">
+
+
+					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Number of entries (N)</h4>
+
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioN" id="radioN1" checked>
+								<label class="form-check-label" for="radioN1"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-N">N</label>
+								</div>
+								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries">
+									<option value="1000">1000</option>
+									<option value="5000">5000</option>
+									<option value="10000">10000</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
+								<label class="form-check-label" for="radioN2"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="cmp-input-E" value="" min="1" type="number" data-preval="1" class="cmp-input form-control"
+									aria-label="Entry Size">
+							</div>
+						</div>
+					</div>
+					
+					
+				</div>
+
+
+
+				<div class="cmp-conf-col col-lg-3 col-md-6 col-sm-6">
+					<h4 class="text-center" style="font-size:large">Percentage of number of out-order elements (K%)</h4>
+
+
+
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioK" id="radioK1" checked>
+								<label class="form-check-label" for="radioK1"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-K">K</label>
+								</div>
+								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries">
+									<option value="0">0%</option>
+									<option value="10">10%</option>
+									<option value="20">20%</option>
+									<option value="30">30%</option>
+									<option value="40">40%</option>
+									<option value="50">50%</option>
+									<option value="60">60%</option>
+									<option value="70">70%</option>
+									<option value="80">80%</option>
+									<option value="90">90%</option>
+									<option value="100">100%</option>
+								</select>
+							</div>
+		
+						</div>
+					</div>
+
+
+
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
+								<label class="form-check-label" for="radioK2"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="cmp-input-E" value="" min="1" type="number" data-preval="1" class="cmp-input form-control"
+									aria-label="Entry Size">
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+				</div>
+
+
+
+				<div class="cmp-conf-col col-lg-3 col-md-6 col-sm-6">
+
+
+					<h4 class="text-center" style="font-size:large;">Percentage of maximum out-of-orderness (L%)</h4>
+
+
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioL" id="radioL1" checked>
+								<label class="form-check-label" for="radioL1"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-L">L</label>
+								</div>
+								<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries">
+									<option value="0">0%</option>
+									<option value="10">10%</option>
+									<option value="20">20%</option>
+									<option value="30">30%</option>
+									<option value="40">40%</option>
+									<option value="50">50%</option>
+									<option value="60">60%</option>
+									<option value="70">70%</option>
+									<option value="80">80%</option>
+									<option value="90">90%</option>
+									<option value="100">100%</option>
+								</select>
+							</div>
+		
+						</div>
+					</div>
+
+
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioL" id="radioL2">
+								<label class="form-check-label" for="radioL2"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="cmp-input-E" value="" min="1" type="number" data-preval="1" class="cmp-input form-control"
+									aria-label="Entry Size">
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+
+			
+			<!-- END of comparative configurations of Interactive Demo -->
+	</section>
+
+</body>
+</html>
