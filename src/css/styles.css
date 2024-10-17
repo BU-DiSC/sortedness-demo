@@ -722,3 +722,11 @@ footer .footer-below {
     border: 1px solid #ddd;
     width: 100%;
 }
+
+div.fixed {
+    position: fixed;
+    bottom: 50%;
+    left: 0;
+    width: 60px;
+    height: 200px;
+}

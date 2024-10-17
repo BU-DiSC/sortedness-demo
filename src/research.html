@@ -29,19 +29,10 @@
 	<script type="text/javascript">
 		google.charts.load('current', {'packages':['corechart']});
 	</script>
-
-	<style>
-		div.fixed {
-			position: fixed;
-			bottom: 50%;
-			left: 0;
-			width: 60px;
-			height: 200px;
-		}
-	</style>
 </head>
 
 <body>
+	<!-- Header at the top -->
 	<header id="page-top">
 		<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top bg-dark fixed-top">
 			<div class="container">
@@ -69,6 +60,7 @@
 		</nav>
 	</header>
 
+	<!-- Banner on the left side-->
 	<div class="fixed">
 		<div class="rcorners-1" style="background-color:8288B4">
 			<a href="research.html"><span class="rcorners-click"></span></a>
@@ -85,7 +77,9 @@
 		</div>
 	</div>
 
+	<!-- Main section -->
 	<section id="research" style="margin:0px">
+		<!-- Title -->
 		<section id="problem" style="padding-top:0px">
 			<div class="container">
 				<div class="row section-title text-center">
@@ -93,16 +87,15 @@
 				</div>
 			</div>
 		</section>
-
+			<!-- Input fields for the parameters -->
 			<div id="cmp-conf-row">
 
-
-				<div class="cmp-conf-col col-lg-3 col-md-3 col-sm-3">
-
-
+				<!-- Div of N -->
+				<div class="col-3">
+					<!-- Title for N-->
 					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Number of entries (N)</h4>
 
-
+					<!-- Default input field for N-->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -123,9 +116,8 @@
 							</div>
 						</div>
 					</div>
-
-
-
+					
+					<!-- Manual input field for N-->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -145,15 +137,13 @@
 					
 					
 				</div>
-
-
-
-				<div class="cmp-conf-col col-lg-3 col-md-3 col-sm-3">
+				
+				<!-- Div of K -->
+				<div class="col-3">
+					<!-- Title for K -->
 					<h4 class="text-center" style="font-size:large">Percentage of number of out-order elements (K%)</h4>
 
-
-
-
+					<!-- Default input field for K -->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -184,9 +174,7 @@
 						</div>
 					</div>
 
-
-
-
+					<!-- Manual input field for K -->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -206,20 +194,14 @@
 							</div>
 						</div>
 					</div>
-
-
-
 				</div>
 
-
-
-				<div class="cmp-conf-col col-lg-3 col-md-3 col-sm-3">
-
-
+				<!-- Div of L-->
+				<div class="col-3">
+					<!-- Title for L -->
 					<h4 class="text-center" style="font-size:large;">Percentage of maximum out-of-orderness (L%)</h4>
 
-
-
+					<!-- Default input field for L -->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -250,8 +232,7 @@
 						</div>
 					</div>
 
-
-
+					<!-- Manual input field for L -->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -271,16 +252,14 @@
 							</div>
 						</div>
 					</div>
-
-
 				</div>
 
-				<div class="cmp-conf-col col-lg-3 col-md-3 col-sm-3">
+				<!-- Div of B -->
+				<div class="col-3">
+					<!-- Title for B -->
 					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Distribution (&#945, &#946)</h4>
 
-
-
-
+					<!-- Default input field for B -->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -307,13 +286,10 @@
 									<option value="1">1</option>
 								</select>
 							</div>
-		
 						</div>
 					</div>
 
-
-
-
+					<!-- Default input field for B -->
 					<div class="row">
 						<div class="col-auto">
 							<div class="form-check">
@@ -330,20 +306,17 @@
 							</div>
 						</div>
 					</div>
-
-
-
 				</div>
 			</div>
 
-			
+			<!-- "Run" button -->
 			<div class="row">
 				<div class="col-md-11 text-right pt-4">
 					<button onclick="drawChart()" type="button" class="btn btn-success">Run</button>
 				</div>
 			</div>
 
-			
+			<!-- Areas for outputs of parameters and the chart -->
 			<div class="container mt-5">
 				<div class="row">
 					<div class="col-md-3 equal-height" id="info-column">

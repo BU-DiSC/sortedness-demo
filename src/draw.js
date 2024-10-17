@@ -1,5 +1,3 @@
-google.charts.load('current', {'packages':['corechart']});
-
 // Function to draw the chart
 function drawChart() {
 
@@ -8,7 +6,7 @@ function drawChart() {
     const maxN = 10000;
     const tickCount = 10;
 
-
+    // Get the correct input for N
     let selectedN;
     if (document.getElementById('radioN1').checked) {
         selectedN = parseInt(document.getElementById('cmp-select-N').value);
@@ -17,6 +15,7 @@ function drawChart() {
         selectedN = document.getElementById("manualN").value;
     }
 
+    // Get the correct input for K
     let selectedK;
     if (document.getElementById('radioK1').checked) {
         selectedK = parseInt(document.getElementById('cmp-select-K').value);
@@ -25,6 +24,7 @@ function drawChart() {
         selectedK = document.getElementById("manualK").value;
     }
 
+    // Get the correct input for L
     let selectedL;
     if (document.getElementById('radioL1').checked) {
         selectedL = parseInt(document.getElementById('cmp-select-L').value);
@@ -33,6 +33,7 @@ function drawChart() {
         selectedL = document.getElementById("manualL").value;
     } 
 
+    // Get the correct input for B
     let selectedB;
     if (document.getElementById('radioB1').checked) {
         selectedB = parseFloat(document.getElementById('cmp-select-B').value);
@@ -41,13 +42,15 @@ function drawChart() {
         selectedB = document.getElementById("manualB").value;
     } 
 
-    let flag = true
-
-    console.log("Selected N: " + selectedN);
-    console.log("Selected K: " + selectedK);
-    console.log("Selected L: " + selectedL);
-    console.log("Selected B: " + selectedB);
-
+    let flag = true // flag to generate graph when parameters are acceptable
+    
+    // Put the inputs in console
+    console.log("Input N: " + selectedN);
+    console.log("Input K: " + selectedK);
+    console.log("Input L: " + selectedL);
+    console.log("Input B: " + selectedB);
+    
+    // Give error when parameters are not acceptable and prevent generating graph
     if (selectedN != parseInt(selectedN)) {
         alert("N should be an integer");
         flag = false;
@@ -82,19 +85,22 @@ function drawChart() {
     }
 
     if (selectedB === '') {
-        alert("L should not be empty");
+        alert("B should not be empty");
         flag = false;
     }
     else {
         if (selectedB < 0 || selectedB >  1) {
-            alert("L should be between 0 and 1");
+            alert("B should be between 0 and 1");
             flag = false;
         }
     }
 
-
+    // Generate graph when parameters are acceptable
     if (flag == true) {
         
+        // Google charts uses the upper bound when generating 
+        // ticks. This function manually creates the ticks 
+        // using N. 
         function createTicks(selectedN) {
             tickArr = [];
             tickArr.push(0);
@@ -107,11 +113,12 @@ function drawChart() {
             return tickArr;
         }
         
-
-        var plot_data = generate_data(selectedN, selectedK, selectedL, selectedB); // true = shuffled, false = sorted
-        console.log(plot_data);
+        // Generate data 
+        var plot_data = generate_data(selectedN, selectedK, selectedL, selectedB); 
+        //console.log(plot_data);
         var data = google.visualization.arrayToDataTable(plot_data);
-    
+        
+        // Options for the graph
         var options = {
             title: 'position vs. value comparison',
             hAxis: {title: 'Position', minValue: 0, maxValue: selectedN, ticks: createTicks(selectedN)},
@@ -121,18 +128,23 @@ function drawChart() {
                 zoomDelta: 0.8,
             }
         };
-    
+        
+        // Draw the chart
         var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
-    
         chart.draw(data, options);
-
+        
+        // Output info besides the chart
         document.getElementById("info_div").innerHTML = `
             <h5>Selected Values</h5>
             <p><strong>N:</strong> ${selectedN}</p>
             <p><strong>K:</strong> ${selectedK}%</p>
             <p><strong>L:</strong> ${selectedL}%</p>
+            <p><strong>B:</strong> ${selectedB}</p>
         `;
 
+    }
+    else {
+        console.log("Expecting correct input");
     }
 
 

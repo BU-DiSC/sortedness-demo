@@ -2,6 +2,7 @@
 function generate_data(N, K, L, B)
 {
   console.log("generate_data( N=" + N + ", K=" + K + ", L=" + L + ", B=" + B + " )");
+  sorted = false;
   // shuffle array function for shuffled data
     const shuffleArray = array => {
       for (let i = array.length - 1; i > 0; i--) {
