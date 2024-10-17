@@ -33,11 +33,20 @@ function drawChart() {
         selectedL = document.getElementById("manualL").value;
     } 
 
+    let selectedB;
+    if (document.getElementById('radioB1').checked) {
+        selectedB = parseFloat(document.getElementById('cmp-select-B').value);
+    }
+    else {
+        selectedB = document.getElementById("manualB").value;
+    } 
+
     let flag = true
 
     console.log("Selected N: " + selectedN);
     console.log("Selected K: " + selectedK);
     console.log("Selected L: " + selectedL);
+    console.log("Selected B: " + selectedB);
 
     if (selectedN != parseInt(selectedN)) {
         alert("N should be an integer");
@@ -72,6 +81,17 @@ function drawChart() {
         }
     }
 
+    if (selectedB === '') {
+        alert("L should not be empty");
+        flag = false;
+    }
+    else {
+        if (selectedB < 0 || selectedB >  1) {
+            alert("L should be between 0 and 1");
+            flag = false;
+        }
+    }
+
 
     if (flag == true) {
         
@@ -88,7 +108,7 @@ function drawChart() {
         }
         
 
-        var plot_data = generate_data(selectedN, false); // true = shuffled, false = sorted
+        var plot_data = generate_data(selectedN, selectedK, selectedL, selectedB); // true = shuffled, false = sorted
         console.log(plot_data);
         var data = google.visualization.arrayToDataTable(plot_data);
     

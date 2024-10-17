@@ -1,6 +1,7 @@
 // Function to generate the data for the chart
-function generate_data(N, sorted = true)
+function generate_data(N, K, L, B)
 {
+  console.log("generate_data( N=" + N + ", K=" + K + ", L=" + L + ", B=" + B + " )");
   // shuffle array function for shuffled data
     const shuffleArray = array => {
       for (let i = array.length - 1; i > 0; i--) {
