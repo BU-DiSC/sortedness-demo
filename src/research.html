@@ -20,11 +20,17 @@
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-	<script src="js/plotly.js"></script>
+	<script src="js/packages/plotly.js"></script>
 	<!-- load data.js -->
-    <script type="text/javascript" src="data.js"></script>
-    <!-- load draw.js-->
-    <script type="text/javascript" src="draw.js"></script>
+    <script type="text/javascript" src="js/data.js"></script>
+    <!-- load draw.js -->
+    <script type="text/javascript" src="js/draw.js"></script>
+	<!-- load par.js (class) before alreadyCompiledValues.js and update.js -->
+    <script type="text/javascript" src="js/Par.js"></script>
+	<!-- load alreadyCompiledValues.js before update.js -->
+    <script type="text/javascript" src="js/alreadyCompiledValues.js"></script>
+	<!-- load update.js -->
+    <script type="text/javascript" src="js/update.js"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript">
 		google.charts.load('current', {'packages':['corechart']});
@@ -97,18 +103,21 @@
 
 					<!-- Default input field for N-->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioN" id="radioN1" checked>
 								<label class="form-check-label" for="radioN1"></label>
 							</div>
 						</div>
+						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<label class="input-group-text" for="cmp-select-N">N</label>
 								</div>
-								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries">
+								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
 									<option value="1000">1000</option>
 									<option value="5000">5000</option>
 									<option value="10000">10000</option>
@@ -119,12 +128,14 @@
 					
 					<!-- Manual input field for N-->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
 								<label class="form-check-label" for="radioN2"></label>
 							</div>
 						</div>
+						<!-- Manual field -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
@@ -145,18 +156,21 @@
 
 					<!-- Default input field for K -->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioK" id="radioK1" checked>
 								<label class="form-check-label" for="radioK1"></label>
 							</div>
 						</div>
+						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<label class="input-group-text" for="cmp-select-K">K</label>
 								</div>
-								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries">
+								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
 									<option value="0">0%</option>
 									<option value="10">10%</option>
 									<option value="20">20%</option>
@@ -176,12 +190,14 @@
 
 					<!-- Manual input field for K -->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
 								<label class="form-check-label" for="radioK2"></label>
 							</div>
 						</div>
+						<!-- Manual field -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
@@ -203,18 +219,21 @@
 
 					<!-- Default input field for L -->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioL" id="radioL1" checked>
 								<label class="form-check-label" for="radioL1"></label>
 							</div>
 						</div>
+						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<label class="input-group-text" for="cmp-select-L">L</label>
 								</div>
-								<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries">
+								<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
 									<option value="0">0%</option>
 									<option value="10">10%</option>
 									<option value="20">20%</option>
@@ -234,12 +253,14 @@
 
 					<!-- Manual input field for L -->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioL" id="radioL2">
 								<label class="form-check-label" for="radioL2"></label>
 							</div>
 						</div>
+						<!-- Manual field -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
@@ -261,18 +282,21 @@
 
 					<!-- Default input field for B -->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioB" id="radioB1" checked>
 								<label class="form-check-label" for="radioB1"></label>
 							</div>
 						</div>
+						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<label class="input-group-text" for="cmp-select-B">&#945 = &#946</label>
 								</div>
-								<select id="cmp-select-B" class="cmp-input form-control" aria-label="#Entries">
+								<select id="cmp-select-B" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
 									<option value="0">0</option>
 									<option value="0.1">0.1</option>
 									<option value="0.2">0.2</option>
@@ -289,14 +313,16 @@
 						</div>
 					</div>
 
-					<!-- Default input field for B -->
+					<!-- Manual input field for B -->
 					<div class="row">
+						<!-- Radio -->
 						<div class="col-auto">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="radioB" id="radioB2">
 								<label class="form-check-label" for="radioB2"></label>
 							</div>
 						</div>
+						<!-- Manual field -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
@@ -329,9 +355,8 @@
 					</div>
 				</div>
 			</div>
-			
-			
 
+			
 	</section>
 
 </body>

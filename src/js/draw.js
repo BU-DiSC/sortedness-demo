@@ -1,4 +1,6 @@
-// Function to draw the chart
+/* 
+ * Function to draw the chart
+ */ 
 function drawChart() {
 
     // parameters
@@ -84,8 +86,8 @@ function drawChart() {
         }
     }
 
-    if (selectedB === '') {
-        alert("B should not be empty");
+    if (selectedB != parseFloat(selectedB)) {
+        alert("B should be a float");
         flag = false;
     }
     else {

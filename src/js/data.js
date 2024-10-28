@@ -1,6 +1,9 @@
-// Function to generate the data for the chart
+/*
+ * Function to generate the data for the chart
+ */
 function generate_data(N, K, L, B)
 {
+  // Log the inputs for the function
   console.log("generate_data( N=" + N + ", K=" + K + ", L=" + L + ", B=" + B + " )");
   sorted = false;
   // shuffle array function for shuffled data
