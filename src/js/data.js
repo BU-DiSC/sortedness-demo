@@ -1,7 +1,8 @@
 /*
  * Function to generate the data for the chart
  */
-function generate_data(N, K, L, B)
+
+function create_data(N, K, L, B)
 {
   // Log the inputs for the function
   console.log("generate_data( N=" + N + ", K=" + K + ", L=" + L + ", B=" + B + " )");
@@ -27,14 +28,29 @@ function generate_data(N, K, L, B)
     // copy data and shuffle it randomly 
     let shuffled_data = data_points.slice();
     shuffleArray(shuffled_data);
+
+    console.log(shuffled_data);
+
+    return shuffled_data;
+}
+
+function generate_data(N, data)
+{
+    let data_points = [];
+    for(let i = 1; i <= N; i++)
+    {
+        data_points.push(i);
+    }
     
     // create data array
     let plot_data = [];
     plot_data.push(['Position', 'Value']);
     for(let i = 0; i < N; i++)
     {
-        plot_data.push([data_points[i], sorted ? data_points[i] : shuffled_data[i]]);
+        plot_data.push([data_points[i], sorted ? data_points[i] : data[i]]);
     }
+
+    console.log(plot_data);
 
     return plot_data;
 }

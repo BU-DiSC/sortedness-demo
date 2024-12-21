@@ -1,12 +1,10 @@
 /* 
  * Function to draw the chart
  */ 
-function drawChart() {
-
+function run_operations() {
     // parameters
     const minN = 20;
     const maxN = 10000;
-    const tickCount = 10;
 
     // Get the correct input for N
     let selectedN;
@@ -96,60 +94,62 @@ function drawChart() {
             flag = false;
         }
     }
-
     // Generate graph when parameters are acceptable
-    if (flag == true) {
-        
-        // Google charts uses the upper bound when generating 
-        // ticks. This function manually creates the ticks 
-        // using N. 
-        function createTicks(selectedN) {
-            tickArr = [];
-            tickArr.push(0);
-            let n =  Math.round(selectedN / tickCount);
-            for (let i = n; i < selectedN; i += n) {
-                tickArr.push(i);
-            }
-            tickArr.push(selectedN);
-
-            return tickArr;
-        }
-        
-        // Generate data 
-        var plot_data = generate_data(selectedN, selectedK, selectedL, selectedB); 
-        //console.log(plot_data);
-        var data = google.visualization.arrayToDataTable(plot_data);
-        
-        // Options for the graph
-        var options = {
-            title: 'position vs. value comparison',
-            hAxis: {title: 'Position', minValue: 0, maxValue: selectedN, ticks: createTicks(selectedN)},
-            vAxis: {title: 'Value', minValue: 0, maxValue: selectedN, ticks: createTicks(selectedN)},
-            legend: 'none',
-            explorer: { 
-                zoomDelta: 0.8,
-            }
-        };
-        
-        // Draw the chart
-        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-        
-        // Output info besides the chart
-        document.getElementById("info_div").innerHTML = `
-            <h5>Selected Values</h5>
-            <p><strong>N:</strong> ${selectedN}</p>
-            <p><strong>K:</strong> ${selectedK}%</p>
-            <p><strong>L:</strong> ${selectedL}%</p>
-            <p><strong>B:</strong> ${selectedB}</p>
-        `;
-
+    if (flag == true) { 
+        draw_chart(selectedN, selectedK, selectedL, selectedB);
     }
     else {
         console.log("Expecting correct input");
     }
+}
 
 
+function draw_chart(N, K, L, B) {
+    const tickCount = 10;
 
+    // Google charts uses the upper bound when generating 
+    // ticks. This function manually creates the ticks 
+    // using N. 
+    function createTicks(N) {
+        tickArr = [];
+        tickArr.push(0);
+        let n =  Math.round(N / tickCount);
+        for (let i = n; i < N; i += n) {
+            tickArr.push(i);
+        }
+        tickArr.push(N);
 
+        return tickArr;
+    }
+
+    // Generate data
+    var total_data = create_data(N, K, L, B);
+    // Adjust data for plotting
+    var plot_data = generate_data(N, total_data); 
+    //console.log(plot_data);
+    var data = google.visualization.arrayToDataTable(plot_data);
+    
+    // Options for the graph
+    var options = {
+        title: 'position vs. value comparison',
+        hAxis: {title: 'Position', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        vAxis: {title: 'Value', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        legend: 'none',
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+    
+    // Draw the chart
+    var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+    
+    // Output info besides the chart
+    document.getElementById("info_div").innerHTML = `
+        <h5>Selected Values</h5>
+        <p><strong>N:</strong> ${N}</p>
+        <p><strong>K:</strong> ${K}%</p>
+        <p><strong>L:</strong> ${L}%</p>
+        <p><strong>B:</strong> ${B}</p>
+    `;
 }
