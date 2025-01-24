@@ -218,6 +218,40 @@ function fillTheBuffer() {
     }
 }
 
+function adjustColors() {
+    resetColors();
+    console.log("adjusting colors!");
+    console.log("lastSortedIndex: " + lastSortedIndex);
+    console.log("we enter here");
+    if (lastSortedIndex == -1) {
+        const first = document.getElementById("buffer0");
+        first.style.backgroundColor = "#b51100";
+    }
+    else {
+        for (let i = 0; i <= lastSortedIndex; i++) {
+            const iter = document.getElementById("buffer" + i);
+            if (i % 2 == 0) {
+                iter.style.backgroundColor = "#b51100";
+            }
+            else {
+                iter.style.backgroundColor = "#FF0000";
+            }
+        }   
+    }     
+}
+
+function resetColors() {
+    for (let i = 0; i < 10; i++) {
+        const iter = document.getElementById("buffer" + i);
+        if (i % 2 == 0) {
+            iter.style.backgroundColor = "#808080";
+        }
+        else {
+            iter.style.backgroundColor = "#d3d3d3";
+        }
+}
+}
+
 
 
 
@@ -247,6 +281,7 @@ function draw_buffer(total_data, N, K, L, B) {
     console.log(zonesDict);
     
     fillTheBuffer();
+    adjustColors();
 }
 
 
@@ -289,6 +324,7 @@ function nextStep() {
             iter.innerHTML = "";
         }
 
+        resetColors();
        
 
         stat = 1;
@@ -331,16 +367,7 @@ function nextStep() {
         numInsideBuffer = buffer.length;
         max = buffer[buffer.length-1][1];
 
-        for (let i = 0; i < buffer.length; i++) {
-            const iter = document.getElementById("buffer" + i);
-            if (i % 2 == 0) {
-                iter.style.backgroundColor = "#b51100";
-            }
-            else {
-                iter.style.backgroundColor = "#FF0000";
-            }
-            
-        }        
+        adjustColors();
 
         stat = 2;
     }
@@ -351,6 +378,8 @@ function nextStep() {
         console.log(zones);
         fillTheBuffer();
 
+        adjustColors();
+
         console.log("lastSortedIndex from status " + stat + ": " + lastSortedIndex);
 
         stat = 0;
@@ -358,4 +387,5 @@ function nextStep() {
     }
     
 }
+
 
