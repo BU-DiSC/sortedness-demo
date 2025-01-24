@@ -734,3 +734,130 @@ div.fixed {
     width: 60px;
     height: 200px;
 }
+
+.long-button {
+    width: 100%;
+    height: 50px;
+    border: none;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    background: repeating-linear-gradient(
+        to right,
+        gray 0%,
+        gray 10%,
+        lightgray 10%,
+        lightgray 20%,
+        gray 20%,
+        gray 30%,
+        lightgray 30%,
+        lightgray 40%,
+        gray 40%,
+        gray 50%,
+        lightgray 50%,
+        lightgray 60%,
+        gray 60%,
+        gray 70%,
+        lightgray 70%,
+        lightgray 80%,
+        gray 80%,
+        gray 90%,
+        lightgray 90%,
+        lightgray 100%
+    );
+    position: relative;
+}
+
+.section-labels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    font-size: 14px;
+    font-weight: bold;
+    color: black;
+    font-size: 20px;
+}
+
+.section-labels span {
+    flex: 1;
+    text-align: center;
+    line-height: 50px; /* Match button height */
+}
+
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-bottom: 200px solid #3498db;
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dots {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+.rectangle {
+    width: 70px;
+    height: 20px;
+    background-color: #3498db;
+}
+
+.rectangles {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+}
+
+.smallerDots {
+    display: flex;
+    gap: 10px;
+}
+
+.smallerDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+#last-tree {
+    width: 70px;
+    height: 20px;
+    background-color: #2ecc71;
+    cursor: pointer;
+    display: flex;               /* Use flexbox for centering */
+    justify-content: center;     /* Center horizontally */
+    align-items: center;         /* Center vertically */
+    text-align: center;          /* Ensure text is centered within the element */
+    color: black;   
+  }

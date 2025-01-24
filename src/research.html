@@ -359,16 +359,59 @@
 			<!-- Areas for the tree and the buffer -->
 			<div class="container mt-5">
 				<div class="row">
-					<div class="col-md-6 equal-height" id="info-column">
-						<div id="info_div" class="equal-height">
+					<div class="col-12">
+						<h4>Buffer</h4>
+						<div id="buffer-area" style="border: 1px solid #ddd; padding: 10px; height: 150px; overflow-y: auto;">
+							<div class="container mt-5 text-center">
+								<button class="long-button">
+									<div class="section-labels">
+										<span id="buffer0"></span>
+										<span id="buffer1"></span>
+										<span id="buffer2"></span>
+										<span id="buffer3"></span>
+										<span id="buffer4"></span>
+										<span id="buffer5"></span>
+										<span id="buffer6"></span>
+										<span id="buffer7"></span>
+										<span id="buffer8"></span>
+										<span id="buffer9"></span>
+									</div>
+								</button>
+							</div>
 						</div>
 					</div>
-		
-					<div class="col-md-6 equal-height" id="chart-column">
-						<div id="chart_div" class="equal-height"></div>
+					<div class="col-12">
+						<h4>Tree</h4>
+						<div id="tree-area" style="border: 1px solid #ddd; padding: 10px; height: 400px; overflow-y: auto;">
+							<div class="triangle"></div>
+							<div class="dots">
+								<span class="dot"></span>
+								<span class="dot"></span>
+								<span class="dot"></span>
+							</div>
+							<!-- Rectangle below the dots -->
+							<div class="rectangles">
+								<div class="rectangle"></div>
+								<div class="rectangle"></div>
+								<div class="rectangle"></div>
+								<div class="smallerDots">
+									<span class="smallerDot"></span>
+									<span class="smallerDot"></span>
+									<span class="smallerDot"></span>
+								</div>
+								<div class="rectangle" id="last-tree"></div> 
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
+			
+			<div class="row mt-3">
+				<div class="col text-center">
+					<button onclick="nextStep()" type="button" class="btn btn-primary">Next Step</button>
+				</div>
+			</div>
+		</div>
 
 
 

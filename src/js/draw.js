@@ -1,3 +1,19 @@
+// Essential parameters
+var buffer = [];
+var tree = [];
+var lastSortedIndex = -1;
+var moved = false;
+var partitioned_data = [];
+var stat = 0; // used to decide which step nextStep() will be performed
+
+var max = Number.MIN_SAFE_INTEGER;
+
+var numInsideBuffer = 0;
+
+
+var zonesDict = {};
+
+
 /* 
  * Function to draw the chart
  */ 
@@ -96,7 +112,10 @@ function run_operations() {
     }
     // Generate graph when parameters are acceptable
     if (flag == true) { 
-        draw_chart(selectedN, selectedK, selectedL, selectedB);
+        // Generate data
+        var total_data = create_data(selectedN, selectedK, selectedL, selectedB);
+        draw_chart(total_data, selectedN, selectedK, selectedL, selectedB);
+        draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
     }
     else {
         console.log("Expecting correct input");
@@ -104,7 +123,7 @@ function run_operations() {
 }
 
 
-function draw_chart(N, K, L, B) {
+function draw_chart(total_data, N, K, L, B) {
     const tickCount = 10;
 
     // Google charts uses the upper bound when generating 
@@ -122,8 +141,6 @@ function draw_chart(N, K, L, B) {
         return tickArr;
     }
 
-    // Generate data
-    var total_data = create_data(N, K, L, B);
     // Adjust data for plotting
     var plot_data = generate_data(N, total_data); 
     //console.log(plot_data);
@@ -153,3 +170,212 @@ function draw_chart(N, K, L, B) {
         <p><strong>B:</strong> ${B}</p>
     `;
 }
+
+function fillTheBuffer() {
+    while (zones.length != 0) {
+        // end of one cycle
+        if (numInsideBuffer == 10) {
+
+            for (let i = 0; i < numInsideBuffer; i++) {
+                const iter = document.getElementById("buffer" + i);
+                iter.innerHTML = buffer[i];
+            }
+
+            console.log("lastSortedIndex: " + lastSortedIndex);
+
+            break;
+        }
+        else {
+            var el = zones.shift();
+            buffer.push(el);
+            numInsideBuffer++;
+            if ((el[0] > max) && !moved) {
+                lastSortedIndex++;
+                max = el[1];
+            }
+            // push lastSortedIndex back, to its position
+            else {
+                for (let i = lastSortedIndex; i >= 0; i--) {
+                    if (i == 0) {
+                        if ((el[0] > buffer[i][0] && el[0] < buffer[i][1]) || (el[0] < buffer[i][0])) {
+                            max = buffer[i][1];
+                            lastSortedIndex = i - 1;
+                            moved = true;
+                            break;
+                        }
+                    }
+                    else {
+                        if ((el[0] > buffer[i][0] && el[0] < buffer[i][1]) || (el[0] < buffer[i][0] && el[0] > buffer[i-1][1])) {
+                            max = buffer[i][1];
+                            lastSortedIndex = i - 1;
+                            moved = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+function draw_buffer(total_data, N, K, L, B) {
+    partitioned_data = [];
+    zones = [];
+
+    for (let i = 0; i < total_data.length; i += 10) {
+        const part = total_data.slice(i, i + 10);
+        partitioned_data.push(part);
+    }
+
+    console.log("partioned data: ");
+    console.log(partitioned_data);
+
+
+
+    
+    for (let i = 0; i < partitioned_data.length; i += 1) {
+        const min = Math.min(...partitioned_data[i]);
+        const max = Math.max(...partitioned_data[i]);
+        zones.push([min, max]);
+        zonesDict[max] = partitioned_data[i];
+    }
+
+    console.log("zones dict: ");
+    console.log(zonesDict);
+    
+    fillTheBuffer();
+}
+
+
+function nextStep() {
+    // if the buffer is full and it is flushing time
+    if (stat === 0) {
+        // flushing operations
+        if (lastSortedIndex == -1) {
+            tree.push(buffer[0]);
+            const lastTreeElement = document.getElementById("last-tree");
+            lastTreeElement.innerHTML = "" + buffer[0];
+            buffer.shift();
+            
+        }
+        else if (lastSortedIndex < 5) {
+            for (let j = 0; j <= lastSortedIndex; j++) {
+                tree.push(buffer[j]);
+            }
+            const lastTreeElement = document.getElementById("last-tree");
+            lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
+            buffer.splice(0, lastSortedIndex + 1);
+        }
+        else {
+            for (let j = 0; j < 5; j++) {
+                tree.push(buffer[j]);
+            }
+            const lastTreeElement = document.getElementById("last-tree");
+            lastTreeElement.innerHTML = "" + buffer[4];
+            buffer.splice(0, 5);
+        } 
+
+        // update HTMLs to show buffer after flush
+        for (let i = 0; i < buffer.length; i++) {
+            const iter = document.getElementById("buffer" + i);
+            iter.innerHTML = buffer[i];
+        }    
+
+        for (let i = buffer.length; i < 10; i++) {
+            const iter = document.getElementById("buffer" + i);
+            iter.innerHTML = "";
+        }
+
+       
+
+        stat = 1;
+
+    }
+    // sort the remainder
+    else if (stat == 1) {
+        
+        let remainingPages = [];
+
+        console.log(buffer);
+
+        for (let i = 0; i < buffer.length; i++) {
+            remainingPages = remainingPages.concat(zonesDict[buffer[i][1]]);
+        }
+
+        remainingPages.sort((a, b) => a - b);
+
+        partitioned_data = [];
+        buffer = [];
+    
+        for (let i = 0; i < remainingPages.length; i += 10) {
+            const part = remainingPages.slice(i, i + 10);
+            partitioned_data.push(part);
+        }
+        
+        for (let i = 0; i < partitioned_data.length; i += 1) {
+            const min = Math.min(...partitioned_data[i]);
+            const max = Math.max(...partitioned_data[i]);
+            buffer.push([min, max]);
+            zonesDict[max] = partitioned_data[i];
+        }
+
+        for (let i = 0; i < buffer.length; i++) {
+            const iter = document.getElementById("buffer" + i);
+            iter.innerHTML = buffer[i];
+        }   
+
+        lastSortedIndex = buffer.length - 1;
+        numInsideBuffer = buffer.length;
+        max = buffer[buffer.length-1][1];
+
+        for (let i = 0; i < buffer.length; i++) {
+            const iter = document.getElementById("buffer" + i);
+            if (i % 2 == 0) {
+                iter.style.backgroundColor = "#b51100";
+            }
+            else {
+                iter.style.backgroundColor = "#FF0000";
+            }
+            
+        }
+
+        /*
+        // sort the buffer
+        buffer.sort((a, b) => a[0] - b[0]);
+
+        // adjust lastSortedIndex
+        lastSortedIndex = buffer.length - 1;
+        numInsideBuffer = buffer.length;
+
+        console.log("lastSortedIndex from status " + stat + ": " + lastSortedIndex);
+
+        // update to show buffer after sorting the remainder
+        for (let i = 0; i < buffer.length; i++) {
+            const iter = document.getElementById("buffer" + i);
+            iter.innerHTML = buffer[i];
+        }   
+
+        */
+
+        
+
+        stat = 2;
+    }
+    // fill the buffer
+    else if (stat == 2) {
+
+        console.log("will will the buffer now");
+        console.log(zones);
+        fillTheBuffer();
+
+        console.log("lastSortedIndex from status " + stat + ": " + lastSortedIndex);
+
+        stat = 0;
+
+    }
+    
+}
+

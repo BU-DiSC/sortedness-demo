@@ -1,6 +1,8 @@
 /*
  * Imitates the data in the server
  */
+
+/*
 var vals = [
     new Par(1000, 20, 40, 0.7),
     new Par(5000, 80, 0, 0.2),
@@ -34,3 +36,13 @@ var vals = [
     new Par(10000, 80, 10, 0.6),
     new Par(10000, 80, 10, 0.7)
 ];
+
+*/
+
+var vals = [
+    new Par(1000, 0, 60, 0.5),
+    new Par(1000, 80, 30, 0.9),
+    new Par(5000, 20, 10, 0.3),
+    new Par(5000, 40, 10, 0.1),
+    new Par(10000, 20, 90, 0.5),
+]
