@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sortedness Demo</title>
+	<!-- Bootswatch CSS based on Bootstrap -->
+	<!-- Theme: http://bootswatch.com/flatly/ -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<!-- Plugin CSS -->
+	<link rel="stylesheet" href="css/bootstrap-slider.min.css">
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/tooltip.css">
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400&display=swap" rel="stylesheet">
+	<!-- Google Material Icon-->
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="js/packages/plotly.js"></script>
+	<!-- load data.js -->
+    <script type="text/javascript" src="js/data.js"></script>
+    <!-- load draw.js -->
+    <script type="text/javascript" src="js/draw.js"></script>
+	<!-- load par.js (class) before alreadyCompiledValues.js and update.js -->
+    <script type="text/javascript" src="js/Par.js"></script>
+	<!-- load alreadyCompiledValues.js before update.js -->
+    <script type="text/javascript" src="js/alreadyCompiledValues.js"></script>
+	<!-- load update.js -->
+    <script type="text/javascript" src="js/update.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+		google.charts.load('current', {'packages':['corechart']});
+	</script>
+</head>
+
+<body>
+	<!-- Header at the top -->
+	<header id="page-top">
+		<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top bg-dark fixed-top">
+			<div class="container">
+				<a class="navbar-brand" href="#page-top">Sortedness<span class="sr-only">(current)</span></a>
+				<button id="navbarToggle" class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#collapsable-nav" aria-controls="collapsable-nav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div id="collapsable-nav" class="collapse navbar-collapse" id="collapsable-nav">
+					<ul class="nav navbar-nav ml-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="#publication">Publications</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#authors">The Team</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#sponsors">Sponsors</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<!-- Banner on the left side-->
+	<div class="fixed">
+		<div class="rcorners-1" style="background-color:8288B4">
+			<a href="research.html"><span class="rcorners-click"></span></a>
+			<div class="rcorners-text-1"><a href="index.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Home</a></div>
+		</div>
+		<div class="rcorners-2" style="background-color:8288B4">
+			<a href="research.html"><span class="rcorners-click"></span></a>
+			<div class="rcorners-text-2"><a href="background.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Background</a></div>
+		</div>
+		<div class="rcorners-3" style="background-color:8288B4">
+			<a href="research.html#problem"><span class="rcorners-click"></span></a>
+			<div class="rcorners-text-3"><a href="research.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a></div>
+			<img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" />
+		</div>
+	</div>
+
+	<!-- Main section -->
+	<section id="research" style="margin:0px">
+		<!-- Title -->
+		<section id="problem" style="padding-top:0px">
+			<div class="container">
+				<div class="row section-title text-center">
+					<h2> Sortedness </h2>
+				</div>
+			</div>
+		</section>
+			<!-- Input fields for the parameters -->
+			<div id="cmp-conf-row">
+
+				<!-- Div of N -->
+				<div class="col-3">
+					<!-- Title for N-->
+					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Number of entries (N)</h4>
+
+					<!-- Default input field for N-->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioN" id="radioN1" checked>
+								<label class="form-check-label" for="radioN1"></label>
+							</div>
+						</div>
+						<!-- Select object -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-N">N</label>
+								</div>
+								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="1000">1000</option>
+									<option value="5000">5000</option>
+									<option value="10000">10000</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Manual input field for N-->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
+								<label class="form-check-label" for="radioN2"></label>
+							</div>
+						</div>
+						<!-- Manual field -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualN" type="number" min="0" step="1" class="cmp-input form-control">
+							</div>
+						</div>
+					</div>
+					
+					
+				</div>
+				
+				<!-- Div of K -->
+				<div class="col-3">
+					<!-- Title for K -->
+					<h4 class="text-center" style="font-size:large">Percentage of number of out-order elements (K%)</h4>
+
+					<!-- Default input field for K -->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioK" id="radioK1" checked>
+								<label class="form-check-label" for="radioK1"></label>
+							</div>
+						</div>
+						<!-- Select object -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-K">K</label>
+								</div>
+								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="0">0%</option>
+									<option value="10">10%</option>
+									<option value="20">20%</option>
+									<option value="30">30%</option>
+									<option value="40">40%</option>
+									<option value="50">50%</option>
+									<option value="60">60%</option>
+									<option value="70">70%</option>
+									<option value="80">80%</option>
+									<option value="90">90%</option>
+									<option value="100">100%</option>
+								</select>
+							</div>
+		
+						</div>
+					</div>
+
+					<!-- Manual input field for K -->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
+								<label class="form-check-label" for="radioK2"></label>
+							</div>
+						</div>
+						<!-- Manual field -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualK" type="number" min="0" step="1" class="cmp-input form-control">
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Div of L-->
+				<div class="col-3">
+					<!-- Title for L -->
+					<h4 class="text-center" style="font-size:large;">Percentage of maximum out-of-orderness (L%)</h4>
+
+					<!-- Default input field for L -->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioL" id="radioL1" checked>
+								<label class="form-check-label" for="radioL1"></label>
+							</div>
+						</div>
+						<!-- Select object -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-L">L</label>
+								</div>
+								<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="0">0%</option>
+									<option value="10">10%</option>
+									<option value="20">20%</option>
+									<option value="30">30%</option>
+									<option value="40">40%</option>
+									<option value="50">50%</option>
+									<option value="60">60%</option>
+									<option value="70">70%</option>
+									<option value="80">80%</option>
+									<option value="90">90%</option>
+									<option value="100">100%</option>
+								</select>
+							</div>
+		
+						</div>
+					</div>
+
+					<!-- Manual input field for L -->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioL" id="radioL2">
+								<label class="form-check-label" for="radioL2"></label>
+							</div>
+						</div>
+						<!-- Manual field -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualL" type="number" min="0" step="1" class="cmp-input form-control">
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Div of B -->
+				<div class="col-3">
+					<!-- Title for B -->
+					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Distribution (&#945, &#946)</h4>
+
+					<!-- Default input field for B -->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioB" id="radioB1" checked>
+								<label class="form-check-label" for="radioB1"></label>
+							</div>
+						</div>
+						<!-- Select object -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-B">&#945 = &#946</label>
+								</div>
+								<select id="cmp-select-B" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="0">0</option>
+									<option value="0.1">0.1</option>
+									<option value="0.2">0.2</option>
+									<option value="0.3">0.3</option>
+									<option value="0.4">0.4</option>
+									<option value="0.5">0.5</option>
+									<option value="0.6">0.6</option>
+									<option value="0.7">0.7</option>
+									<option value="0.8">0.8</option>
+									<option value="0.9">0.9</option>
+									<option value="1">1</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<!-- Manual input field for B -->
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioB" id="radioB2">
+								<label class="form-check-label" for="radioB2"></label>
+							</div>
+						</div>
+						<!-- Manual field -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualB" type="number" min="0" step="1" class="cmp-input form-control">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- "Run" button -->
+			<div class="row">
+				<div class="col-md-11 text-right pt-4">
+					<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
+				</div>
+			</div>
+
+			<!-- Areas for outputs of parameters and the chart -->
+			<div class="container mt-5">
+				<div class="row">
+					<div class="col-md-3 equal-height" id="info-column">
+						<div id="info_div" class="equal-height">
+						</div>
+					</div>
+		
+					<div class="col-md-9 equal-height" id="chart-column">
+						<div id="chart_div" class="equal-height"></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Areas for the tree and the buffer -->
+			<div class="container mt-5">
+				<div class="row">
+					<div class="col-12">
+						<h4>Buffer</h4>
+						<div id="buffer-area" style="border: 1px solid #ddd; padding: 10px; height: 150px; overflow-y: auto;">
+							<div class="container mt-5 text-center">
+								<button class="long-button">
+									<div class="section-labels">
+										<span id="buffer0"></span>
+										<span id="buffer1"></span>
+										<span id="buffer2"></span>
+										<span id="buffer3"></span>
+										<span id="buffer4"></span>
+										<span id="buffer5"></span>
+										<span id="buffer6"></span>
+										<span id="buffer7"></span>
+										<span id="buffer8"></span>
+										<span id="buffer9"></span>
+									</div>
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-12">
+						<h4>Tree</h4>
+						<div id="tree-area" style="border: 1px solid #ddd; padding: 10px; height: 400px; overflow-y: auto;">
+							<div class="triangle"></div>
+							<div class="dots">
+								<span class="dot"></span>
+								<span class="dot"></span>
+								<span class="dot"></span>
+							</div>
+							<!-- Rectangle below the dots -->
+							<div class="rectangles">
+								<div class="rectangle"></div>
+								<div class="rectangle"></div>
+								<div class="rectangle"></div>
+								<div class="smallerDots">
+									<span class="smallerDot"></span>
+									<span class="smallerDot"></span>
+									<span class="smallerDot"></span>
+								</div>
+								<div class="rectangle" id="last-tree"></div> 
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row mt-3">
+				<div class="col text-center">
+					<button onclick="nextStep()" type="button" class="btn btn-primary">Next Step</button>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+			
+	</section>
+
+</body>
+</html>

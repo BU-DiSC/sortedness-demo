@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sortedness</title>
+	<!-- Bootswatch CSS based on Bootstrao -->
+	<!-- Theme: http://bootswatch.com/flatly/ -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<!-- Plugin CSS -->
+	<link rel="stylesheet" href="css/bootstrap-slider.min.css">
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/tooltip.css">
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400&display=swap" rel="stylesheet">
+	<!-- Google Material Icon-->
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="js/plotly.js"></script>
+
+	<style>
+		div.fixed {
+		position: fixed;
+		bottom: 50%;
+		left: 0;
+		width: 60px;
+		height: 200px;
+		}
+	</style>
+</head>
+
+<body>
+	<header id="page-top">
+		<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top bg-dark fixed-top">
+			<div class="container">
+				<a class="navbar-brand" href="#page-top">Sortedness<span class="sr-only">(current)</span></a></a>
+				<button id="navbarToggle" class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#collapsable-nav" aria-controls="collapsable-nav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div id="collapsable-nav" class="collapse navbar-collapse" id="collapsable-nav">
+					<ul class="nav navbar-nav ml-auto">
+						<!-- <li class="nav-item">
+							<a class="nav-link" href="#problem">Problem</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#research">Research</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#interactiveDemo">Compactionary</a>
+						</li> -->
+						<li class="nav-item">
+							<a class="nav-link" href="#publication">Publications</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#authors">The Team</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#sponsors">Sponsors</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+
+		<!-- <div class="jumbotron">
+			<video controls width="250">
+
+				<source src="./img/test.mov"
+						type="video/mov">
+
+				Sorry, your browser doesn't support embedded videos.
+			</video>
+		</div> -->
+
+	</header>
+
+
+	<div class="fixed">
+		<div class="rcorners-1" style="background-color:8288B4">
+            <a href="research.html"><span class="rcorners-click"></span></a>
+            <div class="rcorners-text-1"><a href="index.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Home</a></div>
+          </div>
+    <div class="rcorners-2" style="background-color:8288B4">
+                  <a href="research.html"><span class="rcorners-click"></span></a>
+                  <div class="rcorners-text-2"><a href="background.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Background</a></div>
+                </div>
+                <div class="rcorners-3" style="background-color:8288B4">
+                        <a href="research.html#problem"><span class="rcorners-click"></span></a>
+                        <div class="rcorners-text-3"><a href="research.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a>
+            			</div>
+            			<img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" />
+                      </div>
+	</div>
+
+
+
+	
+	<section id="research" style="margin:0 10px">
+
+		<div id="interactiveDemo" class="container">
+			<div class="row section-title text-center">
+				<h2> <a target="_blank" href="https://disc-projects.bu.edu/compactionary/files/LSM_Compact_Demo.mp4"><span class="metric-title" data-toggle="tooltip" data-placement="right"
+          title="Watch walkthrough this video" style="color:#000">Sortedness </span> </a> </h2>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 mt-3">
+					<div class="custom-control custom-radio text-right">
+						<input id="customRadio1" type="radio" name="customRadio" class="custom-control-input" checked="">
+						<label class="custom-control-label" for="customRadio1">Comparative Analysis</label>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 mt-3">
+					<div class="custom-control custom-radio text-left">
+						<input id="customRadio2" type="radio" name="customRadio" class="custom-control-input">
+						<label class="custom-control-label" for="customRadio2">Individual Analysis </label>
+					</div>
+				</div>
+			</div>
+
+			<!-- Comparative configuration starts here -->
+			<div id="cmp-conf-row" class="row">
+				<div class="cmp-conf-col col-lg-3 col-md-6 col-sm-6">
+					<h4 class="text-center" style="font-size:large;">Workload</h4>
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">#Entries</label>
+						</div>
+						<input id="cmp-input-N" value="10000000" min="1" type="number" step="1" data-preval="1"
+							class="cmp-input form-control" aria-label="#Entries">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-N" class="increase"></button>
+							<button id="cmp-decrease-N" class="decrease"></button>
+						</div>
+					</div>
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">Entry size</label>
+						</div>
+						<input id="cmp-input-E" value="128" min="1" type="number" data-preval="1" class="cmp-input form-control"
+							aria-label="Entry Size">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-E" class="increase"></button>
+							<button id="cmp-decrease-E" class="decrease"></button>
+						</div>
+						<select id="cmp-select-E" class="input-group-append custom-select cmp-input" data-preunit="0">
+							<option value="0" selected> B</option>
+							<option value="1">KB</option>
+							<option value="2">MB</option>
+							<option value="3">GB</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="cmp-conf-col col-lg-3 col-md-6 col-sm-6">
+					<h4 class="text-center" style="font-size:large;">Main Memory Parameter</h4>
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">Buffer size</label>
+						</div>
+						<input id="cmp-input-M" value="16" min="1" data-preval="1" type="number" class="cmp-input form-control"
+							aria-label="Buffer capacity">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-M" class="increase"></button>
+							<button id="cmp-decrease-M" class="decrease"></button>
+						</div>
+						<select id="cmp-select-M" class="input-group-append custom-select cmp-input" data-preunit="2">
+							<option value="0">B</option>
+							<option value="1">KB</option>
+							<option value="2" selected>MB</option>
+							<option value="3">GB</option>
+						</select>
+					</div>
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">BF size / Entry</label>
+						</div>
+						<input id="cmp-input-Mbf" value="10" min="0" type="number" data-preval="1024"
+							class="cmp-input form-control" aria-label="Bloom filters size">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-Mbf" class="increase"></button>
+							<button id="cmp-decrease-Mbf" class="decrease"></button>
+						</div>
+						<select id="cmp-select-Mbf" class="input-group-append custom-select cmp-input" data-preunit="0">
+							<option value="0" >B</option>
+							<option value="1">KB</option>
+							<option value="2" selected>MB</option>
+							<option value="3">GB</option>
+						</select>
+					</div>
+
+					<!--<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">Fence pointers</label>
+						</div>
+						<input id="cmp-input-Mf" value="0" min="1" type="number" class="cmp-input form-control"
+							aria-label="Fence pointer size">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-Mf" class="increase"></button>
+							<button id="cmp-decrease-Mf" class="decrease"></button>
+						</div>
+						<select id="cmp-select-Mf" class="input-group-append custom-select cmp-input">
+							<option value="0">B</option>
+							<option value="1">KB</option>
+							<option value="2" selected>MB</option>
+							<option value="3">GB</option>
+						</select>
+					</div>-->
+				</div>
+
+				<div class="cmp-conf-col col-lg-3 col-md-6 col-sm-6">
+					<h4 class="text-center" style="font-size:large;">Disk Parameters</h4>
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">File size (in terms of buffer)</label>
+						</div>
+						<input id="cmp-input-f" value="1" min="0" max="1" step="0.1" type="number" data-preval="1"
+							class="cmp-input form-control" aria-label="Size factor in terms of buffer size">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-f" class="increase"></button>
+							<button id="cmp-decrease-f" class="decrease"></button>
+						</div>
+					</div>
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">Page size</label>
+						</div>
+						<input id="cmp-input-P" value="4" min="1" type="number" data-preval="1" class="cmp-input form-control"
+							aria-label="Page Size">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-P" class="increase"></button>
+							<button id="cmp-decrease-P" class="decrease"></button>
+						</div>
+						<select id="cmp-select-P" class="input-group-append custom-select cmp-input" data-preunit="1">
+							<option value="0">B</option>
+							<option value="1" selected>KB</option>
+							<option value="2">MB</option>
+							<option value="3">GB</option>
+						</select>
+					</div>
+
+					<div class="cmp-conf-row input-group input-group-sm mb-2" style="display: none">
+						<div class="input-group-prepend">
+							<label class="input-group-text">Threshold</label>
+						</div>
+						<div class="slider-box form-control">
+							<input id="cmp-threshold" data-slider-id='ex1Slider' class="cmp-input" type="text" data-slider-min="0"
+								data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+						</div>
+					</div>
+				</div>
+
+				<div class="cmp-conf-col col-lg-3 col-md-6 col-sm-6">
+					<h4 class="text-center" style="font-size:large;">Data Layout</h4>
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text">Size ratio</label>
+						</div>
+						<input id="cmp-input-T" value="4" min="2" step="1" type="number" data-preval="2"
+							class="cmp-input form-control" aria-label="Ratio">
+						<div class="input-group-append incrementer">
+							<button id="cmp-increase-T" class="increase"></button>
+							<button id="cmp-decrease-T" class="decrease"></button>
+						</div>
+					</div>
+					<div class="mp-btn-group btn-group mb-2" role="group" aria-label="LSM Merge Policy">
+						<button id="cmp-leveling" type="button"
+							class="cmp-input btn-active leveler btn btn-custom">Leveling</button>
+						<button id="cmp-tiering" type="button" class="cmp-input tier btn btn-custom">Tiering</button>
+					</div>
+				</div>
+				<div class="cmp-conf-col col-lg-12 col-md-12 col-sm-12">
+					<div class="text-center"><a data-toggle="collapse" href="#cmp-adSetting" aria-expanded="false"
+							aria-controls="cmp-adSetting" style="color:#000">Advanced settings</a></div>
+					<div class="collapse row" id="cmp-adSetting">
+						<!-- <div class="cmp-conf-col col-lg-3 col-md-3 col-sm-3">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Granularity (in terms of buffer)</label>
+								</div>
+								<input id="granularity-input" value="1" min="1" step="1" type="number" data-preval="2"
+									class="cmp-input form-control" aria-label="Ratio">
+								<div class="input-group-append incrementer">
+									<button id="granularity-increase" class="increase"></button>
+									<button id="granularity-decrease" class="decrease"></button>
+								</div>
+							</div>
+						</div> -->
+						<div class="cmp-conf-col col-lg-4 col-md-4 col-sm-4">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Selectivity of a range lookup">Selectivity</label>
+								</div>
+								<input id="cmp-input-s" value="50" min="0" max="100" step="1" type="number" data-preval="50"
+									class="cmp-input form-control" aria-label="Selectivity of a range lookup">
+								<div class="input-group-append incrementer">
+									<button id="cmp-increase-s" class="increase"></button>
+									<button id="cmp-decrease-s" class="decrease"></button>
+								</div>
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+						</div>
+						<div class="cmp-conf-col col-lg-4 col-md-4 col-sm-4">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage sequential over random access speed">Storage read speed</label>
+								</div>
+								<input id="cmp-input-mu" value="1" min="0" step="1" type="number" data-preval="1"
+									class="cmp-input form-control" aria-label="Storage read speed">
+								<div class="input-group-append incrementer">
+									<button id="cmp-increase-mu" class="increase"></button>
+									<button id="cmp-decrease-mu" class="decrease"></button>
+								</div>
+                <div class="input-group-append">
+									<span class="input-group-text">MB/s</span>
+								</div>
+							</div>
+						</div>
+						<div class="cmp-conf-col col-lg-4 col-md-4 col-sm-4">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage write speed">Storage write speed</label>
+								</div>
+								<input id="cmp-input-phi" value="1" min="0" step="1" data-preval="1" type="number"
+									class="cmp-input form-control" aria-label="Storage write speed">
+								<div class="input-group-append incrementer">
+									<button id="cmp-increase-phi" class="increase"></button>
+									<button id="cmp-decrease-phi" class="decrease"></button>
+								</div>
+                <div class="input-group-append">
+									<span class="input-group-text">MB/s</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END of comparative configurations of Interactive Demo -->
+
+
+			<!-- Individual configuration starts here -->
+			<div id="indiv-conf-row" class="row" style="display: none;">
+				<!-- Vanilla LSM-Tree Configuration starts here-->
+				<div class="vlsm-conf-col col-lg-3 col-md-3 col-sm-3">
+					<div class="row vlsm-conf-row justify-content-center">
+						<div class="lsm-title">
+							<span>Vanilla-LSM</span>
+						</div>
+					</div>
+
+					<div class="row vlsm-conf-row mb-2">
+						<div class="mp-btn-group btn-group" role="group" aria-label="LSM Merge Policy">
+							<button id="vlsm-leveling" type="button"
+								class="vlsm-input leveler btn btn-custom btn-active">Leveling</button>
+							<button id="vlsm-tiering" type="button" class="vlsm-input tier btn btn-custom">Tiering</button>
+						</div>
+					</div>
+
+					<div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text"># Entries</label>
+							</div>
+							<input id="vlsm-input-N" value="10000000" type="number" step="1" min="1" data-preval="1"
+								class="vlsm-input form-control" aria-label="#Entries">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-N" class="increase"></button>
+								<button id="vlsm-decrease-N" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Entry size</label>
+							</div>
+							<input id="vlsm-input-E" value="128" type="number" min="1" data-preval="1" class="vlsm-input form-control"
+								aria-label="Entry Size">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-E" class="increase"></button>
+								<button id="vlsm-decrease-E" class="decrease"></button>
+							</div>
+							<select id="vlsm-select-E" class="input-group-append custom-select vlsm-input" data-preunit="2">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Buffer size</label>
+							</div>
+							<input id="vlsm-input-M" value="16" type="number" min="1" data-preval="1" class="vlsm-input form-control"
+								aria-label="Buffer Capacity">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-M" class="increase"></button>
+								<button id="vlsm-decrease-M" class="decrease"></button>
+							</div>
+							<select id="vlsm-select-M" class="input-group-append custom-select vlsm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Bloom filters</label>
+							</div>
+							<input id="vlsm-input-Mbf" value="10" min="0" type="number" data-preval="1024"
+								class="vlsm-input form-control" aria-label="Bloom filters size">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-Mbf" class="increase"></button>
+								<button id="vlsm-decrease-Mbf" class="decrease"></button>
+							</div>
+							<select id="vlsm-select-Mbf" class="input-group-append custom-select vlsm-input" data-preunit="0">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<!-- <div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Fence pointers</label>
+							</div>
+							<input id="vlsm-input-Mf" value="0" min="1" type="number" class="vlsm-input form-control"
+								aria-label="Fence pointer size">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-Mf" class="increase"></button>
+								<button id="vlsm-decrease-Mf" class="decrease"></button>
+							</div>
+							<select id="vlsm-select-Mf" class="input-group-append custom-select vlsm-input">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div> -->
+					<div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">File size (in terms of buffer)</label>
+							</div>
+							<input id="vlsm-input-f" value="1" min="0" max="1" step="0.1" type="number" data-preval="1"
+								class="vlsm-input form-control" aria-label="Size factor in terms of buffer size">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-f" class="increase"></button>
+								<button id="vlsm-decrease-f" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Page size</label>
+							</div>
+							<input id="vlsm-input-P" value="4" min="1" type="number" data-preval="1" class="vlsm-input form-control"
+								aria-label="Page size">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-P" class="increase"></button>
+								<button id="vlsm-decrease-P" class="decrease"></button>
+							</div>
+							<select id="vlsm-select-P" class="input-group-append custom-select vlsm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1" selected>KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<div class="row vlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Ratio</label>
+							</div>
+							<input id="vlsm-input-T" value="4" min="2" type="number" step="1" data-preval="2"
+								class="vlsm-input form-control" aria-label="Ratio">
+							<div class="input-group-append incrementer">
+								<button id="vlsm-increase-T" class="increase"></button>
+								<button id="vlsm-decrease-T" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div id="vlsm-adConf-row">
+						<div class="text-center"><a data-toggle="collapse" href="#vlsm-adSetting" aria-expanded="false"
+								aria-controls="vlsm-adSetting">Advanced settings</a></div>
+						<div class="collapse" id="vlsm-adSetting">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Selectivity of a range lookup">Selectivity</label>
+								</div>
+								<input id="vlsm-input-s" value="50" min="0" max="100" step="1" type="number" data-preval="50"
+									class="vlsm-input form-control" aria-label="Selectivity of a range lookup">
+								<div class="input-group-append incrementer">
+									<button id="vlsm-increase-s" class="increase"></button>
+									<button id="vlsm-decrease-s" class="decrease"></button>
+								</div>
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage read speed">Storage read speed</label>
+								</div>
+								<input id="vlsm-input-mu" value="1" min="0" step="1" type="number" data-preval="1"
+									class="vlsm-input form-control" aria-label="Storage read speed">
+								<div class="input-group-append incrementer">
+									<button id="vlsm-increase-mu" class="increase"></button>
+									<button id="vlsm-decrease-mu" class="decrease"></button>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage write speed">Storage write speed</label>
+								</div>
+								<input id="vlsm-input-phi" value="1" min="0" step="1" type="number" data-preval="1"
+									class="vlsm-input form-control" aria-label="Storage write speed">
+								<div class="input-group-append incrementer">
+									<button id="vlsm-increase-phi" class="increase"></button>
+									<button id="vlsm-decrease-phi" class="decrease"></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> <!-- END of Demo1-conf-col -->
+
+
+				<!-- RocksDB LSM-Tree Configuration starts here-->
+				<div class="rlsm-conf-col col-lg-3 col-md-3 col-sm-3">
+					<div class="row rlsm-conf-row justify-content-center">
+						<div class="lsm-title">
+							<span>Partial Compaction</span>
+						</div>
+						<div class="custom-control custom-switch">
+							<input id="rlsm-bg-merging" type="checkbox" class="custom-control-input rlsm-input">
+							<label class="custom-control-label" for="rlsm-bg-merging" data-toggle="tooltip" data-placement="top"
+								data-original-title="Background merging OFF"></label>
+						</div>
+					</div>
+
+					<div class="row rlsm-conf-row mb-2">
+						<div class="mp-btn-group btn-group" role="group" aria-label="LSM Merge Policy">
+							<button id="rlsm-leveling" type="button" class="rlsm-input leveler btn btn-custom btn-active">Leveled
+								Compaction</button>
+						</div>
+					</div>
+
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text"># Entries</label>
+							</div>
+							<input id="rlsm-input-N" value="10000000" min="1" type="number" step="1" data-preval="1"
+								class="rlsm-input form-control" aria-label="#Entries">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-N" class="increase"></button>
+								<button id="rlsm-decrease-N" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Entry size</label>
+							</div>
+							<input id="rlsm-input-E" value="128" min="1" type="number" data-preval="1" class="rlsm-input form-control"
+								aria-label="Entry Size">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-E" class="increase"></button>
+								<button id="rlsm-decrease-E" class="decrease"></button>
+							</div>
+							<select id="rlsm-select-E" class="input-group-append custom-select rlsm-input" data-preunit="2">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Buffer size</label>
+							</div>
+							<input id="rlsm-input-M" value="16" min="1" type="number" data-preval="1" class="rlsm-input form-control"
+								aria-label="Buffer Capacity">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-M" class="increase"></button>
+								<button id="rlsm-decrease-M" class="decrease"></button>
+							</div>
+							<select id="rlsm-select-M" class="input-group-append custom-select rlsm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Bloom filters</label>
+							</div>
+							<input id="rlsm-input-Mbf" value="10" min="0" type="number" data-preval="1024"
+								class="rlsm-input form-control" aria-label="Bloom filters size">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-Mbf" class="increase"></button>
+								<button id="rlsm-decrease-Mbf" class="decrease"></button>
+							</div>
+							<select id="rlsm-select-Mbf" class="input-group-append custom-select rlsm-input" data-preunit="0">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<!-- <div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Fence pointers</label>
+							</div>
+							<input id="rlsm-input-Mf" value="0" min="1" type="number" class="rlsm-input form-control"
+								aria-label="Fence pointer size">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-Mf" class="increase"></button>
+								<button id="rlsm-decrease-Mf" class="decrease"></button>
+							</div>
+							<select id="rlsm-select-Mf" class="input-group-append custom-select rlsm-input">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div> -->
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">File size(in terms of buffer)</label>
+							</div>
+							<input id="rlsm-input-f" value="1" min="0" max="1" step="0.1" type="number" data-preval="1"
+								class="rlsm-input form-control" aria-label="Size factor in terms of buffer size">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-f" class="increase"></button>
+								<button id="rlsm-decrease-f" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Page size</label>
+							</div>
+							<input id="rlsm-input-P" value="4" min="1" type="number" data-preval="1" class="rlsm-input form-control"
+								aria-label="Page size">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-P" class="increase"></button>
+								<button id="rlsm-decrease-P" class="decrease"></button>
+							</div>
+							<select id="rlsm-select-P" class="input-group-append custom-select rlsm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1" selected>KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Ratio</label>
+							</div>
+							<input id="rlsm-input-T" value="4" min="2" type="number" step="1" data-preval="2"
+								class="rlsm-input form-control" aria-label="Ratio">
+							<div class="input-group-append incrementer">
+								<button id="rlsm-increase-T" class="increase"></button>
+								<button id="rlsm-decrease-T" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div class="row rlsm-conf-row">
+						<div class="input-group input-group-sm mb-2" style="display: none">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Threshold</label>
+							</div>
+							<div class="slider-box form-control">
+								<input id="rlsm-threshold" data-slider-id='ex1Slider' class="rlsm-input" type="text" data-slider-min="0"
+									data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+							</div>
+						</div>
+					</div>
+					<div id="rlsm-adConf-row">
+						<div class="text-center"><a data-toggle="collapse" href="#rlsm-adSetting" aria-expanded="false"
+								aria-controls="rlsm-adSetting">Advanced settings</a></div>
+						<div class="collapse" id="rlsm-adSetting">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Selectivity of a range lookup">Selectivity</label>
+								</div>
+								<input id="rlsm-input-s" value="50" min="0" max="100" step="1" type="number" data-preval="50"
+									class="rlsm-input form-control" aria-label="Selectivity of a range lookup">
+								<div class="input-group-append incrementer">
+									<button id="rlsm-increase-s" class="increase"></button>
+									<button id="rlsm-decrease-s" class="decrease"></button>
+								</div>
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage read speed">Storage read speed</label>
+								</div>
+								<input id="rlsm-input-mu" value="1" min="0" step="1" type="number" data-preval="1"
+									class="rlsm-input form-control" aria-label="Storage read speed">
+								<div class="input-group-append incrementer">
+									<button id="rlsm-increase-mu" class="increase"></button>
+									<button id="rlsm-decrease-mu" class="decrease"></button>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage write speed">Storage write speed</label>
+								</div>
+								<input id="rlsm-input-phi" value="1" min="0" step="1" type="number" data-preval="1"
+									class="rlsm-input form-control" aria-label="Storage write speed">
+								<div class="input-group-append incrementer">
+									<button id="rlsm-increase-phi" class="increase"></button>
+									<button id="rlsm-decrease-phi" class="decrease"></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> <!-- END of Demo2-conf-col -->
+
+				<!-- Dostoevsky LSM-Tree Configuration starts here-->
+				<div class="dlsm-conf-col col-lg-3 col-md-3 col-sm-3">
+					<div class="row dlsm-conf-row justify-content-center">
+						<div class="lsm-title">
+							<span>Hybrid Strategy</span>
+						</div>
+					</div>
+
+					<div class="row dlsm-conf-row mb-2">
+						<div class="mp-btn-group btn-group" role="group" aria-label="LSM Merge Policy">
+							<button id="dlsm-lazylevel" type="button" class="dlsm-input btn btn-custom btn-active">Lazy
+								Leveling</button>
+						</div>
+					</div>
+
+					<div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text"># Entries</label>
+							</div>
+							<input id="dlsm-input-N" value="10000000" min="1" type="number" step="1" data-preval="1"
+								class="dlsm-input form-control" aria-label="#Entries">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-N" class="increase"></button>
+								<button id="dlsm-decrease-N" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Entry size</label>
+							</div>
+							<input id="dlsm-input-E" value="128" min="1" type="number" data-preval="1" class="dlsm-input form-control"
+								aria-label="Entry Size">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-E" class="increase"></button>
+								<button id="dlsm-decrease-E" class="decrease"></button>
+							</div>
+							<select id="dlsm-select-E" class="input-group-append custom-select dlsm-input" data-preunit="2">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Buffer size</label>
+							</div>
+							<input id="dlsm-input-M" value="16" min="1" type="number" data-preval="1" class="dlsm-input form-control"
+								aria-label="Buffer Capacity">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-M" class="increase"></button>
+								<button id="dlsm-decrease-M" class="decrease"></button>
+							</div>
+							<select id="dlsm-select-M" class="input-group-append custom-select dlsm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Bloom filters</label>
+							</div>
+							<input id="dlsm-input-Mbf" value="10" min="0" type="number" data-preval="1024"
+								class="dlsm-input form-control" aria-label="Bloom filters size">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-Mbf" class="increase"></button>
+								<button id="dlsm-decrease-Mbf" class="decrease"></button>
+							</div>
+							<select id="dlsm-select-Mbf" class="input-group-append custom-select dlsm-input" data-preunit="0">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<!-- <div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Fence pointers</label>
+							</div>
+							<input id="dlsm-input-Mf" value="0" min="1" type="number" class="dlsm-input form-control"
+								aria-label="Fence pointer size">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-Mf" class="increase"></button>
+								<button id="dlsm-decrease-Mf" class="decrease"></button>
+							</div>
+							<select id="dlsm-select-Mf" class="input-group-append custom-select dlsm-input">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div> -->
+					<div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">File size(in terms of buffer)</label>
+							</div>
+							<input id="dlsm-input-f" value="1" min="0" max="1" step="0.1" type="number" data-preval="1"
+								class="dlsm-input form-control" aria-label="Size factor in terms of buffer size">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-f" class="increase"></button>
+								<button id="dlsm-decrease-f" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Page size</label>
+							</div>
+							<input id="dlsm-input-P" value="4" min="1" type="number" data-preval="1" class="dlsm-input form-control"
+								aria-label="Page size">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-P" class="increase"></button>
+								<button id="dlsm-decrease-P" class="decrease"></button>
+							</div>
+							<select id="dlsm-select-P" class="custom-select dlsm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1" selected>KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row dlsm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Ratio</label>
+							</div>
+							<input id="dlsm-input-T" value="4" min="2" step="1" type="number" step="1" data-preval="2"
+								class="dlsm-input form-control" aria-label="Ratio">
+							<div class="input-group-append incrementer">
+								<button id="dlsm-increase-T" class="increase"></button>
+								<button id="dlsm-decrease-T" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div id="dlsm-adConf-row">
+						<div class="text-center"><a data-toggle="collapse" href="#dlsm-adSetting" aria-expanded="false"
+								aria-controls="dlsm-adSetting">Advanced settings</a></div>
+						<div class="collapse" id="dlsm-adSetting">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Selectivity of a range lookup">Selectivity</label>
+								</div>
+								<input id="dlsm-input-s" value="50" min="0" max="100" step="1" type="number" data-preval="50"
+									class="dlsm-input form-control" aria-label="Selectivity of a range lookup">
+								<div class="input-group-append incrementer">
+									<button id="dlsm-increase-s" class="increase"></button>
+									<button id="dlsm-decrease-s" class="decrease"></button>
+								</div>
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage read speed">Storage read speed</label>
+								</div>
+								<input id="dlsm-input-mu" value="1" min="0" step="1" type="number" data-preval="1"
+									class="dlsm-input form-control" aria-label="Storage read speed">
+								<div class="input-group-append incrementer">
+									<button id="dlsm-increase-mu" class="increase"></button>
+									<button id="dlsm-decrease-mu" class="decrease"></button>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage write speed">Storage write speed</label>
+								</div>
+								<input id="dlsm-input-phi" value="1" min="0" step="1" type="number" data-preval="1"
+									class="dlsm-input form-control" aria-label="Storage write speed">
+								<div class="input-group-append incrementer">
+									<button id="dlsm-increase-phi" class="increase"></button>
+									<button id="dlsm-decrease-phi" class="decrease"></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> <!-- END of Demo3-conf-col -->
+
+				<!-- OSM Tree Configuration starts here-->
+				<div class="osm-conf-col col-lg-3 col-md-3 col-sm-3">
+					<div class="row osm-conf-row justify-content-center">
+						<div class="lsm-title">
+							<span>Build-Your-Own</span>
+						</div>
+					</div>
+
+					<div class="row osm-conf-row mb-2">
+            <div class="input-group input-group-sm mb-2" aria-label="LSM Merge Policy">
+              <div class="input-group-prepend">
+                <label class="input-group-text">Tiered #Levels</label>
+              </div>
+              <input id="osm-num-tired-level-input" value="1" min="1" step="1" type="number" data-preval="2"
+                  class="cmp-input form-control">
+              <div class="input-group-append incrementer">
+                <button id="osm-increase-num-tired-levels" class="increase"></button>
+                <button id="osm-decrease-num-tired-levels" class="decrease"></button>
+              </div>
+            </div>
+					</div>
+
+					<div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text"># Entries</label>
+							</div>
+							<input id="osm-input-N" value="10000000" min="1" type="number" step="1" data-preval="1"
+								class="osm-input form-control" aria-label="#Entries">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-N" class="increase"></button>
+								<button id="osm-decrease-N" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Entry size</label>
+							</div>
+							<input id="osm-input-E" value="128" min="1" type="number" data-preval="1" class="osm-input form-control"
+								aria-label="Entry Size">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-E" class="increase"></button>
+								<button id="osm-decrease-E" class="decrease"></button>
+							</div>
+							<select id="osm-select-E" class="input-group-append custom-select osm-input" data-preunit="2">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Buffer size</label>
+							</div>
+							<input id="osm-input-M" value="16" min="1" type="number" data-preval="1" class="osm-input form-control"
+								aria-label="Buffer Capacity">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-M" class="increase"></button>
+								<button id="osm-decrease-M" class="decrease"></button>
+							</div>
+							<select id="osm-select-M" class="input-group-append custom-select osm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Bloom filters</label>
+							</div>
+							<input id="osm-input-Mbf" value="10" min="0" type="number" data-preval="1024"
+								class="osm-input form-control" aria-label="Bloom filters size">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-Mbf" class="increase"></button>
+								<button id="osm-decrease-Mbf" class="decrease"></button>
+							</div>
+							<select id="osm-select-Mbf" class="input-group-append custom-select osm-input" data-preunit="0">
+								<option value="0">B</option>
+								<option value="1">KB</option>
+								<option value="2" selected>MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+					<!-- <div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Fence pointers</label>
+							</div>
+							<input id="osm-input-Mf" value="0" min="1" type="number" class="osm-input form-control"
+								aria-label="Fence pointer size">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-Mf" class="increase"></button>
+								<button id="osm-decrease-Mf" class="decrease"></button>
+							</div>
+							<select id="osm-select-Mf" class="custom-select osm-input">
+								<option value="0" selected>B</option>
+								<option value="1">KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div> -->
+					<div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">File size(in terms of buffer)</label>
+							</div>
+							<input id="osm-input-f" value="1" min="0" max="1" step="0.1" type="number" data-preval="1"
+								class="osm-input form-control" aria-label="Size factor in terms of buffer size">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-f" class="increase"></button>
+								<button id="osm-decrease-f" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Page size</label>
+							</div>
+							<input id="osm-input-P" value="4" min="1" type="number" data-preval="1" class="osm-input form-control"
+								aria-label="Page size">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-P" class="increase"></button>
+								<button id="osm-decrease-P" class="decrease"></button>
+							</div>
+							<select id="osm-select-P" class="input-group-append custom-select osm-input" data-preunit="2">
+								<option value="0">B</option>
+								<option value="1" selected>KB</option>
+								<option value="2">MB</option>
+								<option value="3">GB</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row osm-conf-row">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Ratio</label>
+							</div>
+							<input id="osm-input-T" value="4" min="2" type="number" step="1" data-preval="2"
+								class="osm-input form-control" aria-label="Ratio">
+							<div class="input-group-append incrementer">
+								<button id="osm-increase-T" class="increase"></button>
+								<button id="osm-decrease-T" class="decrease"></button>
+							</div>
+						</div>
+					</div>
+					<div id="osm-adConf-row">
+						<div class="text-center"><a data-toggle="collapse" href="#osm-adSetting" aria-expanded="false"
+								aria-controls="osm-adSetting">Advanced settings</a></div>
+						<div class="collapse" id="osm-adSetting">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Selectivity of a range lookup">Selectivity</label>
+								</div>
+								<input id="osm-input-s" value="50" min="0" max="100" step="1" type="number" data-preval="50"
+									class="osm-input form-control" aria-label="Selectivity of a range lookup">
+								<div class="input-group-append incrementer">
+									<button id="osm-increase-s" class="increase"></button>
+									<button id="osm-decrease-s" class="decrease"></button>
+								</div>
+								<div class="input-group-append">
+									<span class="input-group-text">%</span>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage read speed">Storage read speed</label>
+								</div>
+								<input id="osm-input-mu" value="1" min="0" step="1" type="number" data-preval="1"
+									class="osm-input form-control" aria-label="Storage read speed">
+								<div class="input-group-append incrementer">
+									<button id="osm-increase-mu" class="increase"></button>
+									<button id="osm-decrease-mu" class="decrease"></button>
+								</div>
+							</div>
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" data-toggle="tooltip" data-placement="bottom"
+										title="Storage write speed">Storage write speed</label>
+								</div>
+								<input id="osm-input-phi" value="1" min="0" step="1" type="number" data-preval="1"
+									class="osm-input form-control" aria-label="Storage write speed">
+								<div class="input-group-append incrementer">
+									<button id="osm-increase-phi" class="increase"></button>
+									<button id="osm-decrease-phi" class="decrease"></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> <!-- END of Demo4-conf-col -->
+			</div> <!-- END of indivaidual configurations of Interactive Demo -->
+
+
+			<div id="control-panel" class="">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="cmp-conf-row input-group input-group-sm col-7">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Progress</label>
+								</div>
+							<div id="progress-box" class="slider-box form-control">
+								<input id="adjustable-progress-bar" data-slider-id='ex1Slider' class="cmp-input" type="text" data-slider-min="0"
+									data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+								<label id="progress-percentage-label" class="progress-label">0%</label>
+							</div>
+						</div>
+						<div id="lsm-button-group" class="col-3">
+							<div class="btn-group" role="group" aria-label="progress-control">
+								<button id="autoplay-button" type="button" class="btn btn-info">Play</button>
+								<button id="stop-button" type="button" class="btn btn-warning">Pause</button>
+								<button id="finish-button" type="button" class="btn btn-danger">Finish</button>
+							</div>
+						</div>
+						<div class="cmp-conf-col col-lg-2 col-md-2 col-sm-2">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Step</label>
+								</div>
+								<input id="granularity-input" value="1" min="1" step="1" type="number" data-preval="2"
+										class="cmp-input form-control" aria-label="Ratio">
+								<div class="input-group-append incrementer">
+									<button id="granularity-increase" class="increase"></button>
+									<button id="granularity-decrease" class="decrease"></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<br/>
+
+			<!-- Interactive Demo result starts here -->
+			<!-- Diagram result starts here -->
+			<div id="indiv-bush-row" class="row mt-3">
+				<!-- Vanilla LSM-Tree bush results starts here -->
+				<div class="vlsm-bush-col col-lg-3 col-md-3 col-sm-3">
+					<div id="cmp-vlsm-mp" class="row cmp-indiv-mp">
+						<!--<div id="vlsm-button-group">
+							<div class="btn-group" role="group" aria-label="progress-control">
+								<button id="vlsm-autoplay-button" type="button" class="btn btn-success">Play</button>
+								<button id="vlsm-stop-button" type="button" class="btn btn-warning">Pause</button>
+								<button id="vlsm-finish-button" type="button" class="btn btn-danger">Finish</button>
+							</div>
+						</div>-->
+						<!--<div class="cmp-conf-row input-group input-group-sm mb-2 col-8">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Progress</label>
+							</div>
+						<div id="progress-box" class="slider-box form-control">
+							<input id="adjustable-progress-bar" data-slider-id='ex1Slider' class="cmp-input" type="text" data-slider-min="0"
+								data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+							<label id="progress-percentage-label" class="progress-label">0%</label>
+						</div>
+					</div>-->
+						<div id="cmp-vlsm-title" class="lsm-title">
+							<span>Vanilla-LSM</span>
+						</div>
+						<div id="cmp-vlsm-layout" class="mp-btn-group btn-group mb-2" role="group" aria-label="LSM Merge Policy">
+							<button id="cmp-vlsm-leveling" type="button"
+								class="cmp-input btn-active leveler btn btn-custom">Leveling</button>
+							<button id="cmp-vlsm-tiering" type="button" class="cmp-input tier btn btn-custom">Tiering</button>
+						</div>
+						<!--<span class="material-icons" id="vlsm-autoplay-button">play_arrow</span>-->
+						<image id="vlsm-autoplay-button" class="play-class" src="img/play_circle_outline_black_24dp.svg"/>
+						<input id="vlsm-progress-bar" data-slider-id='ex1Slider' class="cmp-input" type="text" data-slider-min="0"
+								data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+					</div>
+					<div class="col"><br/></div>
+					<div id="vlsm-bush" class="bush-res">
+						<div class="row vlsm-reuslt">
+							<button type="button" class="lsm-btn btn btn-secondary"></button>
+						</div>
+						<div class="row vlsm-reuslt">
+							<button type="button" class="lsm-btn btn btn-secondary"></button>
+						</div>
+						<div class="row vlsm-reuslt">
+							<button type="button" class="lsm-btn btn btn-secondary"></button>
+						</div>
+						<div class="row vlsm-reuslt">
+							<button type="button" class="lsm-btn btn btn-secondary"></button>
+						</div>
+					</div>
+				</div> <!-- END of vlsm-bush-col result -->
+
+				<!-- RocksDB LSM-Tree bush results starts here -->
+				<div class="rlsm-bush-col col-lg-3 col-md-3 col-sm-3">
+					<div id="cmp-rlsm-mp" class="row cmp-indiv-mp">
+						<!--<div id="rlsm-button-group">
+							<div class="btn-group" role="group" aria-label="progress-control">
+								<button id="rlsm-autoplay-button" type="button" class="btn btn-success">Play</button>
+								<button id="rlsm-stop-button" type="button" class="btn btn-warning">Pause</button>
+								<button id="rlsm-finish-button" type="button" class="btn btn-danger">Finish</button>
+							</div>
+						</div>-->
+						<div id="cmp-rlsm-title" class="lsm-title">
+							<span>Partial Compaction</span>
+							<div class="custom-control custom-switch">
+								<input id="cmp-bg-merging" type="checkbox" class="custom-control-input cmp-input">
+								<label class="custom-control-label" for="cmp-bg-merging" data-toggle="tooltip" data-placement="top"
+									data-original-title="Background merging OFF"></label>
+							</div>
+						</div>
+						<div id="cmp-rlsm-layout" class="mp-btn-group btn-group mb-2" role="group" aria-label="LSM Merge Policy">
+							<button id="cmp-rlsm-leveling" type="button" class="cmp-input btn-active leveler btn btn-custom"
+								autofocus>Leveled Compaction</button>
+						</div>
+						<!--<span class="material-icons" id="rlsm-autoplay-button">play_arrow</span>-->
+						<image id="rlsm-autoplay-button" class="play-class" src="img/play_circle_outline_black_24dp.svg"/>
+						<input id="rlsm-progress-bar" data-slider-id='ex1Slider' class="cmp-input" type="text" data-slider-min="0"
+								data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+
+					</div>
+          <div class="col"><br/></div>
+					<div id="rlsm-bush" class="bush-res">
+						<div class="row rlsm-result">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row rlsm-result">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row rlsm-result">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row rlsm-result">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+					</div>
+				</div> <!-- END of rlsm-col-res -->
+
+				<!-- Dostoevsky LSM-Tree diagram results starts here -->
+				<div class="dlsm-bush-col col-lg-3 col-md-3 col-sm-3">
+					<div id="cmp-dlsm-mp" class="row cmp-indiv-mp">
+						<!--<div id="dlsm-button-group">
+							<div class="btn-group" role="group" aria-label="progress-control">
+								<button id="dlsm-autoplay-button" type="button" class="btn btn-success">Play</button>
+								<button id="dlsm-stop-button" type="button" class="btn btn-warning">Pause</button>
+								<button id="dlsm-finish-button" type="button" class="btn btn-danger">Finish</button>
+							</div>
+						</div>-->
+						<div id="cmp-dlsm-title" class="lsm-title">
+							<span>Hybrid Strategy</span>
+						</div>
+						<div id="cmp-dlsm-layout" class="mp-btn-group btn-group mb-2" role="group" aria-label="LSM Merge Policy">
+							<button id="cmp-dlsm-lazylevel" type="button" class="cmp-input btn btn-custom btn-active">Lazy
+								Leveling</button>
+						</div>
+						<!--<span class="material-icons" id="dlsm-autoplay-button">play_arrow</span>-->
+						<image id="dlsm-autoplay-button" class="play-class" src="img/play_circle_outline_black_24dp.svg"/>
+						<input id="dlsm-progress-bar"  data-slider-id='ex1Slider' class="cmp-input" type="text" data-slider-min="0"
+								data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+
+					</div>
+          <div class="col-1"><br/></div>
+					<div id="dlsm-bush" class="bush-res">
+						<div class="row dlsm-reuslt">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row dlsm-reuslt">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row dlsm-reuslt">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row dlsm-reuslt">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+					</div>
+				</div> <!-- END of dlsm3-col-res -->
+
+
+
+				<!-- OSM Tree diagram results starts here -->
+				<div class="osm-bush-col col-lg-3 col-md-3 col-sm-3">
+					<div id="cmp-osm-mp" class="row cmp-indiv-mp">
+						<!--<div id="osm-button-group">
+							<div class="btn-group" role="group" aria-label="progress-control">
+								<button id="osm-autoplay-button" type="button" class="btn btn-success">Play</button>
+								<button id="osm-stop-button" type="button" class="btn btn-warning">Pause</button>
+								<button id="osm-finish-button" type="button" class="btn btn-danger">Finish</button>
+							</div>
+						</div>-->
+						<div id="cmp-osm-title" class="lsm-title">
+							<span>Build-Your-Own</span>
+						</div>
+						<!-- <div class="mp-btn-group btn-group mb-2" role="group" aria-label="LSM Merge Policy">
+							<button id="cmp-osm-leveling" type="button" class="cmp-input btn btn-custom btn-active">Leveling</button>
+						</div> -->
+            <div id="cmp-osm-layout" class="input-group input-group-sm mb-2" aria-label="LSM Merge Policy">
+              <div class="input-group-prepend">
+                <label class="input-group-text">Tiered #Levels</label>
+              </div>
+              <input id="cmp-num-tired-level-input" value="1" min="1" step="1" type="number" data-preval="2"
+                  class="cmp-input form-control">
+              <div class="input-group-append incrementer">
+                <button id="cmp-increase-num-tired-levels" class="increase"></button>
+                <button id="cmp-decrease-num-tired-levels" class="decrease"></button>
+              </div>
+            </div>
+
+						<!--<span class="material-icons" id="osm-autoplay-button">play_arrow</span>-->
+						<image id="osm-autoplay-button" class="play-class" src="img/play_circle_outline_black_24dp.svg"/>
+						<input id="osm-progress-bar" data-slider-id='ex1Slider' class="cmp-input" type="text" data-slider-min="0"
+								data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+
+					</div>
+          <div class="col-1"><br/></div>
+					<div id="osm-bush" class="bush-res">
+						<div class="row osm">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row osm">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row osm">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+
+						<div class="row osm">
+							<div class="lsm-btn-group">
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+								<button type="button" class="lsm-btn btn btn-secondary"></button>
+							</div>
+						</div>
+					</div>
+				</div> <!-- END of demo4-col-res -->
+			</div> <!-- END of diagram result -->
+
+			<br>
+
+
+			<!-- Cost result starts here -->
+			<div id="cost-result" class="row">
+				<!-- Demo1 cost result starts here -->
+				<!-- Level -->
+				<div class="vlsm-cost-col col-lg-3 col-md-3 col-sm-3">
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of levels in the current LSM tree.">Levels</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-W-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\lceil \log_T{\frac{N}{P \cdot B}} \rceil$$">XXX</span>
+						</div>
+					</div>
+					<!-- Number of sorted runs-->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of sorted runs in the current LSM tree.">#sorted runs</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-N-run" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$L$$">XXX</span>
+						</div>
+					</div>
+					<!-- Number of compactions-->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The total number of compactions occured so far">#compactions</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-N-compaction" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{N}{P \cdot B} \cdot (1 - \frac{1}{T^{L-1}})$$">XXX</span>
+						</div>
+					</div>
+					<!-- Average compaction size-->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The average compaction size of all the compactions occured so far">Avg cmpct. size</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-compaction-size" class="cost uncertain">XXX</span>
+						</div>
+					</div>
+					<!-- Average compaction latency -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The average compaction latency of all the compactions occured so far.">Avg cmpct. lat.</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-compaction-latency" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{L \cdot P \cdot B \cdot E}{1 - \frac{1}{T^{L-1}}}$$">XXX</span>
+						</div>
+					</div>
+					<!-- Worst case compaction latency -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The worst-case compaction latnecy among all the compactions occured so far.">Wc cmpct. lat.</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-tail-latency" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(2 \cdot N)$$">XXX</span>
+						</div>
+					</div>
+					<!-- Ingestion Cost -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="Ingestion cost: the average I/O performed by ingestion (including inserts, updates and deletes).">Ingestion cost</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-ingestion-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(\frac{L \cdot (T-1)}{B})$$">XXX</span>
+						</div>
+					</div>
+					<!-- ZR-point lookup -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="Zero-result lookup cost: the average worst-case I/O cost performed by point lookups to a key that does NOT exist in the LSM-tree.">ZR-point
+								lookup</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-ZR-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(L \cdot e^{-{c_0} \cdot b})$$ $$c_0 = (\ln2)^2$$">XXX</span>
+						</div>
+					</div>
+					<!-- NZR-point lookup -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="Non-zero-result lookup cost: the average worst-case I/O cost performed by point lookups to a key that exists in the LSM-tree.">NZR-point
+								lookup</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-NZR-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(1 + L \cdot e^{-c_0 \cdot b})$$">XXX</span>
+						</div>
+					</div>
+					<!-- Short range lookup -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="Short range lookup cost: the average worst-case I/O cost performed by range lookups which key ranges are extremely small and could be accessed approximately one block within each run.">(S)
+								range lookup</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-sQ-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(2 \cdot L)$$">XXX</span>
+						</div>
+					</div>
+					<!-- Long range lookup (50%) -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span id="metric-lQ-title" class="metric-title" data-toggle="tooltip" data-placement="left"
+								data-original-title="Long range lookup cost: the average worst-case I/O cost performed by range lookups which key ranges are relative large and mostly target the largest level."> (L)
+								range lookup (50%)</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-lQ-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(\frac{s}{B} \cdot \frac{T^L-1}{T^L-T^{L-1}})$$">XXX</span>
+						</div>
+					</div>
+					<!-- Space amplification -->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="Space-amplification: the worst-case factor by which the presence of obsolete entries amplify storage space">Space
+								amplification</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-sAMP-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{T^{L-1} - 1}{T^L - T^{L-1}}$$">XXX</span>
+						</div>
+					</div>
+					<!--Storage space-->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title">Storage space</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-storage-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$N \cdot E \cdot (1 + SA)$$">XXX TB</span>
+						</div>
+					</div>
+					<!--Memory footprint-->
+					<div class="row">
+						<div class="metrics col-lg-7 col-md-7 col-sm-7">
+							<span class="metric-title">Memory footprint</span>
+						</div>
+						<div class="cost-col col-lg-5 col-md-5 col-sm-5 text-center">
+							<span id="vlsm-mem-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{b \cdot N}{8} + \frac{N \cdot K}{P \cdot B} + 2 \cdot P \cdot B \cdot E$$">XXX GB</span>
+						</div>
+					</div>
+				</div> <!-- END of demo1 cost result -->
+
+				<!-- Demo2 cost result starts here -->
+				<div class="rlsm-cost-col col-lg-3 col-md-3 col-sm-3">
+					<!--Level-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-W-cost" data-toggle="tooltip" data-placement="right"
+								title="$$\lceil \log_T{\frac{N}{P \cdot B}} \rceil$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Number of sorted runs-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-N-run" data-toggle="tooltip" data-placement="right"
+								title="$$L$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Number of compactions-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-N-compaction" data-toggle="tooltip" data-placement="right"
+								title="$$L \cdot \frac{N}{P \cdot B} + \frac{L}{T-1} - \frac{T^{L+1} - T}{(T-1)^2}$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Average compaction size-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-compaction-size" data-toggle="tooltip" data-placement="right" title="$$O\left(L\right)$$"
+								class="cost">XXX I/O</span>
+						</div>
+					</div>
+					<!--Average compaction latency-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-compaction-latency" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{2L \cdot E \cdot P \cdot B \cdot (T^L - T^{L - 1})}{T^{L-1} - 1}$$"
+								class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Tail compaction latency-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-tail-latency" data-toggle="tooltip" data-placement="right"
+								title="$$O(2 \cdot L \cdot P \cdot B \cdot T)$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Ingestion cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-ingestion-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(\frac{L \cdot (T-1)}{B})$$">XXX TB</span>
+						</div>
+					</div>
+					<!--ZR-point lookup-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-ZR-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(L \cdot e^{-c_0 \cdot b})$$">XXX GB</span>
+						</div>
+					</div>
+					<!--NZR-point lookup-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-NZR-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(1 + L \cdot e^(-c_0 \cdot b})$$">XXX ops/s</span>
+						</div>
+					</div>
+					<!--Short range scan-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-sQ-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(2 \cdot L)$$">XXX TB</span>
+						</div>
+					</div>
+					<!--Long range scan-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-lQ-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(\frac{s}{B} \cdot \frac{T^L - 1}{T^L - T^{L- 1}})$$">XXX GB</span>
+						</div>
+					</div>
+					<!--Space amplification-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-sAMP-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{T^{L-1} - 1}{T^L - T^{L - 1}}$$">XXX ops/s</span>
+						</div>
+					</div>
+					<!--Storage cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-storage-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$N \cdot E \cdot (1 + SA)$$">XXX TB</span>
+						</div>
+					</div>
+					<!--Memory usage-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="rlsm-mem-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{b \cdot N}{8} + \frac{N \cdot K}{P \cdot B} + 2 \cdot P \cdot B \cdot E$$">XXX TB</span>
+						</div>
+					</div>
+				</div> <!-- END of demo2 cost result -->
+
+				<!-- Demo3 cost result starts here -->
+				<div class="dlsm-cost-col col-lg-3 col-md-3 col-sm-3">
+					<!--Update-->
+					<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+						<span id="dlsm-W-cost" data-toggle="tooltip" data-placement="right"
+						title="$$\approx \lceil log_T{\frac{N}{P \cdot B} \cdot \frac{T-1}{T} + 1} \rceil$$"
+							class="cost">XXX</span>
+					</div>
+					<!--Number of sorted runs-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-N-run" data-toggle="tooltip" data-placement="right"
+								title="$$L + (L - 2) \cdot X$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Number of compactions-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-N-compaction" data-toggle="tooltip" data-placement="right"
+								title="$$\frac{N}{P \cdot B} \cdot \frac{1}{T-1}(1 - \frac{1}{T^x}+(T-1)(\frac{1}{T^x} - \frac{1}{T^{L-1}})$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Average compaction size-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-compaction-size" data-toggle="tooltip" data-placement="right"
+								title="$${O\left(1+(L-1) \cdot (T-1)\right)}$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Average compaction latency-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-compaction-latency" data-toggle="tooltip" data-placement="right"
+								title="$${O\left({s \over B} \cdot (1+{1 \over T}) \right)}$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Tail compaction latency-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-tail-latency" data-toggle="tooltip" data-placement="right"
+								title="$${O(2 \cdot N)}$$" class="cost">XXX</span>
+						</div>
+					</div>
+					<!--Ingestion cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-ingestion-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(\frac{T-1}{B} \cdot (\frac{X}{T} + \frac{L-X}{2}))$$">XXX TB</span>
+						</div>
+					</div>
+					<!--ZR-point lookup-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-ZR-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(X \cdot (T-1) + (L-X) \cdot e^{-c_0 \cdot b})$$">XXX GB</span>
+						</div>
+					</div>
+					<!--NZR-point lookup-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-NZR-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(1 + (X \cdot (T - 1) + L - X) \cdot e^{-c_0 \cdot b})$$">XXX ops/s</span>
+						</div>
+					</div>
+					<!--Short range cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-sQ-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(X \cdot (T-1) + L-X)$$">XXX TB</span>
+						</div>
+					</div>
+					<!--Long range cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-lQ-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(\frac{s}{B} \cdot ( 1 + (T-1) \cdot \frac{T^{L-1} - 1}{T^L - T^{L-1}}))$$">XXX GB</span>
+						</div>
+					</div>
+					<!--Space Amplification-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-sAMP-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$O(\frac{1}{T-1}(1 - \frac{1}{T^{L-1-X}}) + \frac{1}{T^{L-1-X}} - \frac{1}{T^{L-1}})$$">XXX ops/s</span>
+						</div>
+					</div>
+					<!--Storage-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-storage-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$N \cdot E \cdot (1 + SA)$$">XXX TB</span>
+						</div>
+					</div>
+					<!--Memory-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="dlsm-mem-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\frac{b \cdot N}{8} + \frac{N \cdot K}{P \cdot B} + 2 \cdot P \cdot B \cdot E$$">XXX TB</span>
+						</div>
+					</div>
+
+				</div> <!-- END of demo3 cost result -->
+
+				<!-- Demo4 cost result starts here -->
+				<div class="osm-cost-col col-lg-3 col-md-3 col-sm-3">
+					<!--Update-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-W-cost" class="cost uncertain" data-toggle="tooltip" data-placement="right"
+							title="$$\lceil \log_T{\frac{N}{P \cdot B}} \rceil$$">XXX</span>
+						</div>
+					</div>
+					<!--Number of sorted runs-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-N-run" class="cost uncertain">XXX</span>
+						</div>
+					</div>
+					<!--Number of compactions-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-N-compaction" class="cost uncertain">XXX</span>
+						</div>
+					</div>
+					<!--Average compaction size-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-compaction-size" class="cost uncertain">XXX</span>
+						</div>
+					</div>
+					<!--Average compaction latency-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-compaction-latency" class="cost uncertain">XXX</span>
+						</div>
+					</div>
+					<!--Tail compaction latency-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-tail-latency" class="cost uncertain">XXX</span>
+						</div>
+					</div>
+					<!--Ingestion cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-ingestion-cost" class="cost uncertain">XXX TB</span>
+						</div>
+					</div>
+					<!--ZR-point lookup-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-ZR-cost" class="cost uncertain">XXX GB</span>
+						</div>
+					</div>
+					<!--NZR-point lookup-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-NZR-cost" class="cost uncertain">XXX ops/s</span>
+						</div>
+					</div>
+					<!--Short range cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-sQ-cost" class="cost uncertain">XXX TB</span>
+						</div>
+					</div>
+					<!--Long range cost-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-lQ-cost" class="cost uncertain">XXX GB</span>
+						</div>
+					</div>
+					<!--Space Amplification-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-sAMP-cost" class="cost uncertain">XXX ops/s</span>
+						</div>
+					</div>
+					<!--Storage-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-storage-cost" class="cost uncertain">XXX TB</span>
+						</div>
+					</div>
+					<!--Memory-->
+					<div class="row">
+						<div class="cost-col col-lg-12 col-md-12 col-sm-12 text-center">
+							<span id="osm-mem-cost" class="cost uncertain">XXX TB</span>
+						</div>
+					</div>
+				</div> <!-- END of demo4 cost result -->
+			</div> <!-- END of all cost results -->
+
+      <div id="plot-result" style="width: 100%; text-align: left; padding: 5px; margin: 0 auto; display:none">
+        <hr>
+        <div class="row" style="border: 2px solid #666666; border-radius: 15px;border-style: dotted">
+          <div class="col-lg-3">
+            <div class="row">
+            <div class="col-lg-4" style="border: 2px solid #F5B041;background-color: #F5B041; height: 20px;margin-top:5px;">
+            </div>
+            <div class="col-lg-8" style="margin:5px auto">
+              <b> Vanilla-LSM</b>
+            </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="row ">
+            <div class="col-lg-4" style="border: 2px solid #52BE80;background-color: #52BE80; height: 20px;margin-top:5px;">
+            </div>
+            <div class="col-lg-8" style="margin:5px auto">
+              <b> Partial Compaction</b>
+            </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="row ">
+            <div class="col-lg-4" style="border: 2px solid #2E86C1;background-color: #2E86C1; height: 20px;margin-top:5px;">
+            </div>
+            <div class="col-lg-8" style="margin:5px auto">
+              <b> Hybrid Strategy</b>
+            </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="row ">
+            <div class="col-lg-4" style="border: 2px solid #EC7063;background-color: #EC7063; height: 20px;margin-top:5px;">
+            </div>
+            <div class="col-lg-8" style="margin:5px auto">
+              <b> Build-Your-Own</b>
+            </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row" >
+          <div class="col-lg-3">
+            <div id="num_level_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="num_run_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="num_cmpct_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="avg_cmpct_size_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row" >
+          <div class="col-lg-3">
+            <div id="avg_cmpct_lat_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="ingest_cost_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="zr_point_lookup_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="non_zr_point_lookup_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row" >
+          <div class="col-lg-3">
+            <div id="short_range_lookup_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="long_range_lookup_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="space_amplification_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div id="storage_space_plot" style="border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+            </div>
+          </div>
+        </div>
+      </div >
+
+			<hr class="my-4 row">
+
+      <div class="row" id="show-plot-btn">
+        <div class="col-lg-12 text-right">
+          <div>
+            <a class="btn btn-info btn-lg" target="_blank" style="color:#fff">
+              Show Plots
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="show-stats-btn" style="display:none">
+        <div class="col-lg-12 text-right">
+          <div>
+            <a class="btn btn-info btn-lg" target="_blank" style="color:#fff">
+              Show Stats
+            </a>
+          </div>
+        </div>
+      </div>
+
+		 </div>
+	</section>
+  <!-- <section id="selected-takeaways" class="bg-light">
+    <div class="container">
+      <div class="row ection-title text-center">
+  				<h2> Selected Takeaways </h2>
+      </div>
+
+        <div class="row" style="padding-top:40px">
+          <div class="col-lg-6">
+            <img class="img-responsive img-centered" style="border: 5px solid #ddd;border-radius: 8px;padding: 5px;margin-left:10%" src="./img/compaction-takeaway-data-moved.png" alt="" width=80%/>
+          </div>
+          <div class="col-lg-6">
+            <img class="img-responsive img-centered" style="border: 5px solid #ddd;border-radius: 8px;padding: 5px;margin-left:10%" src="./img/compaction-takeaway-tail-cmpt-latency.png" alt="" width=80%/>
+          </div>
+        </div>
+
+        <div class="row text-center">
+          <div class="col-lg-6">
+            <div class="text-center" style="margin:10px auto">
+              <img class="img-responsive img-centered" src="./img/shining-bulbs.png" width="30px">
+              <span>Compacting data at smaller granularity reduces data movement. </span>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="text-center" style="margin:10px auto">
+              <img class="img-responsive img-centered" src="./img/shining-bulbs.png" width="30px">
+              <span>"Tiering" moves the least data but incurs the highest tail write latency.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="padding-top:20px">
+          <div class="col-lg-6">
+            <img class="img-responsive img-centered" style="border: 5px solid #ddd;border-radius: 8px;padding: 5px;margin-left:10%" src="./img/compaction-takeaway-point-lookup.png" alt="" width=80%/>
+          </div>
+          <div class="col-lg-6">
+            <img class="img-responsive img-centered" style="border: 5px solid #ddd;border-radius: 8px;padding: 5px;margin-left:20%" src="./img/compaction-takeaway-update.png" alt="" width=60%/>
+          </div>
+        </div>
+
+        <div class="row text-center">
+          <div class="col-lg-6">
+            <div class="text-center" style="margin:10px auto">
+              <img class="img-responsive img-centered" src="./img/shining-bulbs.png" width="30px">
+              <span>Hybrid layouts (e.g., 1-leveling) dominate point lookup performance. </span>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="text-center" style="margin:10px auto">
+              <img class="img-responsive img-centered" src="./img/shining-bulbs.png" width="30px">
+              <span>"Tiering" dominates other strategies for update-intensive workloads.</span>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section> -->
+  <section id="publication" class="bg-light" style="padding-top:100px">
+          <div class="container" style="margin-top:-150px">
+              <div class="row" style="text-align: center">
+                  <div class="col-lg-12">
+                      <h2><br><br><b>For more details check our paper!</h2></b>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-lg-12">
+                      <p class="content">
+                          <br/>
+                          Subhadeep Sarkar, Dimitris Staratzis, Zichen Zhu, Manos Athanassoulis <br/>
+                          <a href="http://vldb.org/pvldb/vol14/p2216-sarkar.pdf" target="_blank"><b><u>Constructing and Analyzing the LSM Compaction Design Space</u></b></a>
+                          <!-- <a href="https://arxiv.org/abs/2006.04777" target="_blank"><font color="Blue"><u>[Updated arXiv version]</u></font></a> -->
+                          <a href="https://www.youtube.com/watch?v=Ok1_ADEclFc" target="_blank"><font color="Blue"><u>[VLDB '21 presentation video]</u></font></a>
+                          <br/>
+                          In Proceedings of the VLDB Endowment, Volume 11, Issue 14, August, 2021
+
+                      </p>
+                  </div>
+
+                  <div class="col-lg-12">
+                      <p class="content">
+                          <br/>
+                          Subhadeep Sarkar, Kaijie Chen, Zichen Zhu, Manos Athanassoulis <br/>
+                          <a href="https://doi.org/10.1145/3514221.3520169" target="_blank"><b><u>Compactionary: A Dictionary for LSM compactions</u></b></a>
+                          <!-- <a href="https://arxiv.org/abs/2006.04777" target="_blank"><font color="Blue"><u>[Updated arXiv version]</u></font></a> -->
+                          <br/>
+                          In Proceedings of the ACM SIGMOD International Conference on Management of Data, 2022
+
+                      </p>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      <section id="authors" class="alternate-2">
+        <div class="container page-scroll">
+            <div class="row" style="text-align: center">
+                <h2><br><b>Meet The Authors</b></h2><br>
+            </div>
+            <br/>
+            <div class="row">
+
+                    <div class="col-md-3 col-lg-3 text-center topReveal">
+                            <div class="team-member-box-2">
+                                <div class="team-image-wrapper rotateTopReveal">
+
+                                    <a target="_blank" href="http://subhadeepsarkar.bitbucket.io">
+                                        <img src="./img/people/subjadeep.jpeg" alt="Subhadeep Sarkar" class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                    </a>
+                                </div>
+                                <h3> <a target="_blank" href="http://subhadeepsarkar.bitbucket.io"><font color="#000"> Subhadeep Sarkar</font></a></h3>
+                                <p style="text-align:center">Postdoctoral Researcher</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3 text-center topReveal">
+                            <div class="team-member-box-2">
+                                <div class="team-image-wrapper rotateTopReveal">
+
+                                    <a target="_blank" href="https://cs-people.bu.edu/zczhu/">
+                                        <img src="./img/people/zichen.jpg" alt="Zichen Zhu" class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                    </a>
+                                </div>
+                                <h3><a target="_blank" href="https://cs-people.bu.edu/zczhu/"><font color="#000"> Zichen Zhu </font></a></h3>
+                                <p style="text-align:center">PhD Researcher</p>
+                            </div>
+                      </div>
+
+                      <div class="col-md-3 col-lg-3 text-center topReveal">
+                                <div class="team-member-box-2">
+                                    <div class="team-image-wrapper rotateTopReveal">
+
+                                        <a target="_blank" href="#">
+                                            <img src="./img/people/kaijie.jpg" alt="Kaijie Chen" class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                        </a>
+                                    </div>
+                                    <h3><a target="_blank" href="#"><font color="#000"> Kaijie Chen </font></a></h3>
+                                    <p style="text-align:center">MS Researcher</p>
+                                </div>
+                      </div>
+
+                        <div class="col-md-3 col-lg-3 text-center topReveal">
+                            <div class="team-member-box-2">
+                                <div class="team-image-wrapper rotateTopReveal">
+
+                                    <a target="_blank" href="https://cs-people.bu.edu/mathan/">
+                                        <img src="./img/people/manos.jpg" alt="Manos Athanassoulis" class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                    </a>
+                                </div>
+                                <h3><a target="_blank" href="https://cs-people.bu.edu/mathan/"><font color="#000"> Manos Athanassoulis</font></a></h3>
+                                <p style="text-align:center">Assistant Professor</p>
+                            </div>
+                        </div>
+
+            </div>
+
+        </div>
+    </section>
+
+	<!-- Footer -->
+	<!-- <footer>
+		<div class="footer-above">
+			<div class="container">
+				<div class="row text-center">
+<hr>
+				</div>
+			</div>
+		</div>
+		<div class="footer-below">
+			<div class="container">
+				<div class="row text-center">
+					<div class="col-lg-12">Copyright © All Rights Reserved.</div>
+				</div>
+			</div>
+		</div>
+	</footer> -->
+
+  <section id="sponsors" style="background-color:#ecf0f1;padding:0px;margin:40px 0px">
+        <div class="container page-scroll">
+            <div class="row" style="text-align: center">
+                <h2><br><b>Sponsors</b></h2><br>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 text-center">
+                    <img src="./img/FB-logo.png" width="150">
+                <br>
+                </div>
+
+                <div class="col-lg-6 text-center">
+                    <a target="_blank" href="#">
+                        <img src="./img/NSF-logo.png" width="150">
+                    </a>
+                <br>
+                <br><br>
+                </div>
+            </div>
+
+        </div>
+    </section>
+  <footer class="text-center">
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <a target="_blank" href="http://www.bu.edu/cs/">
+                            <img class="img-responsive img-centered img-logo" src="./img/BU-logo.png" alt="">
+                        </a>
+                        <br>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <a target="_blank" href="https://disc.bu.edu">
+                            <img class="img-responsive img-centered img-logo" src="./img/disc-logo.png" alt="">
+                        </a>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Copyright © 2021. DiSC lab. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+  <!-- <script>
+    window.onload = function(){
+      if (navigator.userAgent.match(/Chrome|AppleWebKit/)) {
+    window.location.href = "#interactiveDemo";
+} else {
+    window.location.hash = "#interactiveDemo";
+}
+    }
+  </script> -->
+	<!-- jQuery (Bootstrap JS plugins depend on it) -->
+	<script src="js/jquery-3.4.1.min.js"></script>
+	<!-- <script src="js/bootstrap.min.js"></script> -->
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {preview: "none", inlineMath: [['$','$'], ['\\(','\\)']]}, "fast-preview": {disabled: true}});
+  </script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	<script src="js/bootstrap-slider.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/script.js"></script>
+	<script src="js/treeBush.js"></script>
+</body>
+
+</html>
