@@ -340,27 +340,7 @@ function nextStep() {
                 iter.style.backgroundColor = "#FF0000";
             }
             
-        }
-
-        /*
-        // sort the buffer
-        buffer.sort((a, b) => a[0] - b[0]);
-
-        // adjust lastSortedIndex
-        lastSortedIndex = buffer.length - 1;
-        numInsideBuffer = buffer.length;
-
-        console.log("lastSortedIndex from status " + stat + ": " + lastSortedIndex);
-
-        // update to show buffer after sorting the remainder
-        for (let i = 0; i < buffer.length; i++) {
-            const iter = document.getElementById("buffer" + i);
-            iter.innerHTML = buffer[i];
-        }   
-
-        */
-
-        
+        }        
 
         stat = 2;
     }
