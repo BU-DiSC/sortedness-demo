@@ -22,6 +22,11 @@ var zonesDict = {};
  * Function to draw the chart
  */ 
 function run_operations() {
+
+    document.getElementById('chart-container').classList.remove('hidden');
+    document.getElementById('tree-buffer-container').classList.remove('hidden');
+    document.getElementById('nextstepbutton-container').classList.remove('hidden');
+
     // parameters
     const minN = 20;
     const maxN = 10000;

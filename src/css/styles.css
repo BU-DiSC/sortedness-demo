@@ -861,3 +861,7 @@ div.fixed {
     text-align: center;          /* Ensure text is centered within the element */
     color: black;   
   }
+
+.hidden {
+    display: none;
+}

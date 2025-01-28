@@ -79,7 +79,7 @@
 		<div class="rcorners-3" style="background-color:8288B4">
 			<a href="research.html#problem"><span class="rcorners-click"></span></a>
 			<div class="rcorners-text-3"><a href="research.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a></div>
-			<img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" />
+			<!-- <img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" /> -->
 		</div>
 	</div>
 
@@ -343,7 +343,7 @@
 			</div>
 
 			<!-- Areas for outputs of parameters and the chart -->
-			<div class="container mt-5">
+			<div class="container mt-5 hidden" id="chart-container">
 				<div class="row">
 					<div class="col-md-3 equal-height" id="info-column">
 						<div id="info_div" class="equal-height">
@@ -357,7 +357,7 @@
 			</div>
 
 			<!-- Areas for the tree and the buffer -->
-			<div class="container mt-5">
+			<div class="container mt-5 hidden" id="tree-buffer-container">
 				<div class="row">
 					<div class="col-12">
 						<h4>Buffer</h4>
@@ -406,7 +406,7 @@
 				</div>
 			</div>
 			
-			<div class="row mt-3">
+			<div class="row mt-3 hidden" id="nextstepbutton-container">
 				<div class="col text-center">
 					<button onclick="nextStep()" type="button" class="btn btn-primary">Next Step</button>
 				</div>
