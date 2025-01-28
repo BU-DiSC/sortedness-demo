@@ -10,6 +10,10 @@ var max = Number.MIN_SAFE_INTEGER;
 
 var numInsideBuffer = 0;
 
+var destroyer;
+var destroyerSet = false;
+
+var destroyed;
 
 var zonesDict = {};
 
@@ -175,7 +179,7 @@ function fillTheBuffer() {
     while (zones.length != 0) {
         // end of one cycle
         if (numInsideBuffer == 10) {
-
+            destroyerSet = false;
             for (let i = 0; i < numInsideBuffer; i++) {
                 const iter = document.getElementById("buffer" + i);
                 iter.innerHTML = buffer[i];
@@ -189,12 +193,17 @@ function fillTheBuffer() {
             var el = zones.shift();
             buffer.push(el);
             numInsideBuffer++;
-            if ((el[0] > max) && !moved) {
+            if ((el[0] > max) && (moved == false)) {
                 lastSortedIndex++;
                 max = el[1];
             }
             // push lastSortedIndex back, to its position
             else {
+                if (!destroyerSet) {
+                    destroyer = numInsideBuffer - 1;
+                    console.log("setting destroyer to " + destroyer);
+                    destroyerSet = true;
+                }
                 for (let i = lastSortedIndex; i >= 0; i--) {
                     if (i == 0) {
                         if ((el[0] > buffer[i][0] && el[0] < buffer[i][1]) || (el[0] < buffer[i][0])) {
@@ -219,25 +228,61 @@ function fillTheBuffer() {
 }
 
 function adjustColors() {
-    resetColors();
-    console.log("adjusting colors!");
-    console.log("lastSortedIndex: " + lastSortedIndex);
-    console.log("we enter here");
-    if (lastSortedIndex == -1) {
-        const first = document.getElementById("buffer0");
-        first.style.backgroundColor = "#b51100";
+    if (stat == 0) {
+        // reset the colors
+        resetColors();
     }
-    else {
-        for (let i = 0; i <= lastSortedIndex; i++) {
-            const iter = document.getElementById("buffer" + i);
-            if (i % 2 == 0) {
-                iter.style.backgroundColor = "#b51100";
+    else if (stat == 1) {
+        resetColors();
+        console.log("adjusting colors!");
+        console.log("lastSortedIndex: " + lastSortedIndex);
+        console.log("we enter here");
+        if (lastSortedIndex == -1) {
+            const first = document.getElementById("buffer0");
+            first.style.backgroundColor = "#0097B5"; // dark blue (sorted)
+        }
+        else {
+            for (let i = 0; i <= lastSortedIndex; i++) {
+                const iter = document.getElementById("buffer" + i);
+                if (i % 2 == 0) {
+                    iter.style.backgroundColor = "#0097B5"; // dark blue (sorted)
+                }
+                else {
+                    iter.style.backgroundColor = "#00D5FF"; // light blue (sorted)
+                }
             }
-            else {
-                iter.style.backgroundColor = "#FF0000";
+        }     
+    }
+    else if (stat == 2) {
+        resetColors();
+        console.log("adjusting colors!");
+        console.log("lastSortedIndex: " + lastSortedIndex);
+        console.log("we enter here");
+        if (lastSortedIndex == -1) {
+            const first = document.getElementById("buffer0");
+            first.style.backgroundColor = "#05B51C"; // dark green (sorted)
+            const next = document.getElementById("buffer1");
+            next.style.backgroundColor = "#FF0000"; // red (overlaps)
+            const d = document.getElementById("buffer" + destroyer);
+            d.style.backgroundColor = "#FF0000"; // red (overlaps)
+        }
+        else {
+            let i;
+            for (i = 0; i <= lastSortedIndex; i++) {
+                const iter = document.getElementById("buffer" + i);
+                if (i % 2 == 0) {
+                    iter.style.backgroundColor = "#05B51C"; // dark green (sorted)
+                }
+                else {
+                    iter.style.backgroundColor = "#00FF22"; // light green (sorted)
+                }
             }
-        }   
-    }     
+            const destroyed = document.getElementById("buffer" + i);
+            destroyed.style.backgroundColor = "#FF0000"; // red (overlaps)
+            const d = document.getElementById("buffer" + destroyer);
+            d.style.backgroundColor = "#FF0000"; // red (overlaps)
+        }     
+    }
 }
 
 function resetColors() {
@@ -249,7 +294,7 @@ function resetColors() {
         else {
             iter.style.backgroundColor = "#d3d3d3";
         }
-}
+    }
 }
 
 
@@ -280,8 +325,12 @@ function draw_buffer(total_data, N, K, L, B) {
     console.log("zones dict: ");
     console.log(zonesDict);
     
+    stat = 2;
+
     fillTheBuffer();
     adjustColors();
+
+    stat = 0;
 }
 
 
@@ -324,11 +373,11 @@ function nextStep() {
             iter.innerHTML = "";
         }
 
-        resetColors();
+        adjustColors();
        
-
         stat = 1;
 
+    
     }
     // sort the remainder
     else if (stat == 1) {
