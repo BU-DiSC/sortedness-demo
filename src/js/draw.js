@@ -187,6 +187,9 @@ function draw_chart(total_data, N, K, L, B) {
         <p><strong>L:</strong> ${L}%</p>
         <p><strong>B:</strong> ${B}</p>
     `;
+
+    document.getElementById("stop_button").disabled = false;
+    document.getElementById("continue_button").disabled = true;
 }
 
 function fillTheBuffer() {
@@ -454,11 +457,15 @@ function nextStep() {
 
 function stop_animation() {
     running = false;
+    document.getElementById("stop_button").disabled = true;
+    document.getElementById("continue_button").disabled = false;
     console.log("animation stopped");
 }
 
 function continue_animation() {
     running = true;
+    document.getElementById("stop_button").disabled = false;
+    document.getElementById("continue_button").disabled = true;
     let interval = setInterval(() => {
         if (running == false) {
             clearInterval(interval); 
