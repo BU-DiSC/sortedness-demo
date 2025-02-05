@@ -17,6 +17,8 @@ var destroyed;
 
 var zonesDict = {};
 
+var running = true;
+
 
 /* 
  * Function to draw the chart
@@ -125,6 +127,13 @@ function run_operations() {
         var total_data = create_data(selectedN, selectedK, selectedL, selectedB);
         draw_chart(total_data, selectedN, selectedK, selectedL, selectedB);
         draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
+        let interval = setInterval(() => {
+            if (running == false) {
+                clearInterval(interval); 
+                return;
+            }
+            nextStep(); 
+        }, 500);
     }
     else {
         console.log("Expecting correct input");
@@ -441,5 +450,26 @@ function nextStep() {
     }
     
 }
+
+
+function stop_animation() {
+    running = false;
+    console.log("animation stopped");
+}
+
+function continue_animation() {
+    running = true;
+    let interval = setInterval(() => {
+        if (running == false) {
+            clearInterval(interval); 
+            return;
+        }
+        nextStep(); 
+    }, 500);
+    console.log("animation running back again");
+}
+
+
+
 
 
