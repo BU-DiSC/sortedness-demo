@@ -335,6 +335,116 @@
 				</div>
 			</div>
 
+			<!-- NEW INPUT FIELDS -->
+			<div id="cmp-conf-row">
+
+				<div class="col-3">
+					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 1</h4>
+
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radio_new1" id="radio_new1" checked>
+								<label class="form-check-label" for="radio_new1"></label>
+							</div>
+						</div>
+						<!-- Select object -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-N">N</label>
+								</div>
+								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="1000">1000</option>
+									<option value="5000">5000</option>
+									<option value="10000">10000</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
+								<label class="form-check-label" for="radioN2"></label>
+							</div>
+						</div>
+						<!-- Manual field -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualN" type="number" min="0" step="1" class="cmp-input form-control">
+							</div>
+						</div>
+					</div>
+					
+					
+				</div>
+				
+				<div class="col-3">
+					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 2</h4>
+
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioNew2" id="radioNew2" checked>
+								<label class="form-check-label" for="radioNew2"></label>
+							</div>
+						</div>
+						<!-- Select object -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-K">K</label>
+								</div>
+								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="0">0%</option>
+									<option value="10">10%</option>
+									<option value="20">20%</option>
+									<option value="30">30%</option>
+									<option value="40">40%</option>
+									<option value="50">50%</option>
+									<option value="60">60%</option>
+									<option value="70">70%</option>
+									<option value="80">80%</option>
+									<option value="90">90%</option>
+									<option value="100">100%</option>
+								</select>
+							</div>
+		
+						</div>
+					</div>
+
+					<div class="row">
+						<!-- Radio -->
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
+								<label class="form-check-label" for="radioK2"></label>
+							</div>
+						</div>
+						<!-- Manual field -->
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualK" type="number" min="0" step="1" class="cmp-input form-control">
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
 			<!-- "Run" button -->
 			<div class="row">
 				<div class="col-md-11 text-right pt-4">
