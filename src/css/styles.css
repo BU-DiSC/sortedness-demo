@@ -873,9 +873,12 @@ div.fixed {
     cursor: not-allowed;
 }
 
-.freeze-green:disabled {
+.freeze-green {
     background-color: #28a745 !important; 
     border-color: #28a745 !important;
+}
+
+.freeze-green:disabled {
     opacity: 0.65; 
-    cursor: 
+    cursor: not-allowed;
 }
