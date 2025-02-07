@@ -486,9 +486,8 @@ function continue_animation() {
 
 function nextstep_animation() {
     running = false;
-    document.getElementById("stop-button").disabled = false;
-    document.getElementById("continue-button").disabled = true;
-    document.getElementById("nextstep-button").disabled = true;
+    nextStep();
+
 }
 
 
