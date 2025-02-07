@@ -19,6 +19,8 @@ var zonesDict = {};
 
 var running = true;
 
+var delay = 1000;
+
 
 /* 
  * Function to draw the chart
@@ -27,7 +29,7 @@ function run_operations() {
 
     document.getElementById('chart-container').classList.remove('hidden');
     document.getElementById('tree-buffer-container').classList.remove('hidden');
-    document.getElementById('nextstepbutton-container').classList.remove('hidden');
+    document.getElementById('buttons-container').classList.remove('hidden');
 
     // parameters
     const minN = 20;
@@ -133,7 +135,7 @@ function run_operations() {
                 return;
             }
             nextStep(); 
-        }, 500);
+        }, delay);
     }
     else {
         console.log("Expecting correct input");
@@ -188,8 +190,8 @@ function draw_chart(total_data, N, K, L, B) {
         <p><strong>B:</strong> ${B}</p>
     `;
 
-    document.getElementById("stop_button").disabled = false;
-    document.getElementById("continue_button").disabled = true;
+    document.getElementById("stop-button").disabled = false;
+    document.getElementById("continue-button").disabled = true;
 }
 
 function fillTheBuffer() {
@@ -457,22 +459,22 @@ function nextStep() {
 
 function stop_animation() {
     running = false;
-    document.getElementById("stop_button").disabled = true;
-    document.getElementById("continue_button").disabled = false;
+    document.getElementById("stop-button").disabled = true;
+    document.getElementById("continue-button").disabled = false;
     console.log("animation stopped");
 }
 
 function continue_animation() {
     running = true;
-    document.getElementById("stop_button").disabled = false;
-    document.getElementById("continue_button").disabled = true;
+    document.getElementById("stop-button").disabled = false;
+    document.getElementById("continue-button").disabled = true;
     let interval = setInterval(() => {
         if (running == false) {
             clearInterval(interval); 
             return;
         }
         nextStep(); 
-    }, 500);
+    }, delay);
     console.log("animation running back again");
 }
 
