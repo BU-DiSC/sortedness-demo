@@ -192,6 +192,7 @@ function draw_chart(total_data, N, K, L, B) {
 
     document.getElementById("stop-button").disabled = false;
     document.getElementById("continue-button").disabled = true;
+    document.getElementById("nextstep-button").disabled = true;
 }
 
 function fillTheBuffer() {
@@ -461,6 +462,8 @@ function stop_animation() {
     running = false;
     document.getElementById("stop-button").disabled = true;
     document.getElementById("continue-button").disabled = false;
+    document.getElementById("nextstep-button").disabled = false;
+
     console.log("animation stopped");
 }
 
@@ -468,6 +471,8 @@ function continue_animation() {
     running = true;
     document.getElementById("stop-button").disabled = false;
     document.getElementById("continue-button").disabled = true;
+    document.getElementById("nextstep-button").disabled = true;
+
     let interval = setInterval(() => {
         if (running == false) {
             clearInterval(interval); 
@@ -479,6 +484,12 @@ function continue_animation() {
 }
 
 
+function nextstep_animation() {
+    running = false;
+    document.getElementById("stop-button").disabled = false;
+    document.getElementById("continue-button").disabled = true;
+    document.getElementById("nextstep-button").disabled = true;
+}
 
 
 
