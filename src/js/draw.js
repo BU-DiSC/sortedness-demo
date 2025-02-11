@@ -19,7 +19,7 @@ var zonesDict = {};
 
 var running = true;
 
-var delay = 1000;
+var delay = 10;
 
 
 /* 
@@ -318,8 +318,6 @@ function resetColors() {
 }
 
 
-
-
 function draw_buffer(total_data, N, K, L, B) {
     partitioned_data = [];
     zones = [];
@@ -333,8 +331,6 @@ function draw_buffer(total_data, N, K, L, B) {
     console.log(partitioned_data);
 
 
-
-    
     for (let i = 0; i < partitioned_data.length; i += 1) {
         const min = Math.min(...partitioned_data[i]);
         const max = Math.max(...partitioned_data[i]);
@@ -358,39 +354,44 @@ function nextStep() {
     // if the buffer is full and it is flushing time
     if (stat === 0) {
         // flushing operations
-        if (lastSortedIndex == -1) {
-            tree.push(buffer[0]);
-            const lastTreeElement = document.getElementById("last-tree");
-            lastTreeElement.innerHTML = "" + buffer[0];
-            buffer.shift();
-            
-        }
-        else if (lastSortedIndex < 5) {
-            for (let j = 0; j <= lastSortedIndex; j++) {
-                tree.push(buffer[j]);
-            }
-            const lastTreeElement = document.getElementById("last-tree");
-            lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
-            buffer.splice(0, lastSortedIndex + 1);
+        if (buffer.length != 10) {
+            running = false;
         }
         else {
-            for (let j = 0; j < 5; j++) {
-                tree.push(buffer[j]);
+            if (lastSortedIndex == -1) {
+                tree.push(buffer[0]);
+                const lastTreeElement = document.getElementById("last-tree");
+                lastTreeElement.innerHTML = "" + buffer[0];
+                buffer.shift();
+                
             }
-            const lastTreeElement = document.getElementById("last-tree");
-            lastTreeElement.innerHTML = "" + buffer[4];
-            buffer.splice(0, 5);
-        } 
+            else if (lastSortedIndex < 5) {
+                for (let j = 0; j <= lastSortedIndex; j++) {
+                    tree.push(buffer[j]);
+                }
+                const lastTreeElement = document.getElementById("last-tree");
+                lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
+                buffer.splice(0, lastSortedIndex + 1);
+            }
+            else {
+                for (let j = 0; j < 5; j++) {
+                    tree.push(buffer[j]);
+                }
+                const lastTreeElement = document.getElementById("last-tree");
+                lastTreeElement.innerHTML = "" + buffer[4];
+                buffer.splice(0, 5);
+            } 
 
-        // update HTMLs to show buffer after flush
-        for (let i = 0; i < buffer.length; i++) {
-            const iter = document.getElementById("buffer" + i);
-            iter.innerHTML = buffer[i];
-        }    
+            // update HTMLs to show buffer after flush
+            for (let i = 0; i < buffer.length; i++) {
+                const iter = document.getElementById("buffer" + i);
+                iter.innerHTML = buffer[i];
+            }    
 
-        for (let i = buffer.length; i < 10; i++) {
-            const iter = document.getElementById("buffer" + i);
-            iter.innerHTML = "";
+            for (let i = buffer.length; i < 10; i++) {
+                const iter = document.getElementById("buffer" + i);
+                iter.innerHTML = "";
+            }
         }
 
         adjustColors();
