@@ -195,6 +195,7 @@ font-size: 1.5em;
     justify-content: center; 
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 20px;
 }
 
 .input-group > input {
@@ -735,7 +736,6 @@ div.fixed {
     height: 200px;
 }
 
-/* Sware buffer */
 .long-button {
     width: 70%;
     height: 50px;
@@ -773,7 +773,6 @@ div.fixed {
     );
 }
 
-/* Section labels */
 .section-labels {
     position: relative;
     top: 0;
@@ -791,7 +790,7 @@ div.fixed {
 .section-labels span {
     flex: 1;
     text-align: center;
-    line-height: 50px; /* Match button height */
+    line-height: 50px;
 }
 
 
@@ -855,13 +854,34 @@ div.fixed {
     height: 20px;
     background-color: #2ecc71;
     cursor: pointer;
-    display: flex;               /* Use flexbox for centering */
-    justify-content: center;     /* Center horizontally */
-    align-items: center;         /* Center vertically */
-    text-align: center;          /* Ensure text is centered within the element */
+    display: flex;              
+    justify-content: center;    
+    align-items: center;        
+    text-align: center;         
     color: black;   
   }
 
 .hidden {
     display: none;
+}
+
+.freeze-red:disabled {
+    background-color: #dc3545 !important; 
+    border-color: #dc3545 !important;
+    opacity: 0.65; 
+    cursor: not-allowed;
+}
+
+.freeze-green {
+    background-color: #28a745 !important; 
+    border-color: #28a745 !important;
+}
+
+.freeze-green:disabled {
+    opacity: 0.65; 
+    cursor: not-allowed;
+}
+
+#buttons-container {
+    padding-top: 50px;
 }
