@@ -117,7 +117,7 @@
 									<label class="input-group-text" for="cmp-select-N">N</label>
 								</div>
 								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
+									<option value="" selected disabled></option>
 									<option value="1000">1000</option>
 									<option value="5000">5000</option>
 									<option value="10000">10000</option>
@@ -540,7 +540,7 @@
 			<!-- "Run" button -->
 			<div class="row">
 				<div class="col-md-11 text-right pt-4">
-					<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
+					<button onclick="run_operations()" type="button" class="btn btn-success">Visualize Workload</button>
 				</div>
 			</div>
 
@@ -560,6 +560,7 @@
 					<button id="stop-button" onclick="stop_animation()" type="button" class="btn btn-danger freeze-red">Stop</button>
 					<button id="continue-button" onclick="continue_animation()" type="button" class="btn btn-success freeze-green">Continue</button>
 					<button id="nextstep-button" onclick="nextstep_animation()" type="button" class="btn btn-success freeze-green">Next Step</button>
+					<button id="reset-button" onclick="reset()" type="button" class="btn btn-success freeze-green">Reset</button>
 				</div>
 			</div>
 
@@ -591,7 +592,8 @@
 					</div>
 					<div class="col-12">
 						<h4>Tree</h4>
-						<div id="tree-area" style="padding: 10px; height: 400px; overflow-y: auto;">
+						<div id="tree-area" style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+    border-radius: 5px;">
 							<div class="triangle"></div>
 							<div class="dots">
 								<span class="dot"></span>

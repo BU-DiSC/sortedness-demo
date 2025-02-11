@@ -483,5 +483,42 @@ function nextstep_animation() {
 
 }
 
+function reset() {
+    // Reset dropdowns to their default values
+    document.getElementById("cmp-select-N").selectedIndex = 0;
+    document.getElementById("cmp-select-K").selectedIndex = 0;
+    document.getElementById("cmp-select-L").selectedIndex = 0;
+    document.getElementById("cmp-select-B").selectedIndex = 0;
+
+    // Reset manual input fields
+    document.getElementById("manualN").value = "";
+    document.getElementById("manualK").value = "";
+    document.getElementById("manualL").value = "";
+    document.getElementById("manualB").value = "";
+
+    // Reset radio buttons to defaults
+    document.getElementById("radioN1").checked = true;
+    document.getElementById("radioK1").checked = true;
+    document.getElementById("radioL1").checked = true;
+    document.getElementById("radioB1").checked = true;
+
+    // Clear the chart and tree areas
+    document.getElementById("chart_div").innerHTML = "";
+    document.getElementById("tree-area").innerHTML = "";
+    document.getElementById("buffer-area").innerHTML = "";
+
+    // Hide elements that should not be visible initially
+    document.getElementById("chart-column").classList.add("hidden");
+    document.getElementById("buttons-container").classList.add("hidden");
+    document.getElementById("tree-buffer-container").classList.add("hidden");
+    document.getElementById("dashed-line").classList.add("hidden");
+
+    // Reset any ongoing animations (if applicable)
+    stop_animation(); // Assuming you have a function that stops animations
+
+    console.log("Reset to default state.");
+}
+
+
 
 
