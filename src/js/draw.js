@@ -19,7 +19,7 @@ var zonesDict = {};
 
 var running = true;
 
-var delay = 10;
+var delay = 1000;
 
 
 /* 
@@ -27,7 +27,7 @@ var delay = 10;
  */ 
 function run_operations() {
 
-    document.getElementById('chart-container').classList.remove('hidden');
+    document.getElementById('chart-column').classList.remove('hidden');
     document.getElementById('tree-buffer-container').classList.remove('hidden');
     document.getElementById('buttons-container').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden');
@@ -169,7 +169,7 @@ function draw_chart(total_data, N, K, L, B) {
     
     // Options for the graph
     var options = {
-        title: 'position vs. value comparison',
+        title: "position vs. value comparison (N=" + N +", K=" + K + ", L=" + L + ", B=" + B + ")",
         hAxis: {title: 'Position', minValue: 0, maxValue: N, ticks: createTicks(N)},
         vAxis: {title: 'Value', minValue: 0, maxValue: N, ticks: createTicks(N)},
         legend: 'none',
@@ -182,15 +182,6 @@ function draw_chart(total_data, N, K, L, B) {
     var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
     chart.draw(data, options);
     
-    // Output info besides the chart
-    document.getElementById("info_div").innerHTML = `
-        <h5>Selected Values</h5>
-        <p><strong>N:</strong> ${N}</p>
-        <p><strong>K:</strong> ${K}%</p>
-        <p><strong>L:</strong> ${L}%</p>
-        <p><strong>B:</strong> ${B}</p>
-    `;
-
     document.getElementById("stop-button").disabled = false;
     document.getElementById("continue-button").disabled = true;
     document.getElementById("nextstep-button").disabled = true;

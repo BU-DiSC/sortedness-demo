@@ -889,3 +889,8 @@ div.fixed {
 #dashed-line {
     margin-top: 50px;
 }
+
+#chart-container {
+    display: flex;
+    justify-content: center;
+}
