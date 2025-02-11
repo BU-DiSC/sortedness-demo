@@ -30,6 +30,7 @@ function run_operations() {
     document.getElementById('chart-container').classList.remove('hidden');
     document.getElementById('tree-buffer-container').classList.remove('hidden');
     document.getElementById('buttons-container').classList.remove('hidden');
+    document.getElementById('dashed-line').classList.remove('hidden');
 
     // parameters
     const minN = 20;
