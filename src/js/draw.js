@@ -127,6 +127,7 @@ function run_operations() {
     // Generate graph when parameters are acceptable
     if (flag == true) { 
         // Generate data
+        running = true;  
         var total_data = create_data(selectedN, selectedK, selectedL, selectedB);
         draw_chart(total_data, selectedN, selectedK, selectedL, selectedB);
         draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
@@ -484,28 +485,47 @@ function nextstep_animation() {
 }
 
 function reset() {
-    // Reset dropdowns to their default values
-    document.getElementById("cmp-select-N").selectedIndex = 0;
-    document.getElementById("cmp-select-K").selectedIndex = 0;
-    document.getElementById("cmp-select-L").selectedIndex = 0;
-    document.getElementById("cmp-select-B").selectedIndex = 0;
+    valsToEliminate = vals.slice();
 
-    // Reset manual input fields
-    document.getElementById("manualN").value = "";
-    document.getElementById("manualK").value = "";
-    document.getElementById("manualL").value = "";
-    document.getElementById("manualB").value = "";
+    console.log("Reset values:", valsToEliminate);
 
-    // Reset radio buttons to defaults
-    document.getElementById("radioN1").checked = true;
-    document.getElementById("radioK1").checked = true;
-    document.getElementById("radioL1").checked = true;
-    document.getElementById("radioB1").checked = true;
+    function resetDropdown(field, key) {
+        field.length = 0;
+        let op = document.createElement('option');
+        op.value = "";
+        op.text = "";
+        field.appendChild(op);
 
-    // Clear the chart and tree areas
-    document.getElementById("chart_div").innerHTML = "";
-    document.getElementById("tree-area").innerHTML = "";
-    document.getElementById("buffer-area").innerHTML = "";
+        let uniqueValues = [...new Set(valsToEliminate.map(p => p[key]))].sort((a, b) => a - b);
+        for (const value of uniqueValues) {
+            let op = document.createElement('option');
+            op.value = value;
+            op.text = value;
+            field.appendChild(op);
+        }
+    }
+
+    buffer = [];
+    tree = [];
+    lastSortedIndex = -1;
+    moved = false;
+    partitioned_data = [];
+    stat = 0; 
+    max = Number.MIN_SAFE_INTEGER;
+    numInsideBuffer = 0;
+    destroyer;
+    destroyerSet = false;
+    destroyed;
+    zonesDict = {};
+    running = false;
+    delay = 1000;
+
+
+    // Reset each dropdown
+    resetDropdown(document.getElementById("cmp-select-N"), "N");
+    resetDropdown(document.getElementById("cmp-select-K"), "K");
+    resetDropdown(document.getElementById("cmp-select-L"), "L");
+    resetDropdown(document.getElementById("cmp-select-B"), "B");
 
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
@@ -513,8 +533,8 @@ function reset() {
     document.getElementById("tree-buffer-container").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
 
-    // Reset any ongoing animations (if applicable)
-    stop_animation(); // Assuming you have a function that stops animations
+
+    // stop_animation(); 
 
     console.log("Reset to default state.");
 }
