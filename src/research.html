@@ -537,17 +537,24 @@
 			</div>
 			-->
 
-			<!-- "Run" button -->
+			<!-- "Visualize Workload" button -->
 			<div class="row">
 				<div class="col-md-11 text-right pt-4">
-					<button onclick="run_operations()" type="button" class="btn btn-success">Visualize Workload</button>
+					<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
 				</div>
 			</div>
 
-			<!-- Areas for outputs of parameters and the chart -->
+			<!-- Chart -->
 			<div class="container mt-5 d-flex justify-content-center" id="chart-container">		
 				<div class="col-md-9 equal-height hidden" id="chart-column">
 					<div id="chart_div" class="equal-height"></div>
+				</div>
+			</div>
+
+			<!-- "Run" button -->
+			<div class="row">
+				<div id="run-button-container" class="col-md-11 text-right pt-4 hidden">
+					<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
 				</div>
 			</div>
 

@@ -22,15 +22,20 @@ var running = true;
 var delay = 1000;
 
 
+var total_data = [];
+var selectedN;
+var selectedK;
+var selectedL;
+var selectedB;
+
+
 /* 
  * Function to draw the chart
  */ 
-function run_operations() {
+function visualize_workload() {
 
     document.getElementById('chart-column').classList.remove('hidden');
-    document.getElementById('tree-buffer-container').classList.remove('hidden');
-    document.getElementById('buttons-container').classList.remove('hidden');
-    document.getElementById('dashed-line').classList.remove('hidden');
+    document.getElementById('run-button-container').classList.remove('hidden');
 
     // parameters
     const minN = 20;
@@ -128,23 +133,13 @@ function run_operations() {
     if (flag == true) { 
         // Generate data
         running = true;  
-        var total_data = create_data(selectedN, selectedK, selectedL, selectedB);
+        total_data = create_data(selectedN, selectedK, selectedL, selectedB);
         draw_chart(total_data, selectedN, selectedK, selectedL, selectedB);
-        draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
-        let interval = setInterval(() => {
-            if (running == false) {
-                clearInterval(interval); 
-                return;
-            }
-            nextStep(); 
-        }, delay);
     }
     else {
         console.log("Expecting correct input");
     }
 }
-
-
 function draw_chart(total_data, N, K, L, B) {
     const tickCount = 10;
 
@@ -187,6 +182,27 @@ function draw_chart(total_data, N, K, L, B) {
     document.getElementById("continue-button").disabled = true;
     document.getElementById("nextstep-button").disabled = true;
 }
+
+
+function run_operations() {
+
+    document.getElementById('tree-buffer-container').classList.remove('hidden');
+    document.getElementById('buttons-container').classList.remove('hidden');
+    document.getElementById('dashed-line').classList.remove('hidden'); 
+
+
+    draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
+    let interval = setInterval(() => {
+        if (running == false) {
+            clearInterval(interval); 
+            return;
+        }
+        nextStep(); 
+    }, delay);
+}
+
+
+
 
 function fillTheBuffer() {
     while (zones.length != 0) {
@@ -277,6 +293,7 @@ function adjustColors() {
             const next = document.getElementById("buffer1");
             next.style.backgroundColor = "#FF0000"; // red (overlaps)
             const d = document.getElementById("buffer" + destroyer);
+            console.log(destroyer);
             d.style.backgroundColor = "#FF0000"; // red (overlaps)
         }
         else {
@@ -538,7 +555,5 @@ function reset() {
 
     console.log("Reset to default state.");
 }
-
-
 
 
