@@ -22,14 +22,20 @@ var running = true;
 var delay = 1000;
 
 
+var total_data = [];
+var selectedN;
+var selectedK;
+var selectedL;
+var selectedB;
+
+
 /* 
  * Function to draw the chart
  */ 
-function run_operations() {
+function visualize_workload() {
 
-    document.getElementById('chart-container').classList.remove('hidden');
-    document.getElementById('tree-buffer-container').classList.remove('hidden');
-    document.getElementById('buttons-container').classList.remove('hidden');
+    document.getElementById('chart-column').classList.remove('hidden');
+    document.getElementById('run-button-container').classList.remove('hidden');
 
     // parameters
     const minN = 20;
@@ -126,23 +132,14 @@ function run_operations() {
     // Generate graph when parameters are acceptable
     if (flag == true) { 
         // Generate data
-        var total_data = create_data(selectedN, selectedK, selectedL, selectedB);
+        running = true;  
+        total_data = create_data(selectedN, selectedK, selectedL, selectedB);
         draw_chart(total_data, selectedN, selectedK, selectedL, selectedB);
-        draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
-        let interval = setInterval(() => {
-            if (running == false) {
-                clearInterval(interval); 
-                return;
-            }
-            nextStep(); 
-        }, delay);
     }
     else {
         console.log("Expecting correct input");
     }
 }
-
-
 function draw_chart(total_data, N, K, L, B) {
     const tickCount = 10;
 
@@ -168,7 +165,7 @@ function draw_chart(total_data, N, K, L, B) {
     
     // Options for the graph
     var options = {
-        title: 'position vs. value comparison',
+        title: "position vs. value comparison (N=" + N +", K=" + K + ", L=" + L + ", B=" + B + ")",
         hAxis: {title: 'Position', minValue: 0, maxValue: N, ticks: createTicks(N)},
         vAxis: {title: 'Value', minValue: 0, maxValue: N, ticks: createTicks(N)},
         legend: 'none',
@@ -181,19 +178,31 @@ function draw_chart(total_data, N, K, L, B) {
     var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
     chart.draw(data, options);
     
-    // Output info besides the chart
-    document.getElementById("info_div").innerHTML = `
-        <h5>Selected Values</h5>
-        <p><strong>N:</strong> ${N}</p>
-        <p><strong>K:</strong> ${K}%</p>
-        <p><strong>L:</strong> ${L}%</p>
-        <p><strong>B:</strong> ${B}</p>
-    `;
-
     document.getElementById("stop-button").disabled = false;
     document.getElementById("continue-button").disabled = true;
     document.getElementById("nextstep-button").disabled = true;
 }
+
+
+function run_operations() {
+
+    document.getElementById('tree-buffer-container').classList.remove('hidden');
+    document.getElementById('buttons-container').classList.remove('hidden');
+    document.getElementById('dashed-line').classList.remove('hidden'); 
+
+
+    draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
+    let interval = setInterval(() => {
+        if (running == false) {
+            clearInterval(interval); 
+            return;
+        }
+        nextStep(); 
+    }, delay);
+}
+
+
+
 
 function fillTheBuffer() {
     while (zones.length != 0) {
@@ -284,6 +293,7 @@ function adjustColors() {
             const next = document.getElementById("buffer1");
             next.style.backgroundColor = "#FF0000"; // red (overlaps)
             const d = document.getElementById("buffer" + destroyer);
+            console.log(destroyer);
             d.style.backgroundColor = "#FF0000"; // red (overlaps)
         }
         else {
@@ -318,8 +328,6 @@ function resetColors() {
 }
 
 
-
-
 function draw_buffer(total_data, N, K, L, B) {
     partitioned_data = [];
     zones = [];
@@ -333,8 +341,6 @@ function draw_buffer(total_data, N, K, L, B) {
     console.log(partitioned_data);
 
 
-
-    
     for (let i = 0; i < partitioned_data.length; i += 1) {
         const min = Math.min(...partitioned_data[i]);
         const max = Math.max(...partitioned_data[i]);
@@ -358,39 +364,44 @@ function nextStep() {
     // if the buffer is full and it is flushing time
     if (stat === 0) {
         // flushing operations
-        if (lastSortedIndex == -1) {
-            tree.push(buffer[0]);
-            const lastTreeElement = document.getElementById("last-tree");
-            lastTreeElement.innerHTML = "" + buffer[0];
-            buffer.shift();
-            
-        }
-        else if (lastSortedIndex < 5) {
-            for (let j = 0; j <= lastSortedIndex; j++) {
-                tree.push(buffer[j]);
-            }
-            const lastTreeElement = document.getElementById("last-tree");
-            lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
-            buffer.splice(0, lastSortedIndex + 1);
+        if (buffer.length != 10) {
+            running = false;
         }
         else {
-            for (let j = 0; j < 5; j++) {
-                tree.push(buffer[j]);
+            if (lastSortedIndex == -1) {
+                tree.push(buffer[0]);
+                const lastTreeElement = document.getElementById("last-tree");
+                lastTreeElement.innerHTML = "" + buffer[0];
+                buffer.shift();
+                
             }
-            const lastTreeElement = document.getElementById("last-tree");
-            lastTreeElement.innerHTML = "" + buffer[4];
-            buffer.splice(0, 5);
-        } 
+            else if (lastSortedIndex < 5) {
+                for (let j = 0; j <= lastSortedIndex; j++) {
+                    tree.push(buffer[j]);
+                }
+                const lastTreeElement = document.getElementById("last-tree");
+                lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
+                buffer.splice(0, lastSortedIndex + 1);
+            }
+            else {
+                for (let j = 0; j < 5; j++) {
+                    tree.push(buffer[j]);
+                }
+                const lastTreeElement = document.getElementById("last-tree");
+                lastTreeElement.innerHTML = "" + buffer[4];
+                buffer.splice(0, 5);
+            } 
 
-        // update HTMLs to show buffer after flush
-        for (let i = 0; i < buffer.length; i++) {
-            const iter = document.getElementById("buffer" + i);
-            iter.innerHTML = buffer[i];
-        }    
+            // update HTMLs to show buffer after flush
+            for (let i = 0; i < buffer.length; i++) {
+                const iter = document.getElementById("buffer" + i);
+                iter.innerHTML = buffer[i];
+            }    
 
-        for (let i = buffer.length; i < 10; i++) {
-            const iter = document.getElementById("buffer" + i);
-            iter.innerHTML = "";
+            for (let i = buffer.length; i < 10; i++) {
+                const iter = document.getElementById("buffer" + i);
+                iter.innerHTML = "";
+            }
         }
 
         adjustColors();
@@ -490,5 +501,59 @@ function nextstep_animation() {
 
 }
 
+function reset() {
+    valsToEliminate = vals.slice();
+
+    console.log("Reset values:", valsToEliminate);
+
+    function resetDropdown(field, key) {
+        field.length = 0;
+        let op = document.createElement('option');
+        op.value = "";
+        op.text = "";
+        field.appendChild(op);
+
+        let uniqueValues = [...new Set(valsToEliminate.map(p => p[key]))].sort((a, b) => a - b);
+        for (const value of uniqueValues) {
+            let op = document.createElement('option');
+            op.value = value;
+            op.text = value;
+            field.appendChild(op);
+        }
+    }
+
+    buffer = [];
+    tree = [];
+    lastSortedIndex = -1;
+    moved = false;
+    partitioned_data = [];
+    stat = 0; 
+    max = Number.MIN_SAFE_INTEGER;
+    numInsideBuffer = 0;
+    destroyer;
+    destroyerSet = false;
+    destroyed;
+    zonesDict = {};
+    running = false;
+    delay = 1000;
+
+
+    // Reset each dropdown
+    resetDropdown(document.getElementById("cmp-select-N"), "N");
+    resetDropdown(document.getElementById("cmp-select-K"), "K");
+    resetDropdown(document.getElementById("cmp-select-L"), "L");
+    resetDropdown(document.getElementById("cmp-select-B"), "B");
+
+    // Hide elements that should not be visible initially
+    document.getElementById("chart-column").classList.add("hidden");
+    document.getElementById("buttons-container").classList.add("hidden");
+    document.getElementById("tree-buffer-container").classList.add("hidden");
+    document.getElementById("dashed-line").classList.add("hidden");
+
+
+    // stop_animation(); 
+
+    console.log("Reset to default state.");
+}
 
 

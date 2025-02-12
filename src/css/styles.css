@@ -774,23 +774,21 @@ div.fixed {
 }
 
 .section-labels {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    pointer-events: none;
-    font-weight: bold;
-    color: black;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1px; /* 1-pixel separation */
 }
 
-.section-labels span {
-    flex: 1;
+.buffer-btn {
+    width: 80px;   
+    height: 40px;
+    display: inline-block;
     text-align: center;
-    line-height: 50px;
+    border: 1px solid #000;
+    margin: 0.3px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 
@@ -830,7 +828,7 @@ div.fixed {
 
 .rectangles {
     position: absolute;
-    top: 80%;
+    top: 72%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -882,6 +880,25 @@ div.fixed {
     cursor: not-allowed;
 }
 
+.freeze-orange {
+    background-color: orange !important; 
+    border-color: orange !important;
+}
+
+.freeze-orange:disabled {
+    opacity: 0.65; 
+    cursor: not-allowed;
+}
+
 #buttons-container {
     padding-top: 50px;
+}
+
+#dashed-line {
+    margin-top: 50px;
+}
+
+#chart-container {
+    display: flex;
+    justify-content: center;
 }

@@ -117,7 +117,7 @@
 									<label class="input-group-text" for="cmp-select-N">N</label>
 								</div>
 								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
+									<option value="" selected disabled></option>
 									<option value="1000">1000</option>
 									<option value="5000">5000</option>
 									<option value="10000">10000</option>
@@ -436,29 +436,130 @@
 					</div>
 				</div>
 
+								<div class="col-3">
+					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 3</h4>
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radio_new1" id="radio_new1" checked>
+								<label class="form-check-label" for="radio_new1"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-N"></label>
+								</div>
+								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="1000">1000</option>
+									<option value="5000">5000</option>
+									<option value="10000">10000</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
+								<label class="form-check-label" for="radioN2"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualN" type="number" min="0" step="1" class="cmp-input form-control">
+							</div>
+						</div>
+					</div>
+					
+					
+				</div>
+				
+				<div class="col-3">
+					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 4</h4>
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioNew2" id="radioNew2" checked>
+								<label class="form-check-label" for="radioNew2"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="cmp-select-K"></label>
+								</div>
+								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<option value=""></option>
+									<option value="0">0%</option>
+									<option value="10">10%</option>
+									<option value="20">20%</option>
+									<option value="30">30%</option>
+									<option value="40">40%</option>
+									<option value="50">50%</option>
+									<option value="60">60%</option>
+									<option value="70">70%</option>
+									<option value="80">80%</option>
+									<option value="90">90%</option>
+									<option value="100">100%</option>
+								</select>
+							</div>
+		
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
+								<label class="form-check-label" for="radioK2"></label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Other: </label>
+								</div>
+								<input id="manualK" type="number" min="0" step="1" class="cmp-input form-control">
+							</div>
+						</div>
+					</div>
+				</div>
+
+
 			</div>
 			-->
 
-			<!-- "Run" button -->
+			<!-- "Visualize Workload" button -->
 			<div class="row">
 				<div class="col-md-11 text-right pt-4">
+					<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
+				</div>
+			</div>
+
+			<!-- Chart -->
+			<div class="container mt-5 d-flex justify-content-center" id="chart-container">		
+				<div class="col-md-9 equal-height hidden" id="chart-column">
+					<div id="chart_div" class="equal-height"></div>
+				</div>
+			</div>
+
+			<!-- "Run" button -->
+			<div class="row">
+				<div id="run-button-container" class="col-md-11 text-right pt-4 hidden">
 					<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
 				</div>
 			</div>
 
-			<!-- Areas for outputs of parameters and the chart -->
-			<div class="container mt-5 hidden" id="chart-container">
-				<div class="row">
-					<div class="col-md-3 equal-height" id="info-column">
-						<div id="info_div" class="equal-height">
-						</div>
-					</div>
-		
-					<div class="col-md-9 equal-height" id="chart-column">
-						<div id="chart_div" class="equal-height"></div>
-					</div>
-				</div>
-			</div>
+			<!-- Dashed line -->
+			<hr id="dashed-line" style="border-top: dotted 2px;" class="hidden" />
 			
 			<!-- Buttons -->
 			<div class="row mt-3 hidden" id="buttons-container">
@@ -466,8 +567,11 @@
 					<button id="stop-button" onclick="stop_animation()" type="button" class="btn btn-danger freeze-red">Stop</button>
 					<button id="continue-button" onclick="continue_animation()" type="button" class="btn btn-success freeze-green">Continue</button>
 					<button id="nextstep-button" onclick="nextstep_animation()" type="button" class="btn btn-success freeze-green">Next Step</button>
+					<button id="reset-button" onclick="reset()" type="button" class="btn btn-info freeze-orange">Reset</button>
 				</div>
 			</div>
+
+			
 
 			<!-- Areas for the tree and the buffer -->
 			<div class="container mt-5 hidden" id="tree-buffer-container">
@@ -476,33 +580,32 @@
 						<h4>Buffer</h4>
 						<div id="buffer-area" style="padding: 10px; height: 150px; overflow-y: auto;">
 							<div class="container mt-5 text-center">
-								<button class="long-button">
-									<div class="section-labels">
-										<span id="buffer0"></span>
-										<span id="buffer1"></span>
-										<span id="buffer2"></span>
-										<span id="buffer3"></span>
-										<span id="buffer4"></span>
-										<span id="buffer5"></span>
-										<span id="buffer6"></span>
-										<span id="buffer7"></span>
-										<span id="buffer8"></span>
-										<span id="buffer9"></span>
-									</div>
-								</button>
+								<div class="section-labels">
+									<button class="btn btn-primary buffer-btn" id="buffer0"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer1"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer2"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer3"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer4"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer5"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer6"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer7"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer8"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer9"></button>
+								</div>
 							</div>
-						</div>
+						</div>						
 					</div>
 					<div class="col-12">
 						<h4>Tree</h4>
-						<div id="tree-area" style="padding: 10px; height: 400px; overflow-y: auto;">
+						<div id="tree-area" style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+    border-radius: 5px;">
 							<div class="triangle"></div>
 							<div class="dots">
 								<span class="dot"></span>
 								<span class="dot"></span>
 								<span class="dot"></span>
 							</div>
-							<!-- Rectangle below the dots -->
+							<!-- Rectangles below the dots -->
 							<div class="rectangles">
 								<div class="rectangle"></div>
 								<div class="rectangle"></div>
