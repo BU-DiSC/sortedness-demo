@@ -560,7 +560,7 @@
 					<button id="stop-button" onclick="stop_animation()" type="button" class="btn btn-danger freeze-red">Stop</button>
 					<button id="continue-button" onclick="continue_animation()" type="button" class="btn btn-success freeze-green">Continue</button>
 					<button id="nextstep-button" onclick="nextstep_animation()" type="button" class="btn btn-success freeze-green">Next Step</button>
-					<button id="reset-button" onclick="reset()" type="button" class="btn btn-success freeze-green">Reset</button>
+					<button id="reset-button" onclick="reset()" type="button" class="btn btn-info freeze-orange">Reset</button>
 				</div>
 			</div>
 
@@ -573,22 +573,20 @@
 						<h4>Buffer</h4>
 						<div id="buffer-area" style="padding: 10px; height: 150px; overflow-y: auto;">
 							<div class="container mt-5 text-center">
-								<button class="long-button">
-									<div class="section-labels">
-										<span id="buffer0"></span>
-										<span id="buffer1"></span>
-										<span id="buffer2"></span>
-										<span id="buffer3"></span>
-										<span id="buffer4"></span>
-										<span id="buffer5"></span>
-										<span id="buffer6"></span>
-										<span id="buffer7"></span>
-										<span id="buffer8"></span>
-										<span id="buffer9"></span>
-									</div>
-								</button>
+								<div class="section-labels">
+									<button class="btn btn-primary buffer-btn" id="buffer0"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer1"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer2"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer3"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer4"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer5"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer6"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer7"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer8"></button>
+									<button class="btn btn-primary buffer-btn" id="buffer9"></button>
+								</div>
 							</div>
-						</div>
+						</div>						
 					</div>
 					<div class="col-12">
 						<h4>Tree</h4>
