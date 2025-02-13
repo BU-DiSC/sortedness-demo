@@ -549,6 +549,7 @@ function reset() {
     document.getElementById("buttons-container").classList.add("hidden");
     document.getElementById("tree-buffer-container").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
+    document.getElementById("run-button-container").classList.add("hidden");
 
 
     // stop_animation(); 
