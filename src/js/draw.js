@@ -28,6 +28,13 @@ var selectedK;
 var selectedL;
 var selectedB;
 
+var step = 0;
+
+var step_0_done = false;
+var step_1_done = false;
+var step_2_done = false;
+
+var steps_done = false;
 
 /* 
  * Function to draw the chart
@@ -186,7 +193,8 @@ function draw_chart(total_data, N, K, L, B) {
 
 function run_operations() {
 
-    document.getElementById('tree-buffer-container').classList.remove('hidden');
+    document.getElementById('buffer-area').classList.remove('hidden');
+    document.getElementById('tree-area-step-3+').classList.remove('hidden');
     document.getElementById('buttons-container').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden'); 
 
@@ -368,6 +376,8 @@ function nextStep() {
             running = false;
         }
         else {
+            // TODO: Adjust this part
+            //draw_tree_new();
             if (lastSortedIndex == -1) {
                 tree.push(buffer[0]);
                 const lastTreeElement = document.getElementById("last-tree");
@@ -558,3 +568,98 @@ function reset() {
 }
 
 
+/**
+ * Method: have 4 different shapes, do it by removing hidden value of only one 
+ * at each step and hiding others
+ */
+
+// has one outcome for each step
+function draw_tree_new() {
+
+    // have a loop inside it for the first part? like this:
+    /*
+    let interval_2 = setInterval(() => {
+        if (step_running == false) {
+            clearInterval(interval_2); 
+            return;
+        }
+        draw_tree_new_step_helper(); 
+    }, delay);
+
+
+    function draw_tree_new_step_helper () {
+        if (step < 3) {
+
+        }
+    }
+    */
+
+
+    
+    if (!steps_done) {
+        if (!step_0_done) {
+            // the first step, create the first one. Every case will do it
+            document.getElementById("tree-area-step-0").classList.remove("hidden");
+            document.getElementById("rectangle-step-0").innerHTML = buffer[0];
+
+            step_0_done = true;
+
+            delay(1000);
+        }
+
+        if (!step_1_done && lastSortedIndex >= 0) {
+            document.getElementById("tree-area-step-0").classList.add("hidden");
+            document.getElementById("tree-area-step-1").classList.remove("hidden");
+            // Adjust values for rectangles
+
+            // Print values in rectangles
+
+            step_1_done = true;
+
+            delay(1000);
+        }
+
+        if (!step_2_done && lastSortedIndex >= 1) {
+            document.getElementById("tree-area-step-1").classList.add("hidden");
+            document.getElementById("tree-area-step-2").classList.remove("hidden");
+            // Adjust values for rectangles
+
+            // Print values in rectangles
+
+            step_2_done = true;
+            steps_done = true; // change it to the normal version
+
+            delay(1000);
+        }
+    }
+    // if it is time for the index
+    // adjust this too, this is wrong
+    else {
+        if (lastSortedIndex == -1) {
+            tree.push(buffer[0]);
+            const lastTreeElement = document.getElementById("last-tree");
+            lastTreeElement.innerHTML = "" + buffer[0];
+            buffer.shift();
+            
+        }
+        else if (lastSortedIndex < 5) {
+            for (let j = 0; j <= lastSortedIndex; j++) {
+                tree.push(buffer[j]);
+            }
+            const lastTreeElement = document.getElementById("last-tree");
+            lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
+            buffer.splice(0, lastSortedIndex + 1);
+        }
+        else {
+            for (let j = 0; j < 5; j++) {
+                tree.push(buffer[j]);
+            }
+            const lastTreeElement = document.getElementById("last-tree");
+            lastTreeElement.innerHTML = "" + buffer[4];
+            buffer.splice(0, 5);
+        } 
+    }
+    
+
+
+}

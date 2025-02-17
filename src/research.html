@@ -574,11 +574,12 @@
 			
 
 			<!-- Areas for the tree and the buffer -->
-			<div class="container mt-5 hidden" id="tree-buffer-container">
+			<div class="container mt-5">
 				<div class="row">
-					<div class="col-12">
+					<!-- Area for the buffer -->
+					<div id="buffer-area" class="col-12 hidden">
 						<h4>Buffer</h4>
-						<div id="buffer-area" style="padding: 10px; height: 150px; overflow-y: auto;">
+						<div style="padding: 10px; height: 150px; overflow-y: auto;">
 							<div class="container mt-5 text-center">
 								<div class="section-labels">
 									<button class="btn btn-primary buffer-btn" id="buffer0"></button>
@@ -595,9 +596,10 @@
 							</div>
 						</div>						
 					</div>
-					<div class="col-12">
+					<!-- Area for the tree, step 3+ -->
+					<div id="tree-area-step-3+" class="col-12 hidden">
 						<h4>Tree</h4>
-						<div id="tree-area" style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+						<div  style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
     border-radius: 5px;">
 							<div class="triangle"></div>
 							<div class="dots">
@@ -619,6 +621,46 @@
 							</div>
 						</div>
 					</div>
+
+					<!-- Area for the tree, step 0 (one rectangle) -->
+					<div id="tree-area-step-0" class="col-12 hidden">
+						<h4>Tree</h4>
+						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+						border-radius: 5px; display: flex; justify-content: center; align-items: center;">
+							<div id="rectangle-0-step-0" class="rectangle"></div>
+						</div>
+					</div>
+
+					<!-- Area for the tree, step 1 (two rectangles and an subindex) -->
+					<div id="tree-area-step-1" class="col-12 hidden">
+						<h4>Tree</h4>
+						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+									border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
+							<div id="rectangle-step-top" 
+								 class="rectangle" style="width: 100px"></div>
+							<div style="display: flex; justify-content: center; gap: 20px;">
+								<div id="rectangle-0-step-1" class="rectangle"></div>
+								<div id="rectangle-1-step-1" class="rectangle"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Area for the tree, step 2 (three rectangles and an subindex) -->
+					<div id="tree-area-step-2" class="col-12 hidden">
+						<h4>Tree</h4>
+						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+									border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
+							<div id="rectangle-step-top" 
+								 class="rectangle" style="width: 100px"></div>
+							<div style="display: flex; justify-content: center; gap: 20px;">
+								<div id="rectangle-0-step-2" class="rectangle"></div>
+								<div id="rectangle-1-step-2" class="rectangle"></div>
+								<div id="rectangle-2-step-2" class="rectangle"></div>
+							</div>
+						</div>
+					</div>
+					
+
 				</div>
 			</div>
 		</div>
