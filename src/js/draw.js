@@ -23,6 +23,7 @@ var delay = 1000;
 
 var global_max = Number.MIN_SAFE_INTEGER;
 
+var wait = 3;
 
 var total_data = [];
 var selectedN;
@@ -188,7 +189,7 @@ function draw_chart(total_data, N, K, L, B) {
 
 function run_operations() {
 
-    document.getElementById('tree-area-step-3+').classList.remove('hidden');
+    //document.getElementById('tree-area-step-3+').classList.remove('hidden');
     document.getElementById('buffer-area').classList.remove('hidden');
     document.getElementById('buttons-container').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden'); 
@@ -365,7 +366,12 @@ function draw_buffer(total_data, N, K, L, B) {
 
 function nextStep() {
     // if the buffer is full and it is flushing time
+
+
     if (stat === 0) {
+        if (wait-- == 0) {
+            document.getElementById("tree-area-step-3+").classList.remove("hidden");
+        }
         // flushing operations
         if (buffer.length != 10) {
             running = false;
