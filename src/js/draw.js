@@ -311,10 +311,12 @@ function adjustColors() {
                     iter.style.backgroundColor = "#00FF22"; // light green (sorted)
                 }
             }
-            const destroyed = document.getElementById("buffer" + i);
-            destroyed.style.backgroundColor = "#FF0000"; // red (overlaps)
-            const d = document.getElementById("buffer" + destroyer);
-            d.style.backgroundColor = "#FF0000"; // red (overlaps)
+            if (i < 10) {
+                const destroyed = document.getElementById("buffer" + i);
+                destroyed.style.backgroundColor = "#FF0000"; // red (overlaps)
+                const destroyer = document.getElementById("buffer" + destroyer);
+                destroyer.style.backgroundColor = "#FF0000"; // red (overlaps)
+            }
         }     
     }
 }
