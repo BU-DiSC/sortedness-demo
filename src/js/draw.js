@@ -6,30 +6,31 @@ var moved = false;
 var partitioned_data = [];
 var stat = 0; // used to decide which step nextStep() will be performed
 
-var max = Number.MIN_SAFE_INTEGER;
+var max = Number.MIN_SAFE_INTEGER; // used for 
+var global_max = Number.MIN_SAFE_INTEGER; //used for printing
 
 var numInsideBuffer = 0;
 
-var destroyer;
-var destroyerSet = false;
-
-var destroyed;
+var destroyer; // stores the overlapping element that is added later
+var destroyed; // stores the overlapping element that gets overlapped
+var destroyerSet = false; // used when calculating lastSortedIndex
 
 var zonesDict = {};
 
 var running = true;
 
-var delay = 1000;
+var delay = 1000; // delay between animations
 
-var global_max = Number.MIN_SAFE_INTEGER;
 
-var wait = 3;
+
+var wait = 3; // how many iterations we whould wait until index is shown (temporary solution!)
 
 var total_data = [];
-var selectedN;
-var selectedK;
-var selectedL;
-var selectedB;
+
+var selectedN; // stores the N value selected
+var selectedK; // stores the K value selected
+var selectedL; // stores the L value selected
+var selectedB; // stores the B value selected
 
 
 /* 
@@ -314,8 +315,8 @@ function adjustColors() {
             if (i < 10) {
                 const destroyed = document.getElementById("buffer" + i);
                 destroyed.style.backgroundColor = "#FF0000"; // red (overlaps)
-                const destroyer = document.getElementById("buffer" + destroyer);
-                destroyer.style.backgroundColor = "#FF0000"; // red (overlaps)
+                const d = document.getElementById("buffer" + destroyer);
+                d.style.backgroundColor = "#FF0000"; // red (overlaps)
             }
         }     
     }
