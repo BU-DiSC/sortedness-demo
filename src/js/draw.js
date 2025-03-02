@@ -6,33 +6,39 @@ var moved = false;
 var partitioned_data = [];
 var stat = 0; // used to decide which step nextStep() will be performed
 
-var max = Number.MIN_SAFE_INTEGER;
+var max = Number.MIN_SAFE_INTEGER; // used for 
+var global_max = Number.MIN_SAFE_INTEGER; //used for printing
 
 var numInsideBuffer = 0;
 
-var destroyer;
-var destroyerSet = false;
-
-var destroyed;
+var destroyer; // stores the overlapping element that is added later
+var destroyed; // stores the overlapping element that gets overlapped
+var destroyerSet = false; // used when calculating lastSortedIndex
 
 var zonesDict = {};
 
 var running = true;
 
-var delay = 1000;
+var delay = 1000; // delay between animations
 
+
+
+var wait = 3; // how many iterations we whould wait until index is shown (temporary solution!)
 
 var total_data = [];
-var selectedN;
-var selectedK;
-var selectedL;
-var selectedB;
+
+var selectedN; // stores the N value selected
+var selectedK; // stores the K value selected
+var selectedL; // stores the L value selected
+var selectedB; // stores the B value selected
 
 
 /* 
  * Function to draw the chart
  */ 
 function visualize_workload() {
+
+    console.log("Visualising workload:")
 
     document.getElementById('chart-column').classList.remove('hidden');
     document.getElementById('run-button-container').classList.remove('hidden');
@@ -186,7 +192,10 @@ function draw_chart(total_data, N, K, L, B) {
 
 function run_operations() {
 
-    document.getElementById('tree-buffer-container').classList.remove('hidden');
+    console.log("Starting to run the algorithm.");
+
+    //document.getElementById('tree-area-step-3+').classList.remove('hidden');
+    document.getElementById('buffer-area').classList.remove('hidden');
     document.getElementById('buttons-container').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden'); 
 
@@ -214,8 +223,6 @@ function fillTheBuffer() {
                 iter.innerHTML = buffer[i];
             }
 
-            console.log("lastSortedIndex: " + lastSortedIndex);
-
             break;
         }
         else {
@@ -230,7 +237,6 @@ function fillTheBuffer() {
             else {
                 if (!destroyerSet) {
                     destroyer = numInsideBuffer - 1;
-                    console.log("setting destroyer to " + destroyer);
                     destroyerSet = true;
                 }
                 for (let i = lastSortedIndex; i >= 0; i--) {
@@ -263,9 +269,6 @@ function adjustColors() {
     }
     else if (stat == 1) {
         resetColors();
-        console.log("adjusting colors!");
-        console.log("lastSortedIndex: " + lastSortedIndex);
-        console.log("we enter here");
         if (lastSortedIndex == -1) {
             const first = document.getElementById("buffer0");
             first.style.backgroundColor = "#0097B5"; // dark blue (sorted)
@@ -284,16 +287,12 @@ function adjustColors() {
     }
     else if (stat == 2) {
         resetColors();
-        console.log("adjusting colors!");
-        console.log("lastSortedIndex: " + lastSortedIndex);
-        console.log("we enter here");
         if (lastSortedIndex == -1) {
             const first = document.getElementById("buffer0");
             first.style.backgroundColor = "#05B51C"; // dark green (sorted)
             const next = document.getElementById("buffer1");
             next.style.backgroundColor = "#FF0000"; // red (overlaps)
             const d = document.getElementById("buffer" + destroyer);
-            console.log(destroyer);
             d.style.backgroundColor = "#FF0000"; // red (overlaps)
         }
         else {
@@ -307,10 +306,12 @@ function adjustColors() {
                     iter.style.backgroundColor = "#00FF22"; // light green (sorted)
                 }
             }
-            const destroyed = document.getElementById("buffer" + i);
-            destroyed.style.backgroundColor = "#FF0000"; // red (overlaps)
-            const d = document.getElementById("buffer" + destroyer);
-            d.style.backgroundColor = "#FF0000"; // red (overlaps)
+            if (i < 10) {
+                const destroyed = document.getElementById("buffer" + i);
+                destroyed.style.backgroundColor = "#FF0000"; // red (overlaps)
+                const d = document.getElementById("buffer" + destroyer);
+                d.style.backgroundColor = "#FF0000"; // red (overlaps)
+            }
         }     
     }
 }
@@ -337,19 +338,12 @@ function draw_buffer(total_data, N, K, L, B) {
         partitioned_data.push(part);
     }
 
-    console.log("partioned data: ");
-    console.log(partitioned_data);
-
-
     for (let i = 0; i < partitioned_data.length; i += 1) {
         const min = Math.min(...partitioned_data[i]);
         const max = Math.max(...partitioned_data[i]);
         zones.push([min, max]);
         zonesDict[max] = partitioned_data[i];
     }
-
-    console.log("zones dict: ");
-    console.log(zonesDict);
     
     stat = 2;
 
@@ -362,7 +356,12 @@ function draw_buffer(total_data, N, K, L, B) {
 
 function nextStep() {
     // if the buffer is full and it is flushing time
+
+
     if (stat === 0) {
+        if (wait-- == 0) {
+            document.getElementById("tree-area-step-3+").classList.remove("hidden");
+        }
         // flushing operations
         if (buffer.length != 10) {
             running = false;
@@ -371,7 +370,11 @@ function nextStep() {
             if (lastSortedIndex == -1) {
                 tree.push(buffer[0]);
                 const lastTreeElement = document.getElementById("last-tree");
-                lastTreeElement.innerHTML = "" + buffer[0];
+                if (buffer[0][1] > global_max) {
+                    global_max = buffer[0][1];
+                    lastTreeElement.innerHTML = "(... , " + global_max + ")";
+                }
+                //lastTreeElement.innerHTML = "" + buffer[0];
                 buffer.shift();
                 
             }
@@ -380,7 +383,11 @@ function nextStep() {
                     tree.push(buffer[j]);
                 }
                 const lastTreeElement = document.getElementById("last-tree");
-                lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
+                if (buffer[lastSortedIndex][1] > global_max) {
+                    global_max = buffer[lastSortedIndex][1];
+                    lastTreeElement.innerHTML = "(... , " + global_max + ")";
+                }
+                //lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
                 buffer.splice(0, lastSortedIndex + 1);
             }
             else {
@@ -388,7 +395,11 @@ function nextStep() {
                     tree.push(buffer[j]);
                 }
                 const lastTreeElement = document.getElementById("last-tree");
-                lastTreeElement.innerHTML = "" + buffer[4];
+                if (buffer[lastSortedIndex][1] > global_max) {
+                    global_max = buffer[lastSortedIndex][1];
+                    lastTreeElement.innerHTML = "(... , " + global_max + ")";
+                }
+                //lastTreeElement.innerHTML = "" + buffer[4];
                 buffer.splice(0, 5);
             } 
 
@@ -414,8 +425,6 @@ function nextStep() {
     else if (stat == 1) {
         
         let remainingPages = [];
-
-        console.log(buffer);
 
         for (let i = 0; i < buffer.length; i++) {
             remainingPages = remainingPages.concat(zonesDict[buffer[i][1]]);
@@ -454,13 +463,9 @@ function nextStep() {
     // fill the buffer
     else if (stat == 2) {
 
-        console.log("will will the buffer now");
-        console.log(zones);
         fillTheBuffer();
 
         adjustColors();
-
-        console.log("lastSortedIndex from status " + stat + ": " + lastSortedIndex);
 
         stat = 0;
 
@@ -475,7 +480,7 @@ function stop_animation() {
     document.getElementById("continue-button").disabled = false;
     document.getElementById("nextstep-button").disabled = false;
 
-    console.log("animation stopped");
+    console.log("Animation stopped.");
 }
 
 function continue_animation() {
@@ -491,20 +496,18 @@ function continue_animation() {
         }
         nextStep(); 
     }, delay);
-    console.log("animation running back again");
+    console.log("Animation continues.");
 }
 
 
 function nextstep_animation() {
     running = false;
     nextStep();
-
+    console.log("Next step done.")
 }
 
 function reset() {
     valsToEliminate = vals.slice();
-
-    console.log("Reset values:", valsToEliminate);
 
     function resetDropdown(field, key) {
         field.length = 0;
@@ -547,13 +550,13 @@ function reset() {
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
     document.getElementById("buttons-container").classList.add("hidden");
-    document.getElementById("tree-buffer-container").classList.add("hidden");
+    document.getElementById("tree-area-step-3+").classList.add("hidden");
+    document.getElementById("buffer-area").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
-
+    document.getElementById("run-button-container").classList.add("hidden");
 
     // stop_animation(); 
 
     console.log("Reset to default state.");
 }
-
 
