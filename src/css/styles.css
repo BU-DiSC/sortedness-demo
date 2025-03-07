@@ -792,6 +792,16 @@ div.fixed {
     margin: 0.1px;
     font-size: 9px;
     font-weight: bold;
+    pointer-events: none;   
+}
+
+.buffer-btn:hover {
+    background-color: white;
+    border-color: #000;     
+    color: inherit;          
+    cursor: default;        
+    box-shadow: none;       
+    transition: none;     
 }
 
 
@@ -1007,4 +1017,56 @@ div.fixed {
     left: 50%; /* range = 10%-90% */
     transform: translateX(-50%);
     transition: left 0.5s; /* Smooth transition for position changes */
+}
+
+
+/* LSM performance result display */
+#cost-result {
+	line-height: 2;
+	font-size: 1rem;
+	font-weight: 300;
+	color: #343a40;
+}
+.metrics {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.metric-title{
+	white-space: nowrap;
+}
+.cost-col {
+	padding: 0px;
+}
+
+
+.col-lg-3 .row {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.abbr-dot {
+	cursor: pointer;
+	padding: 0px;
+	margin: 0px 2px 3px;
+	vertical-align: top;
+	line-height: 20%;
+	font-size: 20px;
+}
+
+
+.cost {
+    display: block;
+    width: 100%;
+    text-align: center; /* Centers the zero values directly under the titles */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.metric-title {
+    display: block;
+    width: 100%;
+    text-align: center; /* Ensures the titles are also centered */
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px; /* Adds slight spacing between titles and zero values */
 }

@@ -35,6 +35,20 @@ var selectedB; // stores the B value selected
 var inserted_data_quit = [];
 
 
+
+
+var sware_bulk_loads = 0;
+var sware_top_inserts = 0;
+var sware_sorts = 0;
+var sware_flushes = 0;
+var sware_average_pages_per_flush = 0;
+
+
+var quit_fast_inserts = 0;
+var quit_top_inserts = 0;
+var quit_pole_resets = 0;
+
+
 /* 
  * Function to draw the chart
  */ 
@@ -177,6 +191,7 @@ function run_operations() {
     document.getElementById('buttons-container').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden'); 
     document.getElementById('quit-area').classList.remove("hidden");
+    document.getElementById('results-panel').classList.remove("hidden");
 
 
     draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
@@ -643,6 +658,7 @@ function reset() {
         }
     }
 
+    // Reset parameters
     buffer = [];
     tree = [];
     lastSortedIndex = -1;
@@ -658,6 +674,14 @@ function reset() {
     running = false;
     delay = 1000;
     wait = 3;
+    sware_bulk_loads = 0;
+    sware_top_inserts = 0;
+    sware_sorts = 0;
+    sware_flushes = 0;
+    sware_average_pages_per_flush = 0;
+    quit_fast_inserts = 0;
+    quit_top_inserts = 0;
+    quit_pole_resets = 0;
 
 
     // Reset each dropdown
@@ -674,6 +698,7 @@ function reset() {
     document.getElementById("dashed-line").classList.add("hidden");
     document.getElementById("run-button-container").classList.add("hidden");
     document.getElementById('quit-area').classList.add("hidden");
+    document.getElementById("results-panel").classList.add("hidden");
 
     // stop_animation(); 
 

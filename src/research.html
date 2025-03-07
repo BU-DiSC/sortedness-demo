@@ -449,9 +449,8 @@
 			
 			<div class="container mt-5 d-flex" style="flex-direction: row;">
 				<!-- Areas for the tree and the buffer -->
-				<div class="container mt-5" style="flex-direction: column; border: 2px solid lightgray; border-radius: 5px;">
+				<div id="buffer-area" class="hidden container mt-5" style="flex-direction: column;">
 						<!-- Area for the buffer -->
-						<div id="buffer-area" class="hidden">
 							<h4>Buffer</h4>
 							<div style="height: 120px; border: 2px solid lightgray; border-radius: 5px;">
 								<div class="auto; overflow-x; overflow-y; container mt-5" style="left: 8%; position: relative;">
@@ -469,7 +468,6 @@
 									</div>
 								</div>
 							</div>						
-						</div>
 						<!-- Area for the tree, step 3+ -->
 						<div id="tree-area-step-3+" class="hidden">
 							<h4>Tree</h4>
@@ -539,9 +537,8 @@
 						-->
 				</div>
 				<!-- QuIT Part -->
-				<div class="container mt-5" style="flex-direction: column; border: 2px solid lightgray; border-radius: 5px;">
+				<div id="quit-area" class="hidden container mt-5" style="flex-direction: column;">
 					<!-- Area for the buffer -->
-					<div id="quit-area" class="hidden">
 						<h4>Page Stream</h4>
 						<div style="height: 120px; border: 2px solid lightgray; border-radius: 5px;">
 							<div class="auto; overflow-x; overflow-y; container mt-5" style="position: relative;">
@@ -600,9 +597,119 @@
 							</div>
 						</div>
 
-					</div>
 
 				</div>
+			</div>
+
+			<!-- Results Panel -->
+			 <!-- Titles -->
+			<div id="results-panel" class="hidden">
+				<div id="indiv-bush-row" class="row" style="padding-top: 30px">
+					<div class="col-sm">
+						<div id="cmp-lsm-cmpct-pp-1-mp" class="row cmp-indiv-mp">
+							<div class="lsm-title">
+								<span id="sware-alg-table-title" class="row cmp-indiv-mp" style="margin-left: -130px;">SWARE</span>
+							</div>
+							<br>
+						</div>
+						<div id="table1"></div>
+					</div>
+					<div class="col-sm">
+						<div id="cmp-lsm-cmpct-pp-2-mp" class="row cmp-indiv-mp">
+							<div class="lsm-title">
+								<span id="quit-alg-table-title" class="row cmp-indiv-mp">QuIT</span>
+							</div>
+						</div>
+						<div id="table2"></div>
+					</div>
+				</div>
+
+
+
+				<div id="cost-result" class="container">
+					<!-- #Sorts -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-sorts" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of times a requested page is not found in the bufferpool.">#Sorts</span>
+						</div>
+						<div class="col text-left">
+							<span class="cost uncertain"></span>
+						</div>
+					</div>
+
+					<!-- #Buffer Flushes -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-flushes" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of times a requested page is in the bufferpool.">#Buffer Flushes</span>
+						</div>
+						<div class="col text-left">
+							<span class="cost uncertain"></span>
+						</div>
+					</div>
+
+					<!-- #Average Pages per Flush -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-average-pages-per-flush" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title">#Average Pages per Flush</span>
+						</div>
+						<div class="col text-left">
+							<span class="cost uncertain"></span>
+						</div>
+					</div>
+
+					<!-- #Bulk Loads / Fast Inserts -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-bulk-loads" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of dirty pages written.">#Bulk Loads / Fast Inserts</span>
+						</div>
+						<div class="col text-left">
+							<span id="quit-fast-inserts" class="cost uncertain">0</span>
+						</div>
+					</div>
+
+					<!-- #Top Inserts -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-top-inserts" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of pages processed from a workload.">#Top Inserts</span>
+						</div>
+						<div class="col text-left">
+							<span id="quit-top-inserts" class="cost uncertain">0</span>
+						</div>
+					</div>
+
+					<!-- #Pole Resets -->
+					<div class="row">
+						<div class="col text-right">
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right"></span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title">#Pole Resets</span>
+						</div>
+						<div class="col text-left">
+							<span id="quit-pole-resets" class="cost uncertain">0</span>
+						</div>
+					</div>
+				</div>
+
 			</div>
 			
 		</div>
