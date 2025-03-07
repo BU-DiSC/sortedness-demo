@@ -1,6 +1,6 @@
 // Essential parameters
 
-var delay = 1000; // delay between animations
+var delay = 100; // delay between animations
 
 var buffer = [];
 var tree = [];
@@ -44,12 +44,15 @@ var sware_bulk_loads = 0;
 var sware_top_inserts = 0;
 
 
-
-
-
 var quit_fast_inserts = 0;
 var quit_top_inserts = 0;
 var quit_pole_resets = 0;
+
+
+var leaf_node_size = 10;
+var pole = [];
+var pole_prev = [];
+let pole_next = [];
 
 
 /* 
@@ -163,7 +166,6 @@ function draw_chart(total_data, N, K, L, B) {
     var plot_data = generate_data(N, total_data); 
     //console.log(plot_data);
     var data = google.visualization.arrayToDataTable(plot_data);
-    
     // Options for the graph
     var options = {
         title: "position vs. value comparison (N=" + N +", K=" + K + ", L=" + L + ", B=" + B + ")",
@@ -551,6 +553,116 @@ function nextStep() {
     }
     */
 
+    function isOutlier(key) {
+
+        
+
+        if (inserted_data_quit.length < leaf_node_size - 1) {
+            console.log("Pole prev not created, still inputting");
+
+            inserted_data_quit.push(key);
+            pole.push(key);
+            pole.sort((a, b) => a - b);
+
+            quit_fast_inserts++;
+
+            return;
+        }
+        else if (inserted_data_quit.length == leaf_node_size - 1) {
+            inserted_data_quit.push(key);
+            pole.push(key);
+            pole.sort((a, b) => a - b);
+
+            // Split, create pole_prev for the first time
+
+            console.log("POLE PREV CREATING, SPLITTING FOR FIRST TIME");
+
+            let pole_copy = [];
+
+            for (let page of pole) {
+                pole_copy.push(page);
+            }
+
+
+            pole = [];
+            for (let i = 0; i < leaf_node_size / 2 ; i++) {
+                pole_prev.push(pole_copy[i]);
+            }
+            for (let i = 5; i < leaf_node_size; i++) {
+                pole.push(pole_copy[i]);
+            }
+
+            return;
+        }
+        
+        let q = Math.min(...pole);
+        let p = Math.min(...pole_prev);
+
+        console.log("pole: " + pole + ", pole_prev: " + pole_prev + ", q: " + q + ", key: " + key + ", p: " + p);
+        if ((q <= key) && (key < Math.max(...pole))) {
+            console.log("in range");
+            if (pole.length == leaf_node_size) {
+                let pole_copy = [];
+
+                for (let page of pole) {
+                    pole_copy.push(page);
+                }
+
+                pole = [];
+                pole_next = [];
+
+                let i;
+
+                for (i = 0; i < leaf_node_size / 2; i++) {
+                    pole.push(pole_copy[i]);
+                }
+
+                for (i; i < leaf_node_size; i++) {
+                    pole_next.push(pole_copy[i]);
+                }
+
+                let r = Math.min(...pole_next);
+
+                let x = q + ((q-p) / pole_prev.length) * pole.length * 1.5;
+
+                if (r <= x) {
+                    // is not an outlier
+                    pole_prev = pole;
+                    pole = pole_next;
+
+                    // Pole changes, do animation
+                    console.log("Change 1");
+                    let random_x = Math.floor(Math.random() * 81) + 10;
+                    document.getElementById("pole").style.left = random_x + "%";
+                    quit_pole_resets++;
+                }
+            }
+            inserted_data_quit.push(key);
+            pole.push(key);
+            pole.sort((a, b) => a - b);
+
+            quit_fast_inserts++;
+        }
+        else {
+            inserted_data_quit.push(key);
+            quit_top_inserts++;
+            console.log("pole_next: " + pole_next);
+            if (key >= Math.min(...pole_next) && key <= Math.max(...pole_next)) {
+                pole_next.push(key);
+                pole_next.sort((a, b) => a - b);
+                pole_prev = pole;
+                pole = pole_next;
+            }
+
+            // Pole changes, do animation
+            console.log("Change 2");
+            let random_x = Math.floor(Math.random() * 81) + 10;
+            document.getElementById("pole").style.left = random_x + "%";
+            quit_pole_resets++;
+        }
+
+    }
+
     function isOutlierZ(n) {
         if (!inserted_data_quit || inserted_data_quit.length < 4) {
             console.log("Insufficient data for outlier detection.");
@@ -616,12 +728,14 @@ function nextStep() {
 
     page = parseInt(page);
 
-    inserted_data_quit.push(page);
+    isOutlier(page);
 
+    /*
     if (isOutlierZ(page)) {
         let random_x = Math.floor(Math.random() * 81) + 10;
         document.getElementById("pole").style.left = random_x + "%";
     }
+    */
 
 
     document.getElementById("sware-sorts").innerHTML = sware_sorts;
@@ -629,6 +743,10 @@ function nextStep() {
     document.getElementById("sware-average-pages-per-flush").innerHTML = sware_average_pages_per_flush.toFixed(2);
     document.getElementById("sware-bulk-loads").innerHTML = sware_bulk_loads;
     document.getElementById("sware-top-inserts").innerHTML = sware_top_inserts;
+
+    document.getElementById("quit-fast-inserts").innerHTML = quit_fast_inserts;
+    document.getElementById("quit-top-inserts").innerHTML = quit_top_inserts;
+    document.getElementById("quit-pole-resets").innerHTML = quit_pole_resets;
 
 }
 
@@ -698,7 +816,7 @@ function reset() {
     destroyed;
     zonesDict = {};
     running = false;
-    delay = 1000;
+    delay = 100;
     wait = 3;
     sware_sorts = 0;
     sware_flushes = 0;
@@ -710,6 +828,10 @@ function reset() {
     quit_top_inserts = 0;
     quit_pole_resets = 0;
 
+    leaf_node_size = 10;
+    pole = [];
+    pole_prev = [];
+    pole_next = [];
 
     // Reset each dropdown
     resetDropdown(document.getElementById("cmp-select-N"), "N");
