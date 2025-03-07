@@ -48,40 +48,16 @@ function visualize_workload() {
     const maxN = 10000;
 
     // Get the correct input for N
-    let selectedN;
-    if (document.getElementById('radioN1').checked) {
-        selectedN = parseInt(document.getElementById('cmp-select-N').value);
-    }
-    else {
-        selectedN = document.getElementById("manualN").value;
-    }
+    let selectedN = parseInt(document.getElementById('cmp-select-N').value);
 
     // Get the correct input for K
-    let selectedK;
-    if (document.getElementById('radioK1').checked) {
-        selectedK = parseInt(document.getElementById('cmp-select-K').value);
-    }
-    else {
-        selectedK = document.getElementById("manualK").value;
-    }
+    let selectedK = parseInt(document.getElementById('cmp-select-K').value);
 
     // Get the correct input for L
-    let selectedL;
-    if (document.getElementById('radioL1').checked) {
-        selectedL = parseInt(document.getElementById('cmp-select-L').value);
-    }
-    else {
-        selectedL = document.getElementById("manualL").value;
-    } 
+    let selectedL = parseInt(document.getElementById('cmp-select-L').value);
 
     // Get the correct input for B
-    let selectedB;
-    if (document.getElementById('radioB1').checked) {
-        selectedB = parseFloat(document.getElementById('cmp-select-B').value);
-    }
-    else {
-        selectedB = document.getElementById("manualB").value;
-    } 
+    let selectedB = parseFloat(document.getElementById('cmp-select-B').value);
 
     let flag = true // flag to generate graph when parameters are acceptable
     
