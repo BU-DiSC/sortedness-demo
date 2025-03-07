@@ -349,10 +349,22 @@ function nextStep() {
                 if (buffer[0][1] > global_max) {
                     global_max = buffer[0][1];
                     lastTreeElement.innerHTML = "(... , " + global_max + ")";
+
+                }
+                else {
+                    // Trigger the glow effect (top insert)
+                    const circle = document.getElementById('circle');
+                    circle.classList.add('glow-active');
+                        
+                    setTimeout(() => {
+                        circle.classList.remove('glow-active');
+                    }, 300);      
                 }
                 //lastTreeElement.innerHTML = "" + buffer[0];
                 buffer.shift();
-                
+
+                // Trigger the glow effect
+                                
             }
             else if (lastSortedIndex < 5) {
                 for (let j = 0; j <= lastSortedIndex; j++) {
@@ -363,8 +375,19 @@ function nextStep() {
                     global_max = buffer[lastSortedIndex][1];
                     lastTreeElement.innerHTML = "(... , " + global_max + ")";
                 }
+                else {
+                    // Trigger the glow effect (top insert)
+                    const circle = document.getElementById('circle');
+                    circle.classList.add('glow-active');
+                    
+                    setTimeout(() => {
+                        circle.classList.remove('glow-active');
+                    }, 300);
+                }
                 //lastTreeElement.innerHTML = "" + buffer[lastSortedIndex];
                 buffer.splice(0, lastSortedIndex + 1);
+
+
             }
             else {
                 for (let j = 0; j < 5; j++) {
@@ -374,6 +397,15 @@ function nextStep() {
                 if (buffer[lastSortedIndex][1] > global_max) {
                     global_max = buffer[lastSortedIndex][1];
                     lastTreeElement.innerHTML = "(... , " + global_max + ")";
+                }
+                else {
+                    // Trigger the glow effect (top insert)
+                    const circle = document.getElementById('circle');
+                    circle.classList.add('glow-active');
+                    
+                    setTimeout(() => {
+                        circle.classList.remove('glow-active');
+                    }, 300);
                 }
                 //lastTreeElement.innerHTML = "" + buffer[4];
                 buffer.splice(0, 5);

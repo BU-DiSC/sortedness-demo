@@ -776,18 +776,21 @@ div.fixed {
 .section-labels {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 1px; /* 1-pixel separation */
+    justify-content: left;
+    gap: 0.3px; /* 1-pixel separation */
+    margin-left: -30px;  /* Adjust this value to move left */
 }
 
 .buffer-btn {
-    width: 80px;   
-    height: 40px;
-    display: inline-block;
+    width: 46px;   
+    height: 22px;
+    display: inline-flex;  
+    align-items: center;   
+    justify-content: center; 
     text-align: center;
     border: 1px solid #000;
-    margin: 0.3px;
-    font-size: 16px;
+    margin: 0.1px;
+    font-size: 9px;
     font-weight: bold;
 }
 
@@ -902,3 +905,31 @@ div.fixed {
     display: flex;
     justify-content: center;
 }
+
+.circle {
+    width: 20px;
+    height: 20px;
+    background-color: #dc9806; /* Mellow Yellow */
+    border-radius: 50%;
+    position: absolute;
+    top: 9%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+/* Glow effect class to be toggled with JavaScript */
+.glow-active {
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.7), 0 0 40px rgba(255, 255, 0, 0.7), 0 0 60px rgba(255, 255, 0, 0.7);
+    animation: glow-pulse 0.3s alternate; /* Faster animation for 0.3s */
+}
+
+@keyframes glow-pulse {
+    0% {
+        box-shadow: 0 0 15px rgba(255, 255, 0, 0.5), 0 0 30px rgba(255, 255, 0, 0.5), 0 0 45px rgba(255, 255, 0, 0.5); /* Bigger Bright Yellow */
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(255, 255, 0, 0.8), 0 0 60px rgba(255, 255, 0, 0.8), 0 0 90px rgba(255, 255, 0, 0.8); /* Bigger Bright Yellow */
+    }
+}
+

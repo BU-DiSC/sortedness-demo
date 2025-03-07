@@ -93,21 +93,20 @@
 				</div>
 			</div>
 		</section>
+		<h4 class="text-center" style="font-size:large; padding-bottom: 20px;">Workload</h4>
+
 			<!-- Input fields for the parameters -->
 			<div id="cmp-conf-row">
 
 				<!-- Div of N -->
 				<div class="col-3">
-					<!-- Title for N-->
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Number of entries (N)</h4>
-
 					<!-- Default input field for N-->
 					<div class="row">
 						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-N">N</label>
+									<label class="input-group-text" for="cmp-select-N">N (# of elements)</label>
 								</div>
 								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
 									<option value="" selected disabled></option>
@@ -122,8 +121,6 @@
 				
 				<!-- Div of K -->
 				<div class="col-3">
-					<!-- Title for K -->
-					<h4 class="text-center" style="font-size:large">Percentage of number of out-order elements (K%)</h4>
 
 					<!-- Default input field for K -->
 					<div class="row">
@@ -131,7 +128,7 @@
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-K">K</label>
+									<label class="input-group-text" for="cmp-select-K">K (% out-of-order elements)</label>
 								</div>
 								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
 									<option value=""></option>
@@ -155,16 +152,13 @@
 
 				<!-- Div of L-->
 				<div class="col-3">
-					<!-- Title for L -->
-					<h4 class="text-center" style="font-size:large;">Percentage of maximum out-of-orderness (L%)</h4>
-
 					<!-- Default input field for L -->
 					<div class="row">
 						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-L">L</label>
+									<label class="input-group-text" for="cmp-select-L">L (% max out-of-orderness)</label>
 								</div>
 								<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
 									<option value=""></option>
@@ -188,9 +182,6 @@
 
 				<!-- Div of B -->
 				<div class="col-3">
-					<!-- Title for B -->
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Distribution (&#945, &#946)</h4>
-
 					<!-- Default input field for B -->
 					<div class="row">
 						<!-- Select object -->
@@ -458,13 +449,12 @@
 			
 
 			<!-- Areas for the tree and the buffer -->
-			<div class="container mt-5">
-				<div class="row">
+			<div class="container mt-5" style="flex-direction: column;">
 					<!-- Area for the buffer -->
-					<div id="buffer-area" class="col-12 hidden">
+					<div id="buffer-area" class="col-6 hidden">
 						<h4>Buffer</h4>
-						<div style="padding: 10px; height: 150px; overflow-y: auto;">
-							<div class="container mt-5 text-center">
+						<div style="padding: 10px; height: 120px; overflow-y: auto;">
+							<div class="container mt-5" style="position: relative; left: 20px;">
 								<div class="section-labels">
 									<button class="btn btn-primary buffer-btn" id="buffer0"></button>
 									<button class="btn btn-primary buffer-btn" id="buffer1"></button>
@@ -481,11 +471,16 @@
 						</div>						
 					</div>
 					<!-- Area for the tree, step 3+ -->
-					<div id="tree-area-step-3+" class="col-12 hidden">
+					<div id="tree-area-step-3+" class="col-6 hidden">
 						<h4>Tree</h4>
-						<div  style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-    border-radius: 5px;">
+						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+						border-radius: 5px; position: relative;">
+							<!-- Small Circle on Top of the Triangle -->
+							<div id="circle" class="circle"></div>
+							
+							<!-- Existing Triangle -->
 							<div class="triangle"></div>
+							
 							<div class="dots">
 								<span class="dot"></span>
 								<span class="dot"></span>
@@ -505,8 +500,8 @@
 							</div>
 						</div>
 					</div>
-
-					<!-- Area for the tree, step 0 (one rectangle) -->
+										
+					<!--
 					<div id="tree-area-step-0" class="col-12 hidden">
 						<h4>Tree</h4>
 						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
@@ -515,7 +510,6 @@
 						</div>
 					</div>
 
-					<!-- Area for the tree, step 1 (two rectangles and an subindex) -->
 					<div id="tree-area-step-1" class="col-12 hidden">
 						<h4>Tree</h4>
 						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
@@ -529,7 +523,6 @@
 						</div>
 					</div>
 
-					<!-- Area for the tree, step 2 (three rectangles and an subindex) -->
 					<div id="tree-area-step-2" class="col-12 hidden">
 						<h4>Tree</h4>
 						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
@@ -543,9 +536,9 @@
 							</div>
 						</div>
 					</div>
+					-->
 					
 
-				</div>
 			</div>
 		</div>
 
