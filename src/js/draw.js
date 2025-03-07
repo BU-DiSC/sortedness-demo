@@ -32,6 +32,9 @@ var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
 
 
+var inserted_data_quit = [];
+
+
 /* 
  * Function to draw the chart
  */ 
@@ -476,10 +479,84 @@ function nextStep() {
         stat = 0;
 
     }
+    
 
     /* QuIT */
+    /*
+    function isOutlier(n) {
+        // IQR estimation (temporary solution)
+        if (!inserted_data_quit || inserted_data_quit.length < 4) {
+            console.log("Insufficient data for outlier detection.");
+            return false; // Not enough data to determine outliers
+        }
+    
+        // Sort the data
+        const sortedData = [...inserted_data_quit].sort((a, b) => a - b);
+        const len = sortedData.length;
+    
+        // Calculate Q1 and Q3
+        const Q1 = sortedData[Math.floor((len / 4))];
+        const Q3 = sortedData[Math.floor((3 * len / 4))];
+    
+        // Calculate IQR
+        const IQR = Q3 - Q1;
+    
+        // Determine lower and upper bounds
+        const lowerBound = Q1 - 1.5 * IQR;
+        const upperBound = Q3 + 1.5 * IQR;
+    
+        console.log(`Q1: ${Q1}, Q3: ${Q3}, IQR: ${IQR}`);
+        console.log(`Lower Bound: ${lowerBound}, Upper Bound: ${upperBound}`);
+        console.log(`Checking if ${n} is an outlier.`);
+    
+        // Check if n is an outlier
+        if (n < lowerBound || n > upperBound) {
+            console.log(`${n} is an outlier.`);
+            return true;
+        } else {
+            console.log(`${n} is not an outlier.`);
+            return false;
+        }
+        
+    }
+    */
+
+    function isOutlierZ(n) {
+        if (!inserted_data_quit || inserted_data_quit.length < 4) {
+            console.log("Insufficient data for outlier detection.");
+            return false;
+        }
+    
+        // Calculate mean
+        const mean = inserted_data_quit.reduce((sum, x) => sum + x, 0) / inserted_data_quit.length;
+    
+        // Calculate standard deviation
+        const variance = inserted_data_quit.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / inserted_data_quit.length;
+        const stdDev = Math.sqrt(variance);
+    
+        // Calculate Z-score
+        const zScore = Math.abs((n - mean) / stdDev);
+    
+        console.log(`Mean: ${mean}, StdDev: ${stdDev}, Z-Score of ${n}: ${zScore}`);
+    
+        // Use a threshold of 1.5 for higher sensitivity
+        if (zScore > 1.5) {
+            console.log(`${n} is an outlier (Z-Score).`);
+            return true;
+        } else {
+            console.log(`${n} is not an outlier (Z-Score).`);
+            return false;
+        }
+    }
+    
+
     // Start state (can't shift, will input everything)
+
+    let page;
+
     if (total_data.length == selectedN) {
+        page = total_data[0];
+        total_data.shift();
         for (let i = 0; i < 15; i++) {
             const p = document.getElementById("page" + i);
             p.innerHTML = total_data[i];
@@ -489,7 +566,7 @@ function nextStep() {
     // Not the start state
     else {
         // Fill the data stream, shift everything left
-        let page = document.getElementById("page0").innerHTML;
+        page = document.getElementById("page0").innerHTML;
         console.log(page);
         let page_i;
         for (page_i = 0; page_i < 14; page_i++) {
@@ -501,9 +578,15 @@ function nextStep() {
         const last_p = document.getElementById("page" + page_i);
         last_p.innerHTML = total_data[0];
         total_data.shift();
+    }
 
+    page = parseInt(page);
 
-        
+    inserted_data_quit.push(page);
+
+    if (isOutlierZ(page)) {
+        let random_x = Math.floor(Math.random() * 81) + 10;
+        document.getElementById("pole").style.left = random_x + "%";
     }
     
 }
