@@ -1,4 +1,7 @@
 // Essential parameters
+
+var delay = 1000; // delay between animations
+
 var buffer = [];
 var tree = [];
 var lastSortedIndex = -1;
@@ -18,8 +21,6 @@ var destroyerSet = false; // used when calculating lastSortedIndex
 var zonesDict = {};
 
 var running = true;
-
-var delay = 1000; // delay between animations
 
 
 var wait = 3; // how many iterations we whould wait until index is shown (temporary solution!)
@@ -604,8 +605,13 @@ function nextStep() {
         }
 
         const last_p = document.getElementById("page" + page_i);
-        last_p.innerHTML = total_data[0];
-        total_data.shift();
+        if (total_data.length == 0) {
+            running = false;
+        }
+        else {
+            last_p.innerHTML = total_data[0];
+            total_data.shift();
+        }
     }
 
     page = parseInt(page);
