@@ -773,7 +773,7 @@ div.fixed {
     );
 }
 
-.section-labels {
+.section-labels-sware {
     display: flex;
     flex-wrap: wrap;
     justify-content: left;
@@ -826,7 +826,7 @@ div.fixed {
 .rectangle {
     width: 70px;
     height: 20px;
-    background-color: #3498db;
+    background-color: #22dd18;
 }
 
 .rectangles {
@@ -933,3 +933,78 @@ div.fixed {
     }
 }
 
+
+.page-btn {
+    width: 30px;   
+    height: 22px;
+    display: inline-flex;  
+    align-items: center;   
+    justify-content: center; 
+    text-align: center;
+    border: 1px solid #000;
+    margin: 0.1px;
+    font-size: 9px;
+    font-weight: bold;
+    background-color: white;
+    border-radius: 0; 
+    pointer-events: none;   
+    color: black;
+}
+
+.page-btn:hover {
+    background-color: white;
+    border-color: #000;     
+    color: inherit;          
+    cursor: default;        
+    box-shadow: none;       
+    transition: none;     
+}
+
+.section-labels-quit {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    gap: 0.3px; 
+}
+
+
+.rectangle-quit {
+    width: 40px;
+    height: 20px;
+    background-color: #22dd18;
+}
+
+.rectangles-quit {
+    position: absolute;
+    top: 72%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.smallerDots-quit {
+    display: flex;
+    gap: 10px;
+}
+
+.smallerDot-quit {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+
+.arrow-up {
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid red; /* Arrow color */
+    position: absolute;
+    bottom: 60px; /* Adjust as needed */
+    left: 50%; /* range = 10%-90% */
+    transform: translateX(-50%);
+    transition: left 0.5s; /* Smooth transition for position changes */
+}

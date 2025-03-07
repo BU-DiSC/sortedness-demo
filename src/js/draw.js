@@ -22,7 +22,6 @@ var running = true;
 var delay = 1000; // delay between animations
 
 
-
 var wait = 3; // how many iterations we whould wait until index is shown (temporary solution!)
 
 var total_data = [];
@@ -48,16 +47,16 @@ function visualize_workload() {
     const maxN = 10000;
 
     // Get the correct input for N
-    let selectedN = parseInt(document.getElementById('cmp-select-N').value);
+    selectedN = parseInt(document.getElementById('cmp-select-N').value);
 
     // Get the correct input for K
-    let selectedK = parseInt(document.getElementById('cmp-select-K').value);
+    selectedK = parseInt(document.getElementById('cmp-select-K').value);
 
     // Get the correct input for L
-    let selectedL = parseInt(document.getElementById('cmp-select-L').value);
+    selectedL = parseInt(document.getElementById('cmp-select-L').value);
 
     // Get the correct input for B
-    let selectedB = parseFloat(document.getElementById('cmp-select-B').value);
+    selectedB = parseFloat(document.getElementById('cmp-select-B').value);
 
     let flag = true // flag to generate graph when parameters are acceptable
     
@@ -174,6 +173,7 @@ function run_operations() {
     document.getElementById('buffer-area').classList.remove('hidden');
     document.getElementById('buttons-container').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden'); 
+    document.getElementById('quit-area').classList.remove("hidden");
 
 
     draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
@@ -323,16 +323,16 @@ function draw_buffer(total_data, N, K, L, B) {
     
     stat = 2;
 
-    fillTheBuffer();
-    adjustColors();
 
-    stat = 0;
+
+    nextStep();
 }
 
 
 function nextStep() {
-    // if the buffer is full and it is flushing time
 
+    /* SWARE */
+    // if the buffer is full and it is flushing time
 
     if (stat === 0) {
         if (wait-- == 0) {
@@ -426,8 +426,6 @@ function nextStep() {
         adjustColors();
        
         stat = 1;
-
-    
     }
     // sort the remainder
     else if (stat == 1) {
@@ -477,6 +475,35 @@ function nextStep() {
 
         stat = 0;
 
+    }
+
+    /* QuIT */
+    // Start state (can't shift, will input everything)
+    if (total_data.length == selectedN) {
+        for (let i = 0; i < 15; i++) {
+            const p = document.getElementById("page" + i);
+            p.innerHTML = total_data[i];
+            total_data.shift();
+        }
+    }
+    // Not the start state
+    else {
+        // Fill the data stream, shift everything left
+        let page = document.getElementById("page0").innerHTML;
+        console.log(page);
+        let page_i;
+        for (page_i = 0; page_i < 14; page_i++) {
+            const p = document.getElementById("page" + page_i);
+            const page_next = document.getElementById("page" + (page_i + 1));
+            p.innerHTML = page_next.innerHTML;
+        }
+
+        const last_p = document.getElementById("page" + page_i);
+        last_p.innerHTML = total_data[0];
+        total_data.shift();
+
+
+        
     }
     
 }
@@ -547,6 +574,7 @@ function reset() {
     zonesDict = {};
     running = false;
     delay = 1000;
+    wait = 3;
 
 
     // Reset each dropdown
@@ -562,6 +590,7 @@ function reset() {
     document.getElementById("buffer-area").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
     document.getElementById("run-button-container").classList.add("hidden");
+    document.getElementById('quit-area').classList.add("hidden");
 
     // stop_animation(); 
 
