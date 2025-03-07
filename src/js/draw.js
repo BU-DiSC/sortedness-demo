@@ -36,12 +36,14 @@ var inserted_data_quit = [];
 
 
 
-
-var sware_bulk_loads = 0;
-var sware_top_inserts = 0;
 var sware_sorts = 0;
 var sware_flushes = 0;
 var sware_average_pages_per_flush = 0;
+var sware_bulk_loads = 0;
+var sware_top_inserts = 0;
+
+
+
 
 
 var quit_fast_inserts = 0;
@@ -361,22 +363,25 @@ function nextStep() {
             running = false;
         }
         else {
+            sware_flushes++;
             if (lastSortedIndex == -1) {
                 tree.push(buffer[0]);
                 const lastTreeElement = document.getElementById("last-tree");
                 if (buffer[0][1] > global_max) {
                     global_max = buffer[0][1];
                     lastTreeElement.innerHTML = "(... , " + global_max + ")";
-
+                    sware_bulk_loads++;
                 }
                 else {
                     // Trigger the glow effect (top insert)
+                    sware_top_inserts++;
                     const circle = document.getElementById('circle');
                     circle.classList.add('glow-active');
                         
                     setTimeout(() => {
                         circle.classList.remove('glow-active');
                     }, 300);      
+
                 }
                 //lastTreeElement.innerHTML = "" + buffer[0];
                 buffer.shift();
@@ -392,8 +397,10 @@ function nextStep() {
                 if (buffer[lastSortedIndex][1] > global_max) {
                     global_max = buffer[lastSortedIndex][1];
                     lastTreeElement.innerHTML = "(... , " + global_max + ")";
+                    sware_bulk_loads++;
                 }
                 else {
+                    sware_top_inserts++;
                     // Trigger the glow effect (top insert)
                     const circle = document.getElementById('circle');
                     circle.classList.add('glow-active');
@@ -415,8 +422,10 @@ function nextStep() {
                 if (buffer[lastSortedIndex][1] > global_max) {
                     global_max = buffer[lastSortedIndex][1];
                     lastTreeElement.innerHTML = "(... , " + global_max + ")";
+                    sware_bulk_loads++;
                 }
                 else {
+                    sware_top_inserts++;
                     // Trigger the glow effect (top insert)
                     const circle = document.getElementById('circle');
                     circle.classList.add('glow-active');
@@ -428,6 +437,10 @@ function nextStep() {
                 //lastTreeElement.innerHTML = "" + buffer[4];
                 buffer.splice(0, 5);
             } 
+
+            // Calculate average pages per flush
+
+            sware_average_pages_per_flush = (tree.length * 10) / sware_flushes;
 
             // update HTMLs to show buffer after flush
             for (let i = 0; i < buffer.length; i++) {
@@ -455,6 +468,7 @@ function nextStep() {
         }
 
         remainingPages.sort((a, b) => a - b);
+        sware_sorts++;
 
         partitioned_data = [];
         buffer = [];
@@ -566,7 +580,6 @@ function nextStep() {
     
 
     // Start state (can't shift, will input everything)
-
     let page;
 
     if (total_data.length == selectedN) {
@@ -603,7 +616,14 @@ function nextStep() {
         let random_x = Math.floor(Math.random() * 81) + 10;
         document.getElementById("pole").style.left = random_x + "%";
     }
-    
+
+
+    document.getElementById("sware-sorts").innerHTML = sware_sorts;
+    document.getElementById("sware-flushes").innerHTML = sware_flushes;
+    document.getElementById("sware-average-pages-per-flush").innerHTML = sware_average_pages_per_flush.toFixed(2);
+    document.getElementById("sware-bulk-loads").innerHTML = sware_bulk_loads;
+    document.getElementById("sware-top-inserts").innerHTML = sware_top_inserts;
+
 }
 
 
@@ -674,11 +694,12 @@ function reset() {
     running = false;
     delay = 1000;
     wait = 3;
-    sware_bulk_loads = 0;
-    sware_top_inserts = 0;
     sware_sorts = 0;
     sware_flushes = 0;
     sware_average_pages_per_flush = 0;
+    sware_bulk_loads = 0;
+    sware_top_inserts = 0;
+
     quit_fast_inserts = 0;
     quit_top_inserts = 0;
     quit_pole_resets = 0;
