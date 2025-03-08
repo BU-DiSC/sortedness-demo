@@ -38,7 +38,10 @@ var inserted_data_quit = [];
 
 
 var sware_sorts = 0;
+var sware_sorts_history = [];
+
 var sware_flushes = 0;
+var sware_flushes_history = [];
 var sware_average_pages_per_flush = 0;
 var sware_bulk_loads = 0;
 var sware_top_inserts = 0;
@@ -511,8 +514,10 @@ function nextStep() {
         stat = 0;
 
     }
-    
 
+    sware_sorts_history.push(sware_sorts);
+    sware_flushes_history.push(sware_flushes);
+    
     /* QuIT */
     /*
     function isOutlier(n) {
@@ -554,9 +559,6 @@ function nextStep() {
     */
 
     function isOutlier(key) {
-
-        
-
         if (inserted_data_quit.length < leaf_node_size - 1) {
             console.log("Pole prev not created, still inputting");
 
@@ -600,7 +602,7 @@ function nextStep() {
 
         console.log("pole: " + pole + ", pole_prev: " + pole_prev + ", q: " + q + ", key: " + key + ", p: " + p);
         if ((q <= key) && (key < Math.max(...pole))) {
-            console.log("in range");
+            console.log("Key is inside pole");
             if (pole.length == leaf_node_size) {
                 let pole_copy = [];
 
@@ -627,6 +629,7 @@ function nextStep() {
 
                 if (r <= x) {
                     // is not an outlier
+                    console.log("key is not an outlier");
                     pole_prev = pole;
                     pole = pole_next;
 
@@ -644,6 +647,7 @@ function nextStep() {
             quit_fast_inserts++;
         }
         else {
+            console.log("Not in pole, fast insert needed");
             inserted_data_quit.push(key);
             quit_top_inserts++;
             console.log("pole_next: " + pole_next);
@@ -654,8 +658,7 @@ function nextStep() {
                 pole = pole_next;
             }
 
-            // Pole changes, do animation
-            console.log("Change 2");
+            // Pole changes, do animations
             let random_x = Math.floor(Math.random() * 81) + 10;
             document.getElementById("pole").style.left = random_x + "%";
             quit_pole_resets++;
@@ -663,6 +666,7 @@ function nextStep() {
 
     }
 
+    /*
     function isOutlierZ(n) {
         if (!inserted_data_quit || inserted_data_quit.length < 4) {
             console.log("Insufficient data for outlier detection.");
@@ -690,6 +694,8 @@ function nextStep() {
             return false;
         }
     }
+
+    */
     
 
     // Start state (can't shift, will input everything)
@@ -748,6 +754,8 @@ function nextStep() {
     document.getElementById("quit-top-inserts").innerHTML = quit_top_inserts;
     document.getElementById("quit-pole-resets").innerHTML = quit_pole_resets;
 
+
+    update_charts();
 }
 
 
@@ -833,6 +841,9 @@ function reset() {
     pole_prev = [];
     pole_next = [];
 
+    sware_sorts_history = [];
+    sware_flushes_history = [];
+
     // Reset each dropdown
     resetDropdown(document.getElementById("cmp-select-N"), "N");
     resetDropdown(document.getElementById("cmp-select-K"), "K");
@@ -852,5 +863,91 @@ function reset() {
     // stop_animation(); 
 
     console.log("Reset to default state.");
+}
+
+
+function update_charts() {
+    /*
+    const tickCount = 10;
+
+    // Google charts uses the upper bound when generating 
+    // ticks. This function manually creates the ticks 
+    // using N. 
+    function createTicks(N) {
+        tickArr = [];
+        tickArr.push(0);
+        let n =  Math.round(N / tickCount);
+        for (let i = n; i < N; i += n) {
+            tickArr.push(i);
+        }
+        tickArr.push(N);
+
+        return tickArr;
+    }
+
+    // Adjust data for plotting
+    var plot_data = generate_data(N, total_data); 
+    //console.log(plot_data);
+    var data = google.visualization.arrayToDataTable(plot_data);
+    // Options for the graph
+    var options = {
+        title: "position vs. value comparison (N=" + N +", K=" + K + ", L=" + L + ", B=" + B + ")",
+        hAxis: {title: 'Position', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        vAxis: {title: 'Value', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        legend: 'none',
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+    
+    // Draw the chart
+    var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+    */
+    let plot_data = [];
+    let data;
+
+    plot_data.push(['Position', 'Value']);
+    for (let i = 1; i <= sware_sorts_history.length; i++) {
+        plot_data.push([i, sware_sorts_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of Sware Sorts",
+        hAxis: {title: 'Position', minValue: 0, maxValue: sware_sorts_history.length, ticks: 1},
+        vAxis: {title: 'Value', minValue: 0, maxValue: Math.max(...sware_sorts_history), ticks: 1},
+        legend: 'none',
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-sorts-chart"));
+    chart.draw(data, options);
+
+
+
+    plot_data = [];
+    plot_data.push(['Position', 'Value']);
+    for (let i = 1; i <= sware_flushes_history.length; i++) {
+        plot_data.push([i, sware_flushes_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of Sware Sorts",
+        hAxis: {title: 'Position', minValue: 0, maxValue: sware_flushes_history.length, ticks: 1},
+        vAxis: {title: 'Value', minValue: 0, maxValue: Math.max(...sware_flushes_history), ticks: 1},
+        legend: 'none',
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-flushes-chart"));
+    chart.draw(data, options);
+
+
 }
 
