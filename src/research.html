@@ -714,7 +714,29 @@
 
 			<!-- Plots -->
 			<div id="plots">
-				<div class="row">
+				<!-- Color Legends -->
+				<hr>
+				<div id="color-legends" class="row justify-content-center" style="text-align: center; padding: 5px; padding-bottom: 20px">
+					<div class="col-lg-3 d-flex align-items-center justify-content-center">
+						<div class="d-flex align-items-center">
+							<div style="border: 2px solid #34A853; background-color: #34A853; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div id="lsm-cmpct-pp-1-legend">
+								<b>SWARE</b>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 d-flex align-items-center justify-content-center">
+						<div class="d-flex align-items-center">
+							<div style="border: 2px solid #FF9900; background-color: #FF9900; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div id="lsm-cmpct-pp-2-legend">
+								<b>QuIT</b>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Charts -->
+				<div class="row no-gutters">
 					<div class="col-lg-4">
 						<div id="sware-sorts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
 						</div>
@@ -728,7 +750,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row no-gutters">
 					<div class="col-lg-4">
 						<div id="sware-bulk-loads/quit-fast-inserts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
 						</div>

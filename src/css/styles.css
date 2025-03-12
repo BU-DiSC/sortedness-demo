@@ -1011,16 +1011,15 @@ div.fixed {
     height: 0; 
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 20px solid red; /* Arrow color */
+    border-bottom: 20px solid red; /* arrow color */
     position: absolute;
-    bottom: 60px; /* Adjust as needed */
+    bottom: 60px; 
     left: 50%; /* range = 10%-90% */
     transform: translateX(-50%);
-    transition: left 0.5s; /* Smooth transition for position changes */
+    transition: left 0.5s; /* Smooth transition */
 }
 
 
-/* LSM performance result display */
 #cost-result {
 	line-height: 2;
 	font-size: 1rem;
@@ -1057,7 +1056,7 @@ div.fixed {
 .cost {
     display: block;
     width: 100%;
-    text-align: center; /* Centers the zero values directly under the titles */
+    text-align: center; 
     font-weight: bold;
     font-size: 16px;
 }
@@ -1065,8 +1064,8 @@ div.fixed {
 .metric-title {
     display: block;
     width: 100%;
-    text-align: center; /* Ensures the titles are also centered */
+    text-align: center;
     font-weight: bold;
     font-size: 16px;
-    margin-bottom: 5px; /* Adds slight spacing between titles and zero values */
+    margin-bottom: 5px; 
 }

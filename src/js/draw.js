@@ -42,14 +42,24 @@ var sware_sorts_history = [];
 
 var sware_flushes = 0;
 var sware_flushes_history = [];
-var sware_average_pages_per_flush = 0;
-var sware_bulk_loads = 0;
-var sware_top_inserts = 0;
 
+var sware_average_pages_per_flush = 0;
+var sware_average_pages_per_flush_history = [];
+
+var sware_bulk_loads = 0;
+var sware_bulk_loads_history = [];
+
+var sware_top_inserts = 0;
+var sware_top_inserts_history = [];
 
 var quit_fast_inserts = 0;
+var quit_fast_inserts_history = [];
+
 var quit_top_inserts = 0;
+var quit_top_inserts_history = []; 
+
 var quit_pole_resets = 0;
+var quit_pole_resets_history = [];
 
 
 var leaf_node_size = 10;
@@ -517,6 +527,12 @@ function nextStep() {
 
     sware_sorts_history.push(sware_sorts);
     sware_flushes_history.push(sware_flushes);
+    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+    sware_bulk_loads_history.push(sware_bulk_loads);
+    quit_fast_inserts_history.push(quit_fast_inserts);
+    sware_top_inserts_history.push(sware_top_inserts);
+    quit_top_inserts_history.push(quit_top_inserts);
+    quit_pole_resets_history.push(quit_pole_resets);
     
     /* QuIT */
     /*
@@ -843,6 +859,12 @@ function reset() {
 
     sware_sorts_history = [];
     sware_flushes_history = [];
+    sware_average_pages_per_flush_history = [];
+    sware_bulk_loads_history = [];
+    quit_fast_inserts = [];
+    sware_top_inserts_history = [];
+    quit_top_inserts_history = [];
+    quit_pole_resets_history = [];
 
     // Reset each dropdown
     resetDropdown(document.getElementById("cmp-select-N"), "N");
@@ -907,39 +929,43 @@ function update_charts() {
     let plot_data = [];
     let data;
 
-    plot_data.push(['Position', 'Value']);
+    /* Number of SWARE Sorts vs. Operation Steps Chart */
+    plot_data.push(['Operation Steps', 'SWARE']);
     for (let i = 1; i <= sware_sorts_history.length; i++) {
         plot_data.push([i, sware_sorts_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
     var options = {
-        title: "Number of Sware Sorts",
-        hAxis: {title: 'Position', minValue: 0, maxValue: sware_sorts_history.length, ticks: 1},
-        vAxis: {title: 'Value', minValue: 0, maxValue: Math.max(...sware_sorts_history), ticks: 1},
-        legend: 'none',
+        title: "Number of SWARE Sorts vs. Operation Steps",
+        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_sorts_history.length, ticks: 1},
+        vAxis: {title: '# of SWARE Sorts', minValue: 0, maxValue: Math.max(...sware_sorts_history), ticks: 1},
+        legend: "none",
         explorer: { 
             zoomDelta: 0.8,
-        }
+        },
+        legends: "none",
+        colors: ["green"]
     };
 
     var chart = new google.visualization.LineChart(document.getElementById("sware-sorts-chart"));
     chart.draw(data, options);
 
 
-
+    /* Number of SWARE Flushes vs. Operation Steps Chart */
     plot_data = [];
-    plot_data.push(['Position', 'Value']);
+    plot_data.push(['Operation Steps', '# of SWARE Flushes']);
     for (let i = 1; i <= sware_flushes_history.length; i++) {
         plot_data.push([i, sware_flushes_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
     var options = {
-        title: "Number of Sware Sorts",
-        hAxis: {title: 'Position', minValue: 0, maxValue: sware_flushes_history.length, ticks: 1},
-        vAxis: {title: 'Value', minValue: 0, maxValue: Math.max(...sware_flushes_history), ticks: 1},
-        legend: 'none',
+        title: "Number of SWARE Flushes vs. Operation Steps",
+        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_flushes_history.length, ticks: 1},
+        vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_flushes_history), ticks: 1},
+        legend: "none",
+        colors: ["green"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -947,6 +973,97 @@ function update_charts() {
 
     var chart = new google.visualization.LineChart(document.getElementById("sware-flushes-chart"));
     chart.draw(data, options);
+    
+    /* Number of Average Pages per SWARE Flush vs. Operation Step Chart */
+    plot_data = [];
+    plot_data.push(['Operation Steps', '# of Average Pages per SWARE Flush vs. Operation Step Chart']);
+    for (let i = 1; i <= sware_average_pages_per_flush_history.length; i++) {
+        plot_data.push([i, sware_average_pages_per_flush_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of average pages per SWARE flush vs. Operations Steps",
+        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_average_pages_per_flush_history.length, ticks: 1},
+        vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_average_pages_per_flush_history), ticks: 1},
+        legend: "none",
+        colors: ["green"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-average-pages-per-flush-chart"));
+    chart.draw(data, options);
+
+    /* Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operation Step Chart */
+    plot_data = [];
+    plot_data.push(['Operation Steps', '# SWARE Bulk Loads', '# QuIT Fast Inserts']);
+    for (let i = 1; i <= sware_bulk_loads_history.length; i++) {
+        plot_data.push([i, sware_bulk_loads_history[i], quit_fast_inserts_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operations Steps",
+        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_bulk_loads_history.length, ticks: 1},
+        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_bulk_loads_history), Math.max(...quit_fast_inserts_history)), ticks: 1},
+        legend: "none",
+        colors: ["green", "#FF9900"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loads/quit-fast-inserts-chart"));
+    chart.draw(data, options);
+
+    /* Number of SWARE Top Inserts / QuIT Top Inserts vs. Operation Steps Chart */
+    plot_data = [];
+    plot_data.push(['Operation Steps', '# SWARE Top Inserts', '# QuIT Top Inserts']);
+    for (let i = 1; i <= sware_top_inserts_history.length; i++) {
+        plot_data.push([i, sware_top_inserts_history[i], quit_top_inserts_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of SWARE Top Inserts / QuIT Top Inserts vs. Operations Steps",
+        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_top_inserts_history.length, ticks: 1},
+        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_top_inserts_history), Math.max(...quit_top_inserts_history)), ticks: 1},
+        legend: "none",
+        colors: ["green", "#FF9900"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-top-inserts/quit-top-inserts-chart"));
+    chart.draw(data, options);
+
+    /* Number of QuIT Pole Resets Chart */
+    plot_data = [];
+    plot_data.push(['Operation Steps', '# QuIT Pole Resets']);
+    for (let i = 1; i <= quit_pole_resets_history.length; i++) {
+        plot_data.push([i, quit_pole_resets_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of QuIT Pole Resets vs. Operations Steps",
+        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: quit_pole_resets_history.length.length, ticks: 1},
+        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(...quit_pole_resets_history), ticks: 1},
+        legend: "none",
+        colors: ["#FF9900"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("quit-pole-resets-chart"));
+    chart.draw(data, options);
+
+
+
 
 
 }
