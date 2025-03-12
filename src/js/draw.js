@@ -1,6 +1,6 @@
 // Essential parameters
 
-var delay = 100; // delay between animations
+var delay = 1000; // delay between animations
 
 var buffer = [];
 var tree = [];
@@ -210,7 +210,7 @@ function run_operations() {
     document.getElementById('dashed-line').classList.remove('hidden'); 
     document.getElementById('quit-area').classList.remove("hidden");
     document.getElementById('results-panel').classList.remove("hidden");
-
+    document.getElementById('plots').classList.remove("hidden");
 
     draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
     let interval = setInterval(() => {
@@ -534,46 +534,7 @@ function nextStep() {
     quit_top_inserts_history.push(quit_top_inserts);
     quit_pole_resets_history.push(quit_pole_resets);
     
-    /* QuIT */
-    /*
-    function isOutlier(n) {
-        // IQR estimation (temporary solution)
-        if (!inserted_data_quit || inserted_data_quit.length < 4) {
-            console.log("Insufficient data for outlier detection.");
-            return false; // Not enough data to determine outliers
-        }
-    
-        // Sort the data
-        const sortedData = [...inserted_data_quit].sort((a, b) => a - b);
-        const len = sortedData.length;
-    
-        // Calculate Q1 and Q3
-        const Q1 = sortedData[Math.floor((len / 4))];
-        const Q3 = sortedData[Math.floor((3 * len / 4))];
-    
-        // Calculate IQR
-        const IQR = Q3 - Q1;
-    
-        // Determine lower and upper bounds
-        const lowerBound = Q1 - 1.5 * IQR;
-        const upperBound = Q3 + 1.5 * IQR;
-    
-        console.log(`Q1: ${Q1}, Q3: ${Q3}, IQR: ${IQR}`);
-        console.log(`Lower Bound: ${lowerBound}, Upper Bound: ${upperBound}`);
-        console.log(`Checking if ${n} is an outlier.`);
-    
-        // Check if n is an outlier
-        if (n < lowerBound || n > upperBound) {
-            console.log(`${n} is an outlier.`);
-            return true;
-        } else {
-            console.log(`${n} is not an outlier.`);
-            return false;
-        }
-        
-    }
-    */
-
+    /* QuIT Algorithm */
     function isOutlier(key) {
         if (inserted_data_quit.length < leaf_node_size - 1) {
             console.log("Pole prev not created, still inputting");
@@ -680,39 +641,7 @@ function nextStep() {
             quit_pole_resets++;
         }
 
-    }
-
-    /*
-    function isOutlierZ(n) {
-        if (!inserted_data_quit || inserted_data_quit.length < 4) {
-            console.log("Insufficient data for outlier detection.");
-            return false;
-        }
-    
-        // Calculate mean
-        const mean = inserted_data_quit.reduce((sum, x) => sum + x, 0) / inserted_data_quit.length;
-    
-        // Calculate standard deviation
-        const variance = inserted_data_quit.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / inserted_data_quit.length;
-        const stdDev = Math.sqrt(variance);
-    
-        // Calculate Z-score
-        const zScore = Math.abs((n - mean) / stdDev);
-    
-        console.log(`Mean: ${mean}, StdDev: ${stdDev}, Z-Score of ${n}: ${zScore}`);
-    
-        // Use a threshold of 1.5 for higher sensitivity
-        if (zScore > 1.5) {
-            console.log(`${n} is an outlier (Z-Score).`);
-            return true;
-        } else {
-            console.log(`${n} is not an outlier (Z-Score).`);
-            return false;
-        }
-    }
-
-    */
-    
+    }    
 
     // Start state (can't shift, will input everything)
     let page;
@@ -751,14 +680,7 @@ function nextStep() {
     page = parseInt(page);
 
     isOutlier(page);
-
-    /*
-    if (isOutlierZ(page)) {
-        let random_x = Math.floor(Math.random() * 81) + 10;
-        document.getElementById("pole").style.left = random_x + "%";
-    }
-    */
-
+    /** */
 
     document.getElementById("sware-sorts").innerHTML = sware_sorts;
     document.getElementById("sware-flushes").innerHTML = sware_flushes;
@@ -840,7 +762,7 @@ function reset() {
     destroyed;
     zonesDict = {};
     running = false;
-    delay = 100;
+    delay = 1000;
     wait = 3;
     sware_sorts = 0;
     sware_flushes = 0;
@@ -881,7 +803,7 @@ function reset() {
     document.getElementById("run-button-container").classList.add("hidden");
     document.getElementById('quit-area').classList.add("hidden");
     document.getElementById("results-panel").classList.add("hidden");
-
+    document.getElementById("charts").classList.add("hidden");
     // stop_animation(); 
 
     console.log("Reset to default state.");
