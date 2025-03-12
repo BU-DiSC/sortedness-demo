@@ -533,10 +533,16 @@ function nextStep() {
     sware_top_inserts_history.push(sware_top_inserts);
     quit_top_inserts_history.push(quit_top_inserts);
     quit_pole_resets_history.push(quit_pole_resets);
+
     
-    /* QuIT Algorithm */
+    /*********************************************************/
+    /************** QuIT Algorithm Starts Here ***************/
+    /*********************************************************/
+
+
     function isOutlier(key) {
         if (inserted_data_quit.length < leaf_node_size - 1) {
+            // leaf_node_size is set to 10
             console.log("Pole prev not created, still inputting");
 
             inserted_data_quit.push(key);
@@ -680,7 +686,12 @@ function nextStep() {
     page = parseInt(page);
 
     isOutlier(page);
-    /** */
+
+
+    /*********************************************************/
+    /************** QuIT Algorithm Ends Here *****************/
+    /*********************************************************/
+
 
     document.getElementById("sware-sorts").innerHTML = sware_sorts;
     document.getElementById("sware-flushes").innerHTML = sware_flushes;
