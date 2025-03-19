@@ -262,7 +262,7 @@ function fillTheBuffer() {
             destroyerSet = false;
             for (let i = 0; i < numInsideBuffer; i++) {
                 const iter = document.getElementById("buffer" + i);
-                iter.innerHTML = buffer[i];
+                //iter.innerHTML = buffer[i];
             }
 
             break;
@@ -432,7 +432,6 @@ function nextStep() {
                 //lastTreeElement.innerHTML = "" + buffer[0];
                 buffer.shift();
 
-                // Trigger the glow effect
                                 
             }
             else if (lastSortedIndex < 5) {
@@ -487,7 +486,8 @@ function nextStep() {
             // Calculate average pages per flush
 
             sware_average_pages_per_flush = (tree.length * 10) / sware_flushes;
-
+            
+            /*
             // update HTMLs to show buffer after flush
             for (let i = 0; i < buffer.length; i++) {
                 const iter = document.getElementById("buffer" + i);
@@ -498,6 +498,7 @@ function nextStep() {
                 const iter = document.getElementById("buffer" + i);
                 iter.innerHTML = "";
             }
+            */
         }
 
         adjustColors();
@@ -533,7 +534,7 @@ function nextStep() {
 
         for (let i = 0; i < buffer.length; i++) {
             const iter = document.getElementById("buffer" + i);
-            iter.innerHTML = buffer[i];
+            //iter.innerHTML = buffer[i];
         }   
 
         lastSortedIndex = buffer.length - 1;
