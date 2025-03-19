@@ -812,7 +812,7 @@ div.fixed {
     transition: none;     
 }
 
-
+/*
 .triangle {
     width: 0;
     height: 0;
@@ -824,7 +824,26 @@ div.fixed {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+*/
 
+.triangle {
+    height: 60%;
+    margin-left: 120px;
+    --r:20px; /* border radius */
+  
+    aspect-ratio: 1/cos(30deg);
+    --_g:calc(tan(60deg)*var(--r)) bottom var(--r),#000 98%,#0000 101%;
+    -webkit-mask:
+      conic-gradient(from -30deg at 50% calc(200% - 3*var(--r)/2),#000 60deg,#0000 0)
+       0 100%/100% calc(100% - 3*var(--r)/2) no-repeat,
+      radial-gradient(var(--r) at 50% calc(2*var(--r)),#000 98%,#0000 101%),
+      radial-gradient(var(--r) at left  var(--_g)),
+      radial-gradient(var(--r) at right var(--_g));
+    clip-path: polygon(50% 0,100% 100%,0 100%);
+    background: lightgray;
+    
+}
+  
 .dots {
     position: absolute;
     top: 65%;
@@ -845,6 +864,7 @@ div.fixed {
     width: 70px;
     height: 20px;
     background-color: #22dd18;
+    border-radius: 5px; 
 }
 
 .rectangles {
@@ -925,12 +945,12 @@ div.fixed {
 }
 
 .circle {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     background-color: #dc9806; /* Mellow Yellow */
     border-radius: 50%;
     position: absolute;
-    top: 9%;
+    top: 5%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -990,6 +1010,7 @@ div.fixed {
     width: 40px;
     height: 20px;
     background-color: #22dd18;
+    border-radius: 5px; 
 }
 
 .rectangles-quit {
