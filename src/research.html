@@ -93,28 +93,20 @@
 				</div>
 			</div>
 		</section>
+		<h4 class="text-center" style="font-size:large; padding-bottom: 20px;">Workload</h4>
+
 			<!-- Input fields for the parameters -->
 			<div id="cmp-conf-row">
 
 				<!-- Div of N -->
 				<div class="col-3">
-					<!-- Title for N-->
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Number of entries (N)</h4>
-
 					<!-- Default input field for N-->
 					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioN" id="radioN1" checked>
-								<label class="form-check-label" for="radioN1"></label>
-							</div>
-						</div>
 						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-N">N</label>
+									<label class="input-group-text" for="cmp-select-N">N (# of elements)</label>
 								</div>
 								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
 									<option value="" selected disabled></option>
@@ -125,49 +117,18 @@
 							</div>
 						</div>
 					</div>
-					
-					<!-- Manual input field for N-->
-					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
-								<label class="form-check-label" for="radioN2"></label>
-							</div>
-						</div>
-						<!-- Manual field -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualN" type="number" min="0" step="1" class="cmp-input form-control">
-							</div>
-						</div>
-					</div>
-					
-					
 				</div>
 				
 				<!-- Div of K -->
 				<div class="col-3">
-					<!-- Title for K -->
-					<h4 class="text-center" style="font-size:large">Percentage of number of out-order elements (K%)</h4>
 
 					<!-- Default input field for K -->
 					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioK" id="radioK1" checked>
-								<label class="form-check-label" for="radioK1"></label>
-							</div>
-						</div>
 						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-K">K</label>
+									<label class="input-group-text" for="cmp-select-K">K (% out-of-order elements)</label>
 								</div>
 								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
 									<option value=""></option>
@@ -187,50 +148,17 @@
 		
 						</div>
 					</div>
-
-					<!-- Manual input field for K -->
-					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
-								<label class="form-check-label" for="radioK2"></label>
-							</div>
-						</div>
-						<!-- Manual field -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualK" type="number" min="0" step="1" class="cmp-input form-control">
-								<div class="input-group-append">
-									<span class="input-group-text">%</span>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 
 				<!-- Div of L-->
 				<div class="col-3">
-					<!-- Title for L -->
-					<h4 class="text-center" style="font-size:large;">Percentage of maximum out-of-orderness (L%)</h4>
-
 					<!-- Default input field for L -->
 					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioL" id="radioL1" checked>
-								<label class="form-check-label" for="radioL1"></label>
-							</div>
-						</div>
 						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-L">L</label>
+									<label class="input-group-text" for="cmp-select-L">L (% max out-of-orderness)</label>
 								</div>
 								<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
 									<option value=""></option>
@@ -250,45 +178,12 @@
 		
 						</div>
 					</div>
-
-					<!-- Manual input field for L -->
-					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioL" id="radioL2">
-								<label class="form-check-label" for="radioL2"></label>
-							</div>
-						</div>
-						<!-- Manual field -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualL" type="number" min="0" step="1" class="cmp-input form-control">
-								<div class="input-group-append">
-									<span class="input-group-text">%</span>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 
 				<!-- Div of B -->
 				<div class="col-3">
-					<!-- Title for B -->
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Distribution (&#945, &#946)</h4>
-
 					<!-- Default input field for B -->
 					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioB" id="radioB1" checked>
-								<label class="form-check-label" for="radioB1"></label>
-							</div>
-						</div>
 						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
@@ -309,26 +204,6 @@
 									<option value="0.9">0.9</option>
 									<option value="1">1</option>
 								</select>
-							</div>
-						</div>
-					</div>
-
-					<!-- Manual input field for B -->
-					<div class="row">
-						<!-- Radio -->
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioB" id="radioB2">
-								<label class="form-check-label" for="radioB2"></label>
-							</div>
-						</div>
-						<!-- Manual field -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualB" type="number" min="0" step="1" class="cmp-input form-control">
 							</div>
 						</div>
 					</div>
@@ -572,97 +447,326 @@
 			</div>
 
 			
+			<div class="container mt-5 d-flex" style="flex-direction: row;">
+				<!-- Areas for the tree and the buffer -->
+				<div id="buffer-area" class="hidden container mt-5" style="flex-direction: column;">
+						<!-- Area for the buffer -->
+							<h4>Buffer</h4>
+							<div style="height: 120px; border: 2px solid lightgray; border-radius: 5px;">
+								<div class="auto; overflow-x; overflow-y; container mt-5" style="left: 8%; position: relative;">
+									<div class="section-labels-sware">
+										<button class="btn btn-primary buffer-btn" id="buffer0"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer1"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer2"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer3"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer4"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer5"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer6"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer7"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer8"></button>
+										<button class="btn btn-primary buffer-btn" id="buffer9"></button>
+									</div>
+								</div>
+							</div>						
+						<!-- Area for the tree, step 3+ -->
+						<div id="tree-area-step-3+" class="hidden">
+							<h4>Tree</h4>
+							<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+							border-radius: 5px; position: relative;">
+								<!-- Small Circle on Top of the Triangle -->
+								<div id="circle" class="circle"></div>
+								
+								<!-- Existing Triangle -->
+								<div class="triangle"></div>
+								
+								<div class="dots">
+									<span class="dot"></span>
+									<span class="dot"></span>
+									<span class="dot"></span>
+								</div>
+								<!-- Rectangles below the dots -->
+								<div class="rectangles">
+									<div class="rectangle"></div>
+									<div class="rectangle"></div>
+									<div class="rectangle"></div>
+									<div class="smallerDots">
+										<span class="smallerDot"></span>
+										<span class="smallerDot"></span>
+										<span class="smallerDot"></span>
+									</div>
+									<div class="rectangle" id="last-tree"></div> 
+								</div>
+							</div>
+						</div>
+											
+						<!--
+						<div id="tree-area-step-0" class="col-12 hidden">
+							<h4>Tree</h4>
+							<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+							border-radius: 5px; display: flex; justify-content: center; align-items: center;">
+								<div id="rectangle-0-step-0" class="rectangle"></div>
+							</div>
+						</div>
 
-			<!-- Areas for the tree and the buffer -->
-			<div class="container mt-5">
-				<div class="row">
+						<div id="tree-area-step-1" class="col-12 hidden">
+							<h4>Tree</h4>
+							<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+										border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
+								<div id="rectangle-step-top" 
+									class="rectangle" style="width: 100px"></div>
+								<div style="display: flex; justify-content: center; gap: 20px;">
+									<div id="rectangle-0-step-1" class="rectangle"></div>
+									<div id="rectangle-1-step-1" class="rectangle"></div>
+								</div>
+							</div>
+						</div>
+
+						<div id="tree-area-step-2" class="col-12 hidden">
+							<h4>Tree</h4>
+							<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+										border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
+								<div id="rectangle-step-top" 
+									class="rectangle" style="width: 100px"></div>
+								<div style="display: flex; justify-content: center; gap: 20px;">
+									<div id="rectangle-0-step-2" class="rectangle"></div>
+									<div id="rectangle-1-step-2" class="rectangle"></div>
+									<div id="rectangle-2-step-2" class="rectangle"></div>
+								</div>
+							</div>
+						</div>
+						-->
+				</div>
+				<!-- QuIT Part -->
+				<div id="quit-area" class="hidden container mt-5" style="flex-direction: column;">
 					<!-- Area for the buffer -->
-					<div id="buffer-area" class="col-12 hidden">
-						<h4>Buffer</h4>
-						<div style="padding: 10px; height: 150px; overflow-y: auto;">
-							<div class="container mt-5 text-center">
-								<div class="section-labels">
-									<button class="btn btn-primary buffer-btn" id="buffer0"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer1"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer2"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer3"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer4"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer5"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer6"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer7"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer8"></button>
-									<button class="btn btn-primary buffer-btn" id="buffer9"></button>
+						<h4>Page Stream</h4>
+						<div style="height: 120px; border: 2px solid lightgray; border-radius: 5px;">
+							<div class="auto; overflow-x; overflow-y; container mt-5" style="position: relative;">
+								<div class="section-labels-quit">
+									<button class="btn btn-primary page-btn" id="page0"></button>
+									<button class="btn btn-primary page-btn" id="page1"></button>
+									<button class="btn btn-primary page-btn" id="page2"></button>
+									<button class="btn btn-primary page-btn" id="page3"></button>
+									<button class="btn btn-primary page-btn" id="page4"></button>
+									<button class="btn btn-primary page-btn" id="page5"></button>
+									<button class="btn btn-primary page-btn" id="page6"></button>
+									<button class="btn btn-primary page-btn" id="page7"></button>
+									<button class="btn btn-primary page-btn" id="page8"></button>
+									<button class="btn btn-primary page-btn" id="page9"></button>
+									<button class="btn btn-primary page-btn" id="page10"></button>
+									<button class="btn btn-primary page-btn" id="page11"></button>
+									<button class="btn btn-primary page-btn" id="page12"></button>
+									<button class="btn btn-primary page-btn" id="page13"></button>
+									<button class="btn btn-primary page-btn" style="border-right: none" id="page14"></button>
 								</div>
 							</div>
-						</div>						
-					</div>
-					<!-- Area for the tree, step 3+ -->
-					<div id="tree-area-step-3+" class="col-12 hidden">
-						<h4>Tree</h4>
-						<div  style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-    border-radius: 5px;">
-							<div class="triangle"></div>
-							<div class="dots">
-								<span class="dot"></span>
-								<span class="dot"></span>
-								<span class="dot"></span>
-							</div>
-							<!-- Rectangles below the dots -->
-							<div class="rectangles">
-								<div class="rectangle"></div>
-								<div class="rectangle"></div>
-								<div class="rectangle"></div>
-								<div class="smallerDots">
-									<span class="smallerDot"></span>
-									<span class="smallerDot"></span>
-									<span class="smallerDot"></span>
+						</div>		
+						
+						<!-- QuIT Tree-->
+						<div id="tree-quit">
+							<h4>QuIT Tree</h4>
+							<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
+							border-radius: 5px; position: relative;">
+								
+								<!-- Existing Triangle -->
+								<div class="triangle"></div>
+								
+								<div class="dots">
+									<span class="dot"></span>
+									<span class="dot"></span>
+									<span class="dot"></span>
 								</div>
-								<div class="rectangle" id="last-tree"></div> 
+								<!-- Rectangles below the dots -->
+								<div class="rectangles-quit">
+									<div class="rectangle-quit"></div>
+									<div class="rectangle-quit"></div>
+									<div class="rectangle-quit"></div>
+									<div class="rectangle-quit"></div>
+									<div class="rectangle-quit"></div>
+									<div class="rectangle-quit"></div>
+									<div class="smallerDots-quit">
+										<span class="smallerDot-quit"></span>
+										<span class="smallerDot-quit"></span>
+										<span class="smallerDot-quit"></span>
+									</div>
+									<div class="rectangle-quit" id="last-tree-quit"></div> 
+								</div>
+
+								<!-- pole arrow -->
+								<div id="pole" class="arrow-up"></div>
 							</div>
 						</div>
-					</div>
 
-					<!-- Area for the tree, step 0 (one rectangle) -->
-					<div id="tree-area-step-0" class="col-12 hidden">
-						<h4>Tree</h4>
-						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-						border-radius: 5px; display: flex; justify-content: center; align-items: center;">
-							<div id="rectangle-0-step-0" class="rectangle"></div>
-						</div>
-					</div>
-
-					<!-- Area for the tree, step 1 (two rectangles and an subindex) -->
-					<div id="tree-area-step-1" class="col-12 hidden">
-						<h4>Tree</h4>
-						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-									border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
-							<div id="rectangle-step-top" 
-								 class="rectangle" style="width: 100px"></div>
-							<div style="display: flex; justify-content: center; gap: 20px;">
-								<div id="rectangle-0-step-1" class="rectangle"></div>
-								<div id="rectangle-1-step-1" class="rectangle"></div>
-							</div>
-						</div>
-					</div>
-
-					<!-- Area for the tree, step 2 (three rectangles and an subindex) -->
-					<div id="tree-area-step-2" class="col-12 hidden">
-						<h4>Tree</h4>
-						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-									border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
-							<div id="rectangle-step-top" 
-								 class="rectangle" style="width: 100px"></div>
-							<div style="display: flex; justify-content: center; gap: 20px;">
-								<div id="rectangle-0-step-2" class="rectangle"></div>
-								<div id="rectangle-1-step-2" class="rectangle"></div>
-								<div id="rectangle-2-step-2" class="rectangle"></div>
-							</div>
-						</div>
-					</div>
-					
 
 				</div>
 			</div>
+
+			<!-- Results Panel -->
+			 <!-- Titles -->
+			<div id="results-panel" class="hidden">
+				<div id="indiv-bush-row" class="row" style="padding-top: 30px">
+					<div class="col-sm">
+						<div id="cmp-lsm-cmpct-pp-1-mp" class="row cmp-indiv-mp">
+							<div class="lsm-title">
+								<span id="sware-alg-table-title" class="row cmp-indiv-mp" style="margin-left: -130px;">SWARE</span>
+							</div>
+							<br>
+						</div>
+						<div id="table1"></div>
+					</div>
+					<div class="col-sm">
+						<div id="cmp-lsm-cmpct-pp-2-mp" class="row cmp-indiv-mp">
+							<div class="lsm-title">
+								<span id="quit-alg-table-title" class="row cmp-indiv-mp">QuIT</span>
+							</div>
+						</div>
+						<div id="table2"></div>
+					</div>
+				</div>
+
+
+
+				<div id="cost-result" class="container">
+					<!-- #Sorts -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-sorts" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of times a requested page is not found in the bufferpool.">#Sorts</span>
+						</div>
+						<div class="col text-left">
+							<span class="cost uncertain"></span>
+						</div>
+					</div>
+
+					<!-- #Buffer Flushes -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-flushes" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of times a requested page is in the bufferpool.">#Buffer Flushes</span>
+						</div>
+						<div class="col text-left">
+							<span class="cost uncertain"></span>
+						</div>
+					</div>
+
+					<!-- #Average Pages per Flush -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-average-pages-per-flush" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title">#Average Pages per Flush</span>
+						</div>
+						<div class="col text-left">
+							<span class="cost uncertain"></span>
+						</div>
+					</div>
+
+					<!-- #Bulk Loads / Fast Inserts -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-bulk-loads" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of dirty pages written.">#Bulk Loads / Fast Inserts</span>
+						</div>
+						<div class="col text-left">
+							<span id="quit-fast-inserts" class="cost uncertain">0</span>
+						</div>
+					</div>
+
+					<!-- #Top Inserts -->
+					<div class="row">
+						<div class="col text-right">
+							<span id="sware-top-inserts" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title" data-toggle="tooltip" data-placement="left"
+								title="The number of pages processed from a workload.">#Top Inserts</span>
+						</div>
+						<div class="col text-left">
+							<span id="quit-top-inserts" class="cost uncertain">0</span>
+						</div>
+					</div>
+
+					<!-- #Pole Resets -->
+					<div class="row">
+						<div class="col text-right">
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right"></span>
+						</div>
+						<div class="col-2 text-center">
+							<span class="metric-title">#Pole Resets</span>
+						</div>
+						<div class="col text-left">
+							<span id="quit-pole-resets" class="cost uncertain">0</span>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<!-- Plots -->
+			<div id="plots" class="hidden">
+				<!-- Color Legends -->
+				<hr>
+				<div id="color-legends" class="row justify-content-center" style="text-align: center; padding: 5px; padding-bottom: 20px">
+					<div class="col-lg-3 d-flex align-items-center justify-content-center">
+						<div class="d-flex align-items-center">
+							<div style="border: 2px solid #34A853; background-color: #34A853; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div id="lsm-cmpct-pp-1-legend">
+								<b>SWARE</b>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 d-flex align-items-center justify-content-center">
+						<div class="d-flex align-items-center">
+							<div style="border: 2px solid #FF9900; background-color: #FF9900; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div id="lsm-cmpct-pp-2-legend">
+								<b>QuIT</b>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Charts -->
+				<div class="row no-gutters">
+					<div class="col-lg-4">
+						<div id="sware-sorts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div id="sware-flushes-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div id="sware-average-pages-per-flush-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+						</div>
+					</div>
+				</div>
+				<div class="row no-gutters">
+					<div class="col-lg-4">
+						<div id="sware-bulk-loads/quit-fast-inserts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div id="sware-top-inserts/quit-top-inserts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div id="quit-pole-resets-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			
 		</div>
 
 
