@@ -118,8 +118,7 @@ var map = {
   "N10000_K20_L20_B0.5": dataN10000_K20_L20_B05
 }
 
-function create_data(N, K, L, B)
-{
+function create_data(N, K, L, B) {
   let title = "N" + N + "_K" + K + "_L" + L + "_B" + B;
   data = map[title];
   console.log(data);
@@ -174,9 +173,56 @@ function create_data(N, K, L, B)
     console.log(shuffled_data);
 
     return shuffled_data;
-    */
+    
 
     return numberArray;
+    */
+}
+
+function create_inversion_data(N, I) {
+  // Uses Fisher-Yates shuffle
+  let arr = Array.from({ length: N }, (_, i) => i + 1);
+  for (let i = N - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+
+  function countInversions(arr) {
+    let count = 0;
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = i + 1; j < arr.length; j++) {
+        if (arr[i] > arr[j]) count++;
+      }
+    }
+    return count;
+  }
+
+  let currentInversions = countInversions(arr);
+
+  while (currentInversions !== I) {
+    for (let i = 0; i < N - 1 && currentInversions < I; i++) {
+      for (let j = i + 1; j < N && currentInversions < I; j++) {
+        if (arr[i] < arr[j]) {
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+          currentInversions++;
+        }
+      }
+    }
+    if (currentInversions > I) {
+      for (let i = 0; i < N - 1 && currentInversions > I; i++) {
+        for (let j = i + 1; j < N && currentInversions > I; j++) {
+          if (arr[i] > arr[j]) {
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+            currentInversions--;
+          }
+        }
+      }
+    }
+  }
+  
+  console.log("Inversion data: ");
+  console.log(arr);
+  return arr;
 }
 
 function generate_data(N, data)

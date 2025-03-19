@@ -720,6 +720,14 @@ footer .footer-below {
     width: 100%;
 }
 
+#chart_div_inversions {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+}
+
 #info_div {
     background-color: #f8f9fa;
     border-radius: 10px;

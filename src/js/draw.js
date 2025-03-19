@@ -31,6 +31,7 @@ var selectedN; // stores the N value selected
 var selectedK; // stores the K value selected
 var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
+var selectedI; // stores the I value selected
 
 
 var inserted_data_quit = [];
@@ -94,6 +95,9 @@ function visualize_workload() {
     // Get the correct input for B
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
 
+    // Get the correct input for I
+    selectedI = parseInt(document.getElementById('cmp-select-I').value);
+
     let flag = true // flag to generate graph when parameters are acceptable
     
     // Put the inputs in console
@@ -151,13 +155,15 @@ function visualize_workload() {
         // Generate data
         running = true;  
         total_data = create_data(selectedN, selectedK, selectedL, selectedB);
-        draw_chart(total_data, selectedN, selectedK, selectedL, selectedB);
+        total_inversion_data = create_inversion_data(selectedN, selectedI);
+        draw_chart(total_data, total_inversion_data, selectedN, selectedK, selectedL, selectedB, selectedI);
+        
     }
     else {
         console.log("Expecting correct input");
     }
 }
-function draw_chart(total_data, N, K, L, B) {
+function draw_chart(total_data, total_inversion_data, N, K, L, B, I) {
     const tickCount = 10;
 
     // Google charts uses the upper bound when generating 
@@ -193,10 +199,34 @@ function draw_chart(total_data, N, K, L, B) {
     // Draw the chart
     var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
     chart.draw(data, options);
+
+
+
+
+    // Adjust data for plotting
+    plot_data = generate_data(N, total_inversion_data); 
+    //console.log(plot_data);
+    data = google.visualization.arrayToDataTable(plot_data);
+    // Options for the graph
+    var options = {
+        title: "example inversions data (N=" + N + ", I=" + I + ")",
+        hAxis: {title: 'Position', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        vAxis: {title: 'Value', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        legend: 'none',
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart_inversions = new google.visualization.ScatterChart(document.getElementById('chart_div_inversions'));
+    chart_inversions.draw(data, options)
+
+    
     
     document.getElementById("stop-button").disabled = false;
     document.getElementById("continue-button").disabled = true;
     document.getElementById("nextstep-button").disabled = true;
+
 }
 
 

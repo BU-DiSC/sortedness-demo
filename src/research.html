@@ -413,18 +413,72 @@
 			-->
 
 			<!-- "Visualize Workload" button -->
-			<div class="row">
-				<div class="col-md-11 text-right pt-4">
-					<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
+
+		</h4>
+
+		<h4 class="text-center" style="font-size:large; padding-bottom: 20px;">Inversions</h4>
+		<div id="cmp-conf-row">
+			<div class="col-3">
+				<!-- Default input field for Inversions -->
+				<div class="row">
+					<!-- Select object -->
+					<div class="col">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text" for="cmp-select-I">I (% inversions)</label>
+							</div>
+							<select id="cmp-select-I" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+								<option value=""></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</h4>
+
+		<div class="row">
+			<div class="col-md-11 text-right pt-4" style="padding-bottom: 20px";>
+				<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+
+			<!-- Charts -->
+			<div class="row gx-0" style="padding-left: 0px; padding-right:0px">
+				<!-- Chart 1 (default) -->
+				<div class="col-6">
+					<div class="container px-0">
+						<div class="center equal-height" id="chart-column">
+							<div id="chart_div" class="equal-height"></div>
+						</div>
+					</div>
+				</div>
+				<!-- Chart 2 (inversions) -->
+				<div class="col-6">
+					<div class="container px-0">
+						<div class="equal-height">
+							<div id="chart_div_inversions" class="equal-height"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<!-- Chart -->
-			<div class="container mt-5 d-flex justify-content-center" id="chart-container">		
-				<div class="col-md-9 equal-height hidden" id="chart-column">
-					<div id="chart_div" class="equal-height"></div>
-				</div>
-			</div>
+
+
+
+
+
+
+
+
 
 			<!-- "Run" button -->
 			<div class="row">
