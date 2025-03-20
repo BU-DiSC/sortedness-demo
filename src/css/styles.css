@@ -932,7 +932,23 @@ div.fixed {
 }
 
 #buttons-container {
-    padding-top: 50px;
+    display: flex;
+    justify-content: center; /* Keeps buttons centered */
+    align-items: center;
+    gap: 0; /* Removes extra space */
+}
+
+#buttons-container button {
+    margin: 0; /* Ensures no margin around buttons */
+    padding: 10px; /* Adds some padding for a larger clickable area */
+    width: 40px; /* Adjusts button width */
+    height: 40px; /* Adjusts button height */
+    border: none; /* Removes border */
+}
+
+#buttons-container button img {
+    width: 20px; /* Makes images inside buttons bigger */
+    height: 20px;
 }
 
 #dashed-line {
@@ -1097,4 +1113,24 @@ div.fixed {
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 5px; 
+}
+
+#stop-button{
+    background: linear-gradient(135deg, #5D6D7E 0%, #AAB7B8 100%) !important; 
+    color: black;
+}
+
+#continue-button{
+    background: linear-gradient(135deg, #5D6D7E 0%, #AAB7B8 100%) !important;
+    color: black;
+}
+
+#nextstep-button{
+    background: linear-gradient(135deg, #b55802 0%, #ffd016 100%) !important;
+    color: black;
+}
+
+#reset-button{
+    background: linear-gradient(135deg, #ca1616 0%, #df4d18 100%) !important;
+    color: black;
 }

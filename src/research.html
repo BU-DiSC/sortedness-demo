@@ -491,12 +491,18 @@
 			<hr id="dashed-line" style="border-top: dotted 2px;" class="hidden" />
 			
 			<!-- Buttons -->
-			<div class="row mt-3 hidden" id="buttons-container">
-				<div class="col text-center">
+			<div id="buttons-container-wrapper" class="hidden">
+				<div class="col text-center" id="buttons-container">
+					<!--
 					<button id="stop-button" onclick="stop_animation()" type="button"><img src="./img/stop.png" alt="Stop" width="20" height="20"></button>					
 					<button id="continue-button" onclick="continue_animation()" type="button"><img src = "./img/continue.png" alt="Continue" widht = 20 height="20"></button>
 					<button id="nextstep-button" onclick="nextstep_animation()" type="button"><img src = "./img/nextstep.png" alt="Nextstep" widht = 20 height="20"></button>
 					<button id="reset-button" onclick="reset()" type="button"><img src = "./img/reset.png" alt="Nextstep" widht = 20 height="20"></button>
+					-->
+					<button id="stop-button" onclick="stop_animation()" type="button" class="btn btn-info"><img src="./img/stop.png" alt="Stop"></button>					
+					<button id="continue-button" onclick="continue_animation()" type="button" class="btn btn-warning"><img src = "./img/continue.png" alt="Continue"></button>
+					<button id="nextstep-button" onclick="nextstep_animation()" type="button" class="btn btn-warning"><img src = "./img/nextstep.png" alt="Nextstep"></button>
+					<button id="reset-button" onclick="reset()" type="button" class="btn btn-warning"><img src = "./img/reset.png" alt="Nextstep"></button>
 				</div>
 			</div>
 

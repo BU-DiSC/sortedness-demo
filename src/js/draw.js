@@ -236,7 +236,7 @@ function run_operations() {
 
     //document.getElementById('tree-area-step-3+').classList.remove('hidden');
     document.getElementById('buffer-area').classList.remove('hidden');
-    document.getElementById('buttons-container').classList.remove('hidden');
+    document.getElementById('buttons-container-wrapper').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden'); 
     document.getElementById('quit-area').classList.remove("hidden");
     document.getElementById('results-panel').classList.remove("hidden");
@@ -838,14 +838,14 @@ function reset() {
 
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
-    document.getElementById("buttons-container").classList.add("hidden");
+    document.getElementById("buttons-container-wrapper").classList.add("hidden");
     document.getElementById("tree-area-step-3+").classList.add("hidden");
     document.getElementById("buffer-area").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
     document.getElementById("run-button-container").classList.add("hidden");
     document.getElementById('quit-area').classList.add("hidden");
     document.getElementById("results-panel").classList.add("hidden");
-    document.getElementById("charts").classList.add("hidden");
+    document.getElementById("plots").classList.add("hidden");
     // stop_animation(); 
 
     console.log("Reset to default state.");
