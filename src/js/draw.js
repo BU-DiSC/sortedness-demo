@@ -909,7 +909,7 @@ function update_charts() {
             zoomDelta: 0.8,
         },
         legends: "none",
-        colors: ["green"]
+        colors: ["#80CBC4"]
     };
 
     var chart = new google.visualization.LineChart(document.getElementById("sware-sorts-chart"));
@@ -929,7 +929,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_flushes_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_flushes_history), ticks: 1},
         legend: "none",
-        colors: ["green"],
+        colors: ["#80CBC4"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -951,7 +951,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_average_pages_per_flush_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_average_pages_per_flush_history), ticks: 1},
         legend: "none",
-        colors: ["green"],
+        colors: ["#80CBC4"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -973,7 +973,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_bulk_loads_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_bulk_loads_history), Math.max(...quit_fast_inserts_history)), ticks: 1},
         legend: "none",
-        colors: ["green", "#FF9900"],
+        colors: ["#80CBC4", "#FFB433"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -995,7 +995,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_top_inserts_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_top_inserts_history), Math.max(...quit_top_inserts_history)), ticks: 1},
         legend: "none",
-        colors: ["green", "#FF9900"],
+        colors: ["#80CBC4", "#FFB433"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -1017,7 +1017,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: quit_pole_resets_history.length.length, ticks: 1},
         vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(...quit_pole_resets_history), ticks: 1},
         legend: "none",
-        colors: ["#FF9900"],
+        colors: ["#FFB433"],
         explorer: { 
             zoomDelta: 0.8,
         }
