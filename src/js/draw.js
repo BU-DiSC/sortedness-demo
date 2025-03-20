@@ -31,6 +31,7 @@ var selectedN; // stores the N value selected
 var selectedK; // stores the K value selected
 var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
+var selectedI; // stores the I value selected
 
 
 var inserted_data_quit = [];
@@ -94,6 +95,9 @@ function visualize_workload() {
     // Get the correct input for B
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
 
+    // Get the correct input for I
+    selectedI = parseInt(document.getElementById('cmp-select-I').value);
+
     let flag = true // flag to generate graph when parameters are acceptable
     
     // Put the inputs in console
@@ -151,13 +155,15 @@ function visualize_workload() {
         // Generate data
         running = true;  
         total_data = create_data(selectedN, selectedK, selectedL, selectedB);
-        draw_chart(total_data, selectedN, selectedK, selectedL, selectedB);
+        total_inversion_data = create_inversion_data(selectedN, selectedI);
+        draw_chart(total_data, total_inversion_data, selectedN, selectedK, selectedL, selectedB, selectedI);
+        
     }
     else {
         console.log("Expecting correct input");
     }
 }
-function draw_chart(total_data, N, K, L, B) {
+function draw_chart(total_data, total_inversion_data, N, K, L, B, I) {
     const tickCount = 10;
 
     // Google charts uses the upper bound when generating 
@@ -193,10 +199,34 @@ function draw_chart(total_data, N, K, L, B) {
     // Draw the chart
     var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
     chart.draw(data, options);
+
+
+
+
+    // Adjust data for plotting
+    plot_data = generate_data(N, total_inversion_data); 
+    //console.log(plot_data);
+    data = google.visualization.arrayToDataTable(plot_data);
+    // Options for the graph
+    var options = {
+        title: "example inversions data (N=" + N + ", I=" + I + ")",
+        hAxis: {title: 'Position', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        vAxis: {title: 'Value', minValue: 0, maxValue: N, ticks: createTicks(N)},
+        legend: 'none',
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart_inversions = new google.visualization.ScatterChart(document.getElementById('chart_div_inversions'));
+    chart_inversions.draw(data, options)
+
+    
     
     document.getElementById("stop-button").disabled = false;
     document.getElementById("continue-button").disabled = true;
     document.getElementById("nextstep-button").disabled = true;
+
 }
 
 
@@ -206,7 +236,7 @@ function run_operations() {
 
     //document.getElementById('tree-area-step-3+').classList.remove('hidden');
     document.getElementById('buffer-area').classList.remove('hidden');
-    document.getElementById('buttons-container').classList.remove('hidden');
+    document.getElementById('buttons-container-wrapper').classList.remove('hidden');
     document.getElementById('dashed-line').classList.remove('hidden'); 
     document.getElementById('quit-area').classList.remove("hidden");
     document.getElementById('results-panel').classList.remove("hidden");
@@ -232,7 +262,7 @@ function fillTheBuffer() {
             destroyerSet = false;
             for (let i = 0; i < numInsideBuffer; i++) {
                 const iter = document.getElementById("buffer" + i);
-                iter.innerHTML = buffer[i];
+                //iter.innerHTML = buffer[i];
             }
 
             break;
@@ -402,7 +432,6 @@ function nextStep() {
                 //lastTreeElement.innerHTML = "" + buffer[0];
                 buffer.shift();
 
-                // Trigger the glow effect
                                 
             }
             else if (lastSortedIndex < 5) {
@@ -457,7 +486,8 @@ function nextStep() {
             // Calculate average pages per flush
 
             sware_average_pages_per_flush = (tree.length * 10) / sware_flushes;
-
+            
+            /*
             // update HTMLs to show buffer after flush
             for (let i = 0; i < buffer.length; i++) {
                 const iter = document.getElementById("buffer" + i);
@@ -468,6 +498,7 @@ function nextStep() {
                 const iter = document.getElementById("buffer" + i);
                 iter.innerHTML = "";
             }
+            */
         }
 
         adjustColors();
@@ -503,7 +534,7 @@ function nextStep() {
 
         for (let i = 0; i < buffer.length; i++) {
             const iter = document.getElementById("buffer" + i);
-            iter.innerHTML = buffer[i];
+            //iter.innerHTML = buffer[i];
         }   
 
         lastSortedIndex = buffer.length - 1;
@@ -807,14 +838,14 @@ function reset() {
 
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
-    document.getElementById("buttons-container").classList.add("hidden");
+    document.getElementById("buttons-container-wrapper").classList.add("hidden");
     document.getElementById("tree-area-step-3+").classList.add("hidden");
     document.getElementById("buffer-area").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
     document.getElementById("run-button-container").classList.add("hidden");
     document.getElementById('quit-area').classList.add("hidden");
     document.getElementById("results-panel").classList.add("hidden");
-    document.getElementById("charts").classList.add("hidden");
+    document.getElementById("plots").classList.add("hidden");
     // stop_animation(); 
 
     console.log("Reset to default state.");
@@ -878,7 +909,7 @@ function update_charts() {
             zoomDelta: 0.8,
         },
         legends: "none",
-        colors: ["green"]
+        colors: ["#80CBC4"]
     };
 
     var chart = new google.visualization.LineChart(document.getElementById("sware-sorts-chart"));
@@ -898,7 +929,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_flushes_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_flushes_history), ticks: 1},
         legend: "none",
-        colors: ["green"],
+        colors: ["#80CBC4"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -920,7 +951,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_average_pages_per_flush_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_average_pages_per_flush_history), ticks: 1},
         legend: "none",
-        colors: ["green"],
+        colors: ["#80CBC4"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -942,7 +973,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_bulk_loads_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_bulk_loads_history), Math.max(...quit_fast_inserts_history)), ticks: 1},
         legend: "none",
-        colors: ["green", "#FF9900"],
+        colors: ["#80CBC4", "#FFB433"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -964,7 +995,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_top_inserts_history.length, ticks: 1},
         vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_top_inserts_history), Math.max(...quit_top_inserts_history)), ticks: 1},
         legend: "none",
-        colors: ["green", "#FF9900"],
+        colors: ["#80CBC4", "#FFB433"],
         explorer: { 
             zoomDelta: 0.8,
         }
@@ -986,7 +1017,7 @@ function update_charts() {
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: quit_pole_resets_history.length.length, ticks: 1},
         vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(...quit_pole_resets_history), ticks: 1},
         legend: "none",
-        colors: ["#FF9900"],
+        colors: ["#FFB433"],
         explorer: { 
             zoomDelta: 0.8,
         }

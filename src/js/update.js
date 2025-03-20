@@ -11,12 +11,14 @@ function update() {
     const fieldK = document.getElementById("cmp-select-K");
     const fieldL = document.getElementById("cmp-select-L");
     const fieldB = document.getElementById("cmp-select-B");
+    const fieldI = document.getElementById("cmp-select-I");
 
     // Gets the value of the select elements
     let selectedN = fieldN.value;
     let selectedK = fieldK.value;
     let selectedL = fieldL.value;
     let selectedB = fieldB.value;
+    let selectedI = fieldI.value;
 
     // For all values in valsToEliminate
     for (let i = 0; i < valsToEliminate.length; i++) {
@@ -56,13 +58,31 @@ function update() {
     console.log("The updated values left:");
     console.log(valsToEliminate);
 
-    // If N is selected lock N
+    // If N is selected lock N and adjust I fields
     if (selectedN != "") {
         fieldN.length = 0;
         let op = document.createElement('option');
         op.value = selectedN;
         op.text = selectedN;
         fieldN.appendChild(op);
+
+        if (selectedI == "") {
+            // adjust I fields 
+            fieldI.length = 0; // clear I
+            // create empty input
+            op = document.createElement('option');
+            op.value = "";
+            op.text = "";
+            fieldI.appendChild(op);
+            
+            let maxI = (parseInt(selectedN) * (parseInt(selectedN) - 1)) / 2;
+            for (let i = 0; i < 100; i += 10) {
+                let op = document.createElement('option');
+                op.value = (maxI * i) / 100;
+                op.text = (maxI * i) / 100;
+                fieldI.appendChild(op);
+            }
+        }
     }
     // Else adjust N dropdown
     else {
@@ -192,5 +212,13 @@ function update() {
             op.text = b;
             fieldB.appendChild(op);
         }
+    }
+
+    if (selectedI != "") {
+        fieldI.length = 0;
+        let op = document.createElement('option');
+        op.value = selectedI;
+        op.text = selectedI;
+        fieldI.appendChild(op);
     }
 }

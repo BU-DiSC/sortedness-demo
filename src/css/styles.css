@@ -720,6 +720,14 @@ footer .footer-below {
     width: 100%;
 }
 
+#chart_div_inversions {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+}
+
 #info_div {
     background-color: #f8f9fa;
     border-radius: 10px;
@@ -804,7 +812,7 @@ div.fixed {
     transition: none;     
 }
 
-
+/*
 .triangle {
     width: 0;
     height: 0;
@@ -816,7 +824,26 @@ div.fixed {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+*/
 
+.triangle {
+    height: 60%;
+    margin-left: 120px;
+    --r:20px; /* border radius */
+  
+    aspect-ratio: 1/cos(30deg);
+    --_g:calc(tan(60deg)*var(--r)) bottom var(--r),#000 98%,#0000 101%;
+    -webkit-mask:
+      conic-gradient(from -30deg at 50% calc(200% - 3*var(--r)/2),#000 60deg,#0000 0)
+       0 100%/100% calc(100% - 3*var(--r)/2) no-repeat,
+      radial-gradient(var(--r) at 50% calc(2*var(--r)),#000 98%,#0000 101%),
+      radial-gradient(var(--r) at left  var(--_g)),
+      radial-gradient(var(--r) at right var(--_g));
+    clip-path: polygon(50% 0,100% 100%,0 100%);
+    background: lightgray;
+    
+}
+  
 .dots {
     position: absolute;
     top: 65%;
@@ -836,7 +863,7 @@ div.fixed {
 .rectangle {
     width: 70px;
     height: 20px;
-    background-color: #22dd18;
+    border-radius: 5px; 
 }
 
 .rectangles {
@@ -904,7 +931,23 @@ div.fixed {
 }
 
 #buttons-container {
-    padding-top: 50px;
+    display: flex;
+    justify-content: center; /* Keeps buttons centered */
+    align-items: center;
+    gap: 0; /* Removes extra space */
+}
+
+#buttons-container button {
+    margin: 0; /* Ensures no margin around buttons */
+    padding: 10px; /* Adds some padding for a larger clickable area */
+    width: 40px; /* Adjusts button width */
+    height: 40px; /* Adjusts button height */
+    border: none; /* Removes border */
+}
+
+#buttons-container button img {
+    width: 20px; /* Makes images inside buttons bigger */
+    height: 20px;
 }
 
 #dashed-line {
@@ -917,12 +960,12 @@ div.fixed {
 }
 
 .circle {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     background-color: #dc9806; /* Mellow Yellow */
     border-radius: 50%;
     position: absolute;
-    top: 9%;
+    top: 5%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -982,6 +1025,7 @@ div.fixed {
     width: 40px;
     height: 20px;
     background-color: #22dd18;
+    border-radius: 5px; 
 }
 
 .rectangles-quit {
@@ -1068,4 +1112,24 @@ div.fixed {
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 5px; 
+}
+
+#stop-button{
+    background: linear-gradient(135deg, #5D6D7E 0%, #AAB7B8 100%) !important; 
+    color: black;
+}
+
+#continue-button{
+    background: linear-gradient(135deg, #5D6D7E 0%, #AAB7B8 100%) !important;
+    color: black;
+}
+
+#nextstep-button{
+    background: linear-gradient(135deg, #b55802 0%, #ffd016 100%) !important;
+    color: black;
+}
+
+#reset-button{
+    background: linear-gradient(135deg, #ca1616 0%, #df4d18 100%) !important;
+    color: black;
 }
