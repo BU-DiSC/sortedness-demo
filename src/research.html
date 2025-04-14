@@ -413,18 +413,72 @@
 			-->
 
 			<!-- "Visualize Workload" button -->
-			<div class="row">
-				<div class="col-md-11 text-right pt-4">
-					<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
+
+		</h4>
+
+		<h4 class="text-center" style="font-size:large; padding-bottom: 20px;">Inversions</h4>
+		<div id="cmp-conf-row">
+			<div class="col-3">
+				<!-- Default input field for Inversions -->
+				<div class="row">
+					<!-- Select object -->
+					<div class="col">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<label class="input-group-text" for="cmp-select-I">I (% inversions)</label>
+							</div>
+							<select id="cmp-select-I" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+								<option value=""></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</h4>
+
+		<div class="row">
+			<div class="col-md-11 text-right pt-4" style="padding-bottom: 20px";>
+				<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+
+			<!-- Charts -->
+			<div class="row gx-0 hidden" style="padding-left: 0px; padding-right:0px" id="chart-column">
+				<!-- Chart 1 (default) -->
+				<div class="col-6">
+					<div class="container px-0">
+						<div class="center equal-height">
+							<div id="chart_div" class="equal-height"></div>
+						</div>
+					</div>
+				</div>
+				<!-- Chart 2 (inversions) -->
+				<div class="col-6">
+					<div class="container px-0">
+						<div class="equal-height">
+							<div id="chart_div_inversions" class="equal-height"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<!-- Chart -->
-			<div class="container mt-5 d-flex justify-content-center" id="chart-container">		
-				<div class="col-md-9 equal-height hidden" id="chart-column">
-					<div id="chart_div" class="equal-height"></div>
-				</div>
-			</div>
+
+
+
+
+
+
+
+
 
 			<!-- "Run" button -->
 			<div class="row">
@@ -437,12 +491,18 @@
 			<hr id="dashed-line" style="border-top: dotted 2px;" class="hidden" />
 			
 			<!-- Buttons -->
-			<div class="row mt-3 hidden" id="buttons-container">
-				<div class="col text-center">
+			<div id="buttons-container-wrapper" class="hidden">
+				<div class="col text-center" id="buttons-container">
+					<!--
 					<button id="stop-button" onclick="stop_animation()" type="button"><img src="./img/stop.png" alt="Stop" width="20" height="20"></button>					
 					<button id="continue-button" onclick="continue_animation()" type="button"><img src = "./img/continue.png" alt="Continue" widht = 20 height="20"></button>
 					<button id="nextstep-button" onclick="nextstep_animation()" type="button"><img src = "./img/nextstep.png" alt="Nextstep" widht = 20 height="20"></button>
 					<button id="reset-button" onclick="reset()" type="button"><img src = "./img/reset.png" alt="Nextstep" widht = 20 height="20"></button>
+					-->
+					<button id="stop-button" onclick="stop_animation()" type="button" class="btn btn-info"><img src="./img/stop.png" alt="Stop"></button>					
+					<button id="continue-button" onclick="continue_animation()" type="button" class="btn btn-warning"><img src = "./img/continue.png" alt="Continue"></button>
+					<button id="nextstep-button" onclick="nextstep_animation()" type="button" class="btn btn-warning"><img src = "./img/nextstep.png" alt="Nextstep"></button>
+					<button id="reset-button" onclick="reset()" type="button" class="btn btn-warning"><img src = "./img/reset.png" alt="Nextstep"></button>
 				</div>
 			</div>
 
@@ -486,15 +546,15 @@
 								</div>
 								<!-- Rectangles below the dots -->
 								<div class="rectangles">
-									<div class="rectangle"></div>
-									<div class="rectangle"></div>
-									<div class="rectangle"></div>
+									<div class="rectangle" style="background-color: #80CBC4;"></div>
+									<div class="rectangle" style="background-color: #80CBC4;""></div>
+									<div class="rectangle" style="background-color: #80CBC4;""></div>
 									<div class="smallerDots">
 										<span class="smallerDot"></span>
 										<span class="smallerDot"></span>
 										<span class="smallerDot"></span>
 									</div>
-									<div class="rectangle" id="last-tree"></div> 
+									<div class="rectangle" style="background-color: #80CBC4;" id="last-tree"></div> 
 								</div>
 							</div>
 						</div>
@@ -539,7 +599,7 @@
 				<!-- QuIT Part -->
 				<div id="quit-area" class="hidden container mt-5" style="flex-direction: column;">
 					<!-- Area for the buffer -->
-						<h4>Page Stream</h4>
+						<h4>Insertions Tree</h4>
 						<div style="height: 120px; border: 2px solid lightgray; border-radius: 5px;">
 							<div class="auto; overflow-x; overflow-y; container mt-5" style="position: relative;">
 								<div class="section-labels-quit">
@@ -578,18 +638,18 @@
 								</div>
 								<!-- Rectangles below the dots -->
 								<div class="rectangles-quit">
-									<div class="rectangle-quit"></div>
-									<div class="rectangle-quit"></div>
-									<div class="rectangle-quit"></div>
-									<div class="rectangle-quit"></div>
-									<div class="rectangle-quit"></div>
-									<div class="rectangle-quit"></div>
+									<div class="rectangle-quit" style="background-color: #FFB433;"></div>
+									<div class="rectangle-quit" style="background-color: #FFB433;"></div>
+									<div class="rectangle-quit" style="background-color: #FFB433;"></div>
+									<div class="rectangle-quit" style="background-color: #FFB433;"></div>
+									<div class="rectangle-quit" style="background-color: #FFB433;"></div>
+									<div class="rectangle-quit" style="background-color: #FFB433;"></div>
 									<div class="smallerDots-quit">
 										<span class="smallerDot-quit"></span>
 										<span class="smallerDot-quit"></span>
 										<span class="smallerDot-quit"></span>
 									</div>
-									<div class="rectangle-quit" id="last-tree-quit"></div> 
+									<div class="rectangle-quit" style="background-color: #FFB433;" id="last-tree-quit"></div> 
 								</div>
 
 								<!-- pole arrow -->
@@ -719,7 +779,7 @@
 				<div id="color-legends" class="row justify-content-center" style="text-align: center; padding: 5px; padding-bottom: 20px">
 					<div class="col-lg-3 d-flex align-items-center justify-content-center">
 						<div class="d-flex align-items-center">
-							<div style="border: 2px solid #34A853; background-color: #34A853; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div style="border: 2px solid #80CBC4; background-color: #80CBC4; height: 20px; width: 60px; margin-right: 5px;"></div>
 							<div id="lsm-cmpct-pp-1-legend">
 								<b>SWARE</b>
 							</div>
@@ -727,7 +787,7 @@
 					</div>
 					<div class="col-lg-3 d-flex align-items-center justify-content-center">
 						<div class="d-flex align-items-center">
-							<div style="border: 2px solid #FF9900; background-color: #FF9900; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div style="border: 2px solid #FFB433; background-color: #FFB433; height: 20px; width: 60px; margin-right: 5px;"></div>
 							<div id="lsm-cmpct-pp-2-legend">
 								<b>QuIT</b>
 							</div>
