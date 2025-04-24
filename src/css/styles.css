@@ -1117,19 +1117,25 @@ div.fixed {
 #stop-button{
     background: linear-gradient(135deg, #5D6D7E 0%, #AAB7B8 100%) !important; 
     color: black;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 #continue-button{
     background: linear-gradient(135deg, #5D6D7E 0%, #AAB7B8 100%) !important;
     color: black;
+    border-radius: 0;
 }
 
 #nextstep-button{
     background: linear-gradient(135deg, #b55802 0%, #ffd016 100%) !important;
     color: black;
+    border-radius: 0;
 }
 
 #reset-button{
     background: linear-gradient(135deg, #ca1616 0%, #df4d18 100%) !important;
     color: black;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }

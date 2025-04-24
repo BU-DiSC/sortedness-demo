@@ -836,6 +836,7 @@ function reset() {
     resetDropdown(document.getElementById("cmp-select-K"), "K");
     resetDropdown(document.getElementById("cmp-select-L"), "L");
     resetDropdown(document.getElementById("cmp-select-B"), "B");
+    resetDropdown(document.getElementById("cmp-select-I"), "I");
 
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
