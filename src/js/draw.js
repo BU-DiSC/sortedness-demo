@@ -241,6 +241,7 @@ function run_operations() {
     document.getElementById('quit-area').classList.remove("hidden");
     document.getElementById('results-panel').classList.remove("hidden");
     document.getElementById('plots').classList.remove("hidden");
+    document.getElementById('animations-div').classList.remove("hidden");
 
     draw_buffer(total_data, selectedN, selectedK, selectedL, selectedB);
     let interval = setInterval(() => {
@@ -835,6 +836,7 @@ function reset() {
     resetDropdown(document.getElementById("cmp-select-K"), "K");
     resetDropdown(document.getElementById("cmp-select-L"), "L");
     resetDropdown(document.getElementById("cmp-select-B"), "B");
+    resetDropdown(document.getElementById("cmp-select-I"), "I");
 
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
@@ -843,9 +845,9 @@ function reset() {
     document.getElementById("buffer-area").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
     document.getElementById("run-button-container").classList.add("hidden");
-    document.getElementById('quit-area').classList.add("hidden");
     document.getElementById("results-panel").classList.add("hidden");
     document.getElementById("plots").classList.add("hidden");
+    document.getElementById("animations-div").classList.add("hidden");
     // stop_animation(); 
 
     console.log("Reset to default state.");
