@@ -73,94 +73,82 @@ let pole_next = [];
  * Function to draw the chart
  */ 
 function visualize_workload() {
-
     console.log("Visualising workload:")
-
-    document.getElementById('chart-column').classList.remove('hidden');
-    document.getElementById('run-button-container').classList.remove('hidden');
 
     // parameters
     const minN = 20;
     const maxN = 10000;
 
-    // Get the correct input for N
+    // Get the inputs
     selectedN = parseInt(document.getElementById('cmp-select-N').value);
-
-    // Get the correct input for K
     selectedK = parseInt(document.getElementById('cmp-select-K').value);
-
-    // Get the correct input for L
     selectedL = parseInt(document.getElementById('cmp-select-L').value);
-
-    // Get the correct input for B
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
-
-    // Get the correct input for I
     selectedI = parseInt(document.getElementById('cmp-select-I').value);
 
-    let flag = true // flag to generate graph when parameters are acceptable
+    let flag = true; // flag to generate graph when parameters are acceptable
     
     // Put the inputs in console
-    console.log("Input N: " + selectedN);
-    console.log("Input K: " + selectedK);
-    console.log("Input L: " + selectedL);
-    console.log("Input B: " + selectedB);
+    console.log("Input N:", selectedN);
+    console.log("Input K:", selectedK);
+    console.log("Input L:", selectedL);
+    console.log("Input B:", selectedB);
     
-    // Give error when parameters are not acceptable and prevent generating graph
-    if (selectedN != parseInt(selectedN)) {
+    // Validate all parameters before proceeding
+    if (isNaN(selectedN) || selectedN != parseInt(selectedN)) {
         alert("N should be an integer");
         flag = false;
     }
-    else {
-        if (selectedN < minN || selectedN >  maxN) {
-            alert("N should be between " + minN + " and " + maxN);
-            flag = false;
-        }
-    } 
+    else if (selectedN < minN || selectedN > maxN) {
+        alert("N should be between " + minN + " and " + maxN);
+        flag = false;
+    }
 
-    if (selectedK != parseInt(selectedK)) {
+    if (isNaN(selectedK) || selectedK != parseInt(selectedK)) {
         alert("K should be an integer");
         flag = false;
     }
-    else {
-        if (selectedK < 0 || selectedK >  100) {
-            alert("K should be between 0 and 100");
-            flag = false;
-        }
+    else if (selectedK < 0 || selectedK > 100) {
+        alert("K should be between 0 and 100");
+        flag = false;
     }
 
-    if (selectedL != parseInt(selectedL)) {
+    if (isNaN(selectedL) || selectedL != parseInt(selectedL)) {
         alert("L should be an integer");
         flag = false;
     }
-    else {
-        if (selectedL < 0 || selectedL >  100) {
-            alert("L should be between 0 and 100");
-            flag = false;
-        }
+    else if (selectedL < 0 || selectedL > 100) {
+        alert("L should be between 0 and 100");
+        flag = false;
     }
 
-    if (selectedB != parseFloat(selectedB)) {
+    if (isNaN(selectedB) || selectedB != parseFloat(selectedB)) {
         alert("B should be a float");
         flag = false;
     }
-    else {
-        if (selectedB < 0 || selectedB >  1) {
-            alert("B should be between 0 and 1");
-            flag = false;
-        }
+    else if (selectedB < 0 || selectedB > 1) {
+        alert("B should be between 0 and 1");
+        flag = false;
     }
-    // Generate graph when parameters are acceptable
-    if (flag == true) { 
+
+    // If all parameters are valid, generate the visualization
+    if (flag) {
+        console.log("All parameters valid, generating visualization");
+        
+        // Show chart elements
+        document.getElementById('chart-column').classList.remove('hidden');
+        document.getElementById('run-button-container').classList.remove('hidden');
+        
         // Generate data
-        running = true;  
+        running = true;
         total_data = create_data(selectedN, selectedK, selectedL, selectedB);
         total_inversion_data = create_inversion_data(selectedN, selectedI);
-        draw_chart(total_data, total_inversion_data, selectedN, selectedK, selectedL, selectedB, selectedI);
         
-    }
+        // Draw charts
+        draw_chart(total_data, total_inversion_data, selectedN, selectedK, selectedL, selectedB, selectedI);
+    } 
     else {
-        console.log("Expecting correct input");
+        console.log("Invalid parameters detected, visualization aborted");
     }
 }
 function draw_chart(total_data, total_inversion_data, N, K, L, B, I) {
