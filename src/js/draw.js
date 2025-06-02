@@ -613,6 +613,12 @@ function nextStep() {
             console.log("After first split:");
             console.log("pole_prev:", pole_prev);
             console.log("pole:", pole);
+
+            // Pole changes, do animations
+            let random_x = Math.floor(Math.random() * 81) + 10;
+            document.getElementById("pole").style.left = random_x + "%";
+            quit_pole_resets++;
+            
             return;
         }
         
@@ -665,6 +671,12 @@ function nextStep() {
                     pole = pole_next;
                     pole_next = [];
                     quit_pole_resets++;
+
+                    // Pole changes, do animations
+                    let random_x = Math.floor(Math.random() * 81) + 10;
+                    document.getElementById("pole").style.left = random_x + "%";
+                    quit_pole_resets++;
+
                 } else {
                     console.log("Not catching up - Maintaining pole_prev, pole, and pole_next");
                 }
@@ -698,6 +710,11 @@ function nextStep() {
                 pole_prev = pole;
                 pole = pole_next;
                 pole_next = [];
+                quit_pole_resets++;
+
+                // Pole changes, do animations
+                let random_x = Math.floor(Math.random() * 81) + 10;
+                document.getElementById("pole").style.left = random_x + "%";
                 quit_pole_resets++;
             } else {
                 console.log("True outlier - Requires top insert");
