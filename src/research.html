@@ -104,9 +104,8 @@
 							<label class="input-group-text" for="cmp-select-N">N (# of elements)</label>
 						</div>
 						<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value="" selected disabled></option>
 							<option value="1000">1000</option>
-							<option value="5000">5000</option>
+							<option value="5000" selected>5000</option>
 							<option value="10000">10000</option>
 						</select>
 					</div>
@@ -119,10 +118,9 @@
 							<label class="input-group-text" for="cmp-select-K">K (% out-of-order elements)</label>
 						</div>
 						<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value=""></option>
 							<option value="0">0%</option>
 							<option value="10">10%</option>
-							<option value="20">20%</option>
+							<option value="20" selected>20%</option>
 							<option value="30">30%</option>
 							<option value="40">40%</option>
 							<option value="50">50%</option>
@@ -142,9 +140,8 @@
 							<label class="input-group-text" for="cmp-select-L">L (% max out-of-orderness)</label>
 						</div>
 						<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value=""></option>
 							<option value="0">0%</option>
-							<option value="10">10%</option>
+							<option value="10" selected>10%</option>
 							<option value="20">20%</option>
 							<option value="30">30%</option>
 							<option value="40">40%</option>
@@ -165,11 +162,10 @@
 							<label class="input-group-text" for="cmp-select-B">&#945 = &#946</label>
 						</div>
 						<select id="cmp-select-B" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value=""></option>
 							<option value="0">0</option>
 							<option value="0.1">0.1</option>
 							<option value="0.2">0.2</option>
-							<option value="0.3">0.3</option>
+							<option value="0.3" selected>0.3</option>
 							<option value="0.4">0.4</option>
 							<option value="0.5">0.5</option>
 							<option value="0.6">0.6</option>
@@ -399,7 +395,18 @@
 								<label class="input-group-text" for="cmp-select-I">I (% inversions)</label>
 							</div>
 							<select id="cmp-select-I" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-								<option value=""></option>
+								<!-- <option value=""></option> -->
+								<option value="0">0</option>
+								<option value="1249750">1,249,750</option>
+								<option value="2499500">2,499,500</option>
+								<option value="3749250">3,749,250</option>
+								<option value="4999000">4,999,000</option>
+								<option value="6248750">6,248,750</option>
+								<option value="7498500">7,498,500</option>
+								<option value="8748250">8,748,250</option>
+								<option value="9998000">9,998,000</option>
+								<option value="11247750">11,247,750</option>
+								<option value="12497500">12,497,500</option>
 							</select>
 						</div>
 					</div>
