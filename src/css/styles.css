@@ -860,13 +860,14 @@ div.fixed {
     background-color: black;
 }
 
-.rectangle {
+.rectangle-sware {
     width: 70px;
     height: 20px;
     border-radius: 5px; 
+    background-color: #80CBC4;
 }
 
-.rectangles {
+.rectangles-sware {
     position: absolute;
     top: 72%;
     left: 50%;
@@ -875,12 +876,12 @@ div.fixed {
     gap: 20px;
 }
 
-.smallerDots {
+.smallerDots-sware {
     display: flex;
     gap: 10px;
 }
 
-.smallerDot {
+.smallerDot-sware {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -1027,7 +1028,7 @@ div.fixed {
 .rectangle-quit {
     width: 40px;
     height: 20px;
-    background-color: #22dd18;
+    background-color: #FFB433;
     border-radius: 5px; 
 }
 
@@ -1052,10 +1053,10 @@ div.fixed {
     background-color: black;
 }
 
-.rectangles-lil {
+.rectangle-lil {
     width: 40px;
     height: 20px;
-    background-color: #22dd18;
+    background-color: #800080;
     border-radius: 5px; 
 }
 
