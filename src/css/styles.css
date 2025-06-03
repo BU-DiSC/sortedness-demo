@@ -1052,6 +1052,34 @@ div.fixed {
     background-color: black;
 }
 
+.rectangles-lil {
+    width: 40px;
+    height: 20px;
+    background-color: #22dd18;
+    border-radius: 5px; 
+}
+
+.rectangles-lil {
+    position: absolute;
+    top: 72%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.smallerDots-lil {
+    display: flex;
+    gap: 10px;
+}
+
+.smallerDot-lil {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: black;
+}
+
 
 .arrow-up {
     width: 0; 

@@ -131,6 +131,11 @@ function visualize_workload() {
         flag = false;
     }
 
+    if (isNaN(selectedI) || selectedI != parseInt(selectedI)) {
+        alert("I should be an integer");
+        flag = false;
+    }
+
     // If all parameters are valid, generate the visualization
     if (flag) {
         console.log("All parameters valid, generating visualization");
