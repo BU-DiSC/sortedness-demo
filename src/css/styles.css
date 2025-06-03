@@ -828,9 +828,10 @@ div.fixed {
 
 .triangle {
     height: 60%;
-    margin-left: 120px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     --r:20px; /* border radius */
-  
     aspect-ratio: 1/cos(30deg);
     --_g:calc(tan(60deg)*var(--r)) bottom var(--r),#000 98%,#0000 101%;
     -webkit-mask:
@@ -841,7 +842,6 @@ div.fixed {
       radial-gradient(var(--r) at right var(--_g));
     clip-path: polygon(50% 0,100% 100%,0 100%);
     background: lightgray;
-    
 }
   
 .dots {
@@ -896,8 +896,11 @@ div.fixed {
     justify-content: center;    
     align-items: center;        
     text-align: center;         
-    color: black;   
-  }
+    color: black;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
 
 .hidden {
     display: none;
