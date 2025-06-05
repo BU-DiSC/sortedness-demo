@@ -828,9 +828,10 @@ div.fixed {
 
 .triangle {
     height: 60%;
-    margin-left: 120px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     --r:20px; /* border radius */
-  
     aspect-ratio: 1/cos(30deg);
     --_g:calc(tan(60deg)*var(--r)) bottom var(--r),#000 98%,#0000 101%;
     -webkit-mask:
@@ -841,7 +842,6 @@ div.fixed {
       radial-gradient(var(--r) at right var(--_g));
     clip-path: polygon(50% 0,100% 100%,0 100%);
     background: lightgray;
-    
 }
   
 .dots {
@@ -860,13 +860,14 @@ div.fixed {
     background-color: black;
 }
 
-.rectangle {
+.rectangle-sware {
     width: 70px;
     height: 20px;
     border-radius: 5px; 
+    background-color: #80CBC4;
 }
 
-.rectangles {
+.rectangles-sware {
     position: absolute;
     top: 72%;
     left: 50%;
@@ -875,12 +876,12 @@ div.fixed {
     gap: 20px;
 }
 
-.smallerDots {
+.smallerDots-sware {
     display: flex;
     gap: 10px;
 }
 
-.smallerDot {
+.smallerDot-sware {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -896,8 +897,11 @@ div.fixed {
     justify-content: center;    
     align-items: center;        
     text-align: center;         
-    color: black;   
-  }
+    color: black;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
 
 .hidden {
     display: none;
@@ -1024,7 +1028,7 @@ div.fixed {
 .rectangle-quit {
     width: 40px;
     height: 20px;
-    background-color: #22dd18;
+    background-color: #FFB433;
     border-radius: 5px; 
 }
 
@@ -1043,6 +1047,34 @@ div.fixed {
 }
 
 .smallerDot-quit {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+.rectangle-lil {
+    width: 40px;
+    height: 20px;
+    background-color: #800080;
+    border-radius: 5px; 
+}
+
+.rectangles-lil {
+    position: absolute;
+    top: 72%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.smallerDots-lil {
+    display: flex;
+    gap: 10px;
+}
+
+.smallerDot-lil {
     width: 7px;
     height: 7px;
     border-radius: 50%;

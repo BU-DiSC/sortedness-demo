@@ -73,94 +73,87 @@ let pole_next = [];
  * Function to draw the chart
  */ 
 function visualize_workload() {
-
     console.log("Visualising workload:")
-
-    document.getElementById('chart-column').classList.remove('hidden');
-    document.getElementById('run-button-container').classList.remove('hidden');
 
     // parameters
     const minN = 20;
     const maxN = 10000;
 
-    // Get the correct input for N
+    // Get the inputs
     selectedN = parseInt(document.getElementById('cmp-select-N').value);
-
-    // Get the correct input for K
     selectedK = parseInt(document.getElementById('cmp-select-K').value);
-
-    // Get the correct input for L
     selectedL = parseInt(document.getElementById('cmp-select-L').value);
-
-    // Get the correct input for B
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
-
-    // Get the correct input for I
     selectedI = parseInt(document.getElementById('cmp-select-I').value);
 
-    let flag = true // flag to generate graph when parameters are acceptable
+    let flag = true; // flag to generate graph when parameters are acceptable
     
     // Put the inputs in console
-    console.log("Input N: " + selectedN);
-    console.log("Input K: " + selectedK);
-    console.log("Input L: " + selectedL);
-    console.log("Input B: " + selectedB);
+    console.log("Input N:", selectedN);
+    console.log("Input K:", selectedK);
+    console.log("Input L:", selectedL);
+    console.log("Input B:", selectedB);
     
-    // Give error when parameters are not acceptable and prevent generating graph
-    if (selectedN != parseInt(selectedN)) {
+    // Validate all parameters before proceeding
+    if (isNaN(selectedN) || selectedN != parseInt(selectedN)) {
         alert("N should be an integer");
         flag = false;
     }
-    else {
-        if (selectedN < minN || selectedN >  maxN) {
-            alert("N should be between " + minN + " and " + maxN);
-            flag = false;
-        }
-    } 
+    else if (selectedN < minN || selectedN > maxN) {
+        alert("N should be between " + minN + " and " + maxN);
+        flag = false;
+    }
 
-    if (selectedK != parseInt(selectedK)) {
+    if (isNaN(selectedK) || selectedK != parseInt(selectedK)) {
         alert("K should be an integer");
         flag = false;
     }
-    else {
-        if (selectedK < 0 || selectedK >  100) {
-            alert("K should be between 0 and 100");
-            flag = false;
-        }
+    else if (selectedK < 0 || selectedK > 100) {
+        alert("K should be between 0 and 100");
+        flag = false;
     }
 
-    if (selectedL != parseInt(selectedL)) {
+    if (isNaN(selectedL) || selectedL != parseInt(selectedL)) {
         alert("L should be an integer");
         flag = false;
     }
-    else {
-        if (selectedL < 0 || selectedL >  100) {
-            alert("L should be between 0 and 100");
-            flag = false;
-        }
+    else if (selectedL < 0 || selectedL > 100) {
+        alert("L should be between 0 and 100");
+        flag = false;
     }
 
-    if (selectedB != parseFloat(selectedB)) {
+    if (isNaN(selectedB) || selectedB != parseFloat(selectedB)) {
         alert("B should be a float");
         flag = false;
     }
-    else {
-        if (selectedB < 0 || selectedB >  1) {
-            alert("B should be between 0 and 1");
-            flag = false;
-        }
+    else if (selectedB < 0 || selectedB > 1) {
+        alert("B should be between 0 and 1");
+        flag = false;
     }
-    // Generate graph when parameters are acceptable
-    if (flag == true) { 
+
+    if (isNaN(selectedI) || selectedI != parseInt(selectedI)) {
+        alert("I should be an integer");
+        flag = false;
+    }
+
+    // If all parameters are valid, generate the visualization
+    if (flag) {
+        console.log("All parameters valid, generating visualization");
+        
+        // Show chart elements
+        document.getElementById('chart-column').classList.remove('hidden');
+        document.getElementById('run-button-container').classList.remove('hidden');
+        
         // Generate data
-        running = true;  
+        running = true;
         total_data = create_data(selectedN, selectedK, selectedL, selectedB);
         total_inversion_data = create_inversion_data(selectedN, selectedI);
-        draw_chart(total_data, total_inversion_data, selectedN, selectedK, selectedL, selectedB, selectedI);
         
-    }
+        // Draw charts
+        draw_chart(total_data, total_inversion_data, selectedN, selectedK, selectedL, selectedB, selectedI);
+    } 
     else {
-        console.log("Expecting correct input");
+        console.log("Invalid parameters detected, visualization aborted");
     }
 }
 function draw_chart(total_data, total_inversion_data, N, K, L, B, I) {
@@ -573,114 +566,159 @@ function nextStep() {
 
 
     function isOutlier(key) {
+        console.log("Processing new key: ", key);
+        
+        // Initial phase - building first pole
         if (inserted_data_quit.length < leaf_node_size - 1) {
-            // leaf_node_size is set to 10
-            console.log("Pole prev not created, still inputting");
-
+            console.log("Building initial pole");
+            console.log("Current pole size:", pole.length);
+            
             inserted_data_quit.push(key);
             pole.push(key);
             pole.sort((a, b) => a - b);
-
             quit_fast_inserts++;
-
-            return;
-        }
-        else if (inserted_data_quit.length == leaf_node_size - 1) {
-            inserted_data_quit.push(key);
-            pole.push(key);
-            pole.sort((a, b) => a - b);
-
-            // Split, create pole_prev for the first time
-
-            console.log("POLE PREV CREATING, SPLITTING FOR FIRST TIME");
-
-            let pole_copy = [];
-
-            for (let page of pole) {
-                pole_copy.push(page);
-            }
-
-
-            pole = [];
-            for (let i = 0; i < leaf_node_size / 2 ; i++) {
-                pole_prev.push(pole_copy[i]);
-            }
-            for (let i = 5; i < leaf_node_size; i++) {
-                pole.push(pole_copy[i]);
-            }
-
+            
+            console.log("Pole after insert:", pole);
             return;
         }
         
-        let q = Math.min(...pole);
-        let p = Math.min(...pole_prev);
-
-        console.log("pole: " + pole + ", pole_prev: " + pole_prev + ", q: " + q + ", key: " + key + ", p: " + p);
-        if ((q <= key) && (key < Math.max(...pole))) {
-            console.log("Key is inside pole");
-            if (pole.length == leaf_node_size) {
-                let pole_copy = [];
-
-                for (let page of pole) {
-                    pole_copy.push(page);
-                }
-
-                pole = [];
-                pole_next = [];
-
-                let i;
-
-                for (i = 0; i < leaf_node_size / 2; i++) {
-                    pole.push(pole_copy[i]);
-                }
-
-                for (i; i < leaf_node_size; i++) {
-                    pole_next.push(pole_copy[i]);
-                }
-
-                let r = Math.min(...pole_next);
-
-                let x = q + ((q-p) / pole_prev.length) * pole.length * 1.5;
-
-                if (r <= x) {
-                    // is not an outlier
-                    console.log("key is not an outlier");
-                    pole_prev = pole;
-                    pole = pole_next;
-
-                    // Pole changes, do animation
-                    console.log("Change 1");
-                    let random_x = Math.floor(Math.random() * 81) + 10;
-                    document.getElementById("pole").style.left = random_x + "%";
-                    quit_pole_resets++;
-                }
-            }
+        // Create pole_prev when we first reach leaf_node_size
+        if (inserted_data_quit.length == leaf_node_size - 1) {
+            console.log("Split to create pole_prev");
+            
             inserted_data_quit.push(key);
             pole.push(key);
             pole.sort((a, b) => a - b);
-
-            quit_fast_inserts++;
-        }
-        else {
-            console.log("Not in pole, fast insert needed");
-            inserted_data_quit.push(key);
-            quit_top_inserts++;
-            console.log("pole_next: " + pole_next);
-            if (key >= Math.min(...pole_next) && key <= Math.max(...pole_next)) {
-                pole_next.push(key);
-                pole_next.sort((a, b) => a - b);
-                pole_prev = pole;
-                pole = pole_next;
+            
+            let pole_copy = [...pole];
+            pole = [];
+            
+            // Split at 50%
+            let mid = Math.floor(leaf_node_size / 2);
+            
+            for (let i = 0; i < mid; i++) {
+                pole_prev.push(pole_copy[i]);
             }
+            for (let i = mid; i < leaf_node_size; i++) {
+                pole.push(pole_copy[i]);
+            }
+            
+            console.log("After first split:");
+            console.log("pole_prev:", pole_prev);
+            console.log("pole:", pole);
 
             // Pole changes, do animations
             let random_x = Math.floor(Math.random() * 81) + 10;
             document.getElementById("pole").style.left = random_x + "%";
             quit_pole_resets++;
+            
+            return;
         }
+        
+        console.log("STARTING NORMAL OPERATIONS");
+        
+        // Get minimum keys for prediction
+        let q = Math.min(...pole);
+        let p = Math.min(...pole_prev);
+        
+        console.log("Current state:");
+        console.log("pole_prev:", pole_prev, "min:", p);
+        console.log("pole:", pole, "min:", q);
+        console.log("pole_next:", pole_next);
+        console.log("incoming key:", key);
+        
+        // Check if key belongs to current pole's range
+        if (key >= q && key <= Math.max(...pole)) {
+            console.log("Key belongs to current pole range");
+            
+            // Handle pole splitting if needed
+            if (pole.length == leaf_node_size) {
+                console.log("Pole is full - Initiating split");
+                
+                let pole_copy = [...pole];
+                pole = [];
+                pole_next = [];
+                
+                // Split
+                let mid = Math.floor(leaf_node_size / 2);
+                
+                for (let i = 0; i < mid; i++) {
+                    pole.push(pole_copy[i]);
+                }
+                for (let i = mid; i < leaf_node_size; i++) {
+                    pole_next.push(pole_copy[i]);
+                }
+                
+                // Calculate catching up condition
+                let e = Math.min(...pole_next);
+                let x = q + ((q-p) / pole_prev.length) * pole.length * 1.5;
+                
+                console.log("Catching up check:");
+                console.log("e: ", e);
+                console.log("x ", x);
+                
+                // Check if pole_next is catching up 
+                if (e <= x) {
+                    console.log("Catching up - Moving pole forward");
+                    pole_prev = pole;
+                    pole = pole_next;
+                    pole_next = [];
+                    quit_pole_resets++;
 
+                    // Pole changes, do animations
+                    let random_x = Math.floor(Math.random() * 81) + 10;
+                    document.getElementById("pole").style.left = random_x + "%";
+                    quit_pole_resets++;
+
+                } else {
+                    console.log("Not catching up - Maintaining pole_prev, pole, and pole_next");
+                }
+            }
+            
+            // Fast insert into current pole
+            inserted_data_quit.push(key);
+            pole.push(key);
+            pole.sort((a, b) => a - b);
+            quit_fast_inserts++;
+            
+            console.log("Fast insert complete. New pole:", pole);
+            
+        } else {
+            console.log("Key is outside pole range - Handling outlier");
+            
+            // Simulate top_insert by checking if key belongs in pole_next
+            let leaf_for_outlier = null;
+            if (pole_next.length > 0 && key >= Math.min(...pole_next) && key <= Math.max(...pole_next)) {
+                leaf_for_outlier = 'pole_next';
+            }
+            
+            inserted_data_quit.push(key);
+            
+            // Update pole structure if outlier belongs in pole_next
+            if (leaf_for_outlier === 'pole_next') {
+                console.log("Outlier belongs in pole_next - Catching up");
+                console.log("Making pole_next the new pole");
+                pole_next.push(key);
+                pole_next.sort((a, b) => a - b);
+                pole_prev = pole;
+                pole = pole_next;
+                pole_next = [];
+                quit_pole_resets++;
+
+                // Pole changes, do animations
+                let random_x = Math.floor(Math.random() * 81) + 10;
+                document.getElementById("pole").style.left = random_x + "%";
+                quit_pole_resets++;
+            } else {
+                console.log("True outlier - Requires top insert");
+                quit_top_inserts++;
+            }
+        }
+        
+        console.log("Finished processing key", key);
     }    
 
+    // Buffer stuff
     // Start state (can't shift, will input everything)
     let page;
 
@@ -771,7 +809,6 @@ function nextstep_animation() {
     nextStep();
     console.log("Next step done.")
 }
-
 function reset() {
     valsToEliminate = vals.slice();
 
@@ -826,7 +863,7 @@ function reset() {
     sware_flushes_history = [];
     sware_average_pages_per_flush_history = [];
     sware_bulk_loads_history = [];
-    quit_fast_inserts = [];
+    quit_fast_inserts_history = [];
     sware_top_inserts_history = [];
     quit_top_inserts_history = [];
     quit_pole_resets_history = [];
@@ -1033,4 +1070,5 @@ function update_charts() {
 
 
 }
+
 

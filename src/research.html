@@ -96,120 +96,87 @@
 		<h4 class="text-center" style="font-size:large; padding-bottom: 20px;">Workload</h4>
 
 			<!-- Input fields for the parameters -->
-			<div id="cmp-conf-row">
-
+			<div id="cmp-conf-row" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
 				<!-- Div of N -->
-				<div class="col-3">
-					<!-- Default input field for N-->
-					<div class="row">
-						<!-- Select object -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-N">N (# of elements)</label>
-								</div>
-								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value="" selected disabled></option>
-									<option value="1000">1000</option>
-									<option value="5000">5000</option>
-									<option value="10000">10000</option>
-								</select>
-							</div>
+				<div style="width: 23%;">
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="cmp-select-N">N (# of elements)</label>
 						</div>
+						<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+							<option value="1000">1000</option>
+							<option value="5000" selected>5000</option>
+							<option value="10000">10000</option>
+						</select>
 					</div>
 				</div>
 				
 				<!-- Div of K -->
-				<div class="col-3">
-
-					<!-- Default input field for K -->
-					<div class="row">
-						<!-- Select object -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-K">K (% out-of-order elements)</label>
-								</div>
-								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
-									<option value="0">0%</option>
-									<option value="10">10%</option>
-									<option value="20">20%</option>
-									<option value="30">30%</option>
-									<option value="40">40%</option>
-									<option value="50">50%</option>
-									<option value="60">60%</option>
-									<option value="70">70%</option>
-									<option value="80">80%</option>
-									<option value="90">90%</option>
-									<option value="100">100%</option>
-								</select>
-							</div>
-		
+				<div style="width: 23%;">
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="cmp-select-K">K (% out-of-order elements)</label>
 						</div>
+						<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+							<option value="0">0%</option>
+							<option value="10">10%</option>
+							<option value="20" selected>20%</option>
+							<option value="30">30%</option>
+							<option value="40">40%</option>
+							<option value="50">50%</option>
+							<option value="60">60%</option>
+							<option value="70">70%</option>
+							<option value="80">80%</option>
+							<option value="90">90%</option>
+							<option value="100">100%</option>
+						</select>
 					</div>
 				</div>
 
-				<!-- Div of L-->
-				<div class="col-3">
-					<!-- Default input field for L -->
-					<div class="row">
-						<!-- Select object -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-L">L (% max out-of-orderness)</label>
-								</div>
-								<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
-									<option value="0">0%</option>
-									<option value="10">10%</option>
-									<option value="20">20%</option>
-									<option value="30">30%</option>
-									<option value="40">40%</option>
-									<option value="50">50%</option>
-									<option value="60">60%</option>
-									<option value="70">70%</option>
-									<option value="80">80%</option>
-									<option value="90">90%</option>
-									<option value="100">100%</option>
-								</select>
-							</div>
-		
+				<!-- Div of L -->
+				<div style="width: 23%;">
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="cmp-select-L">L (% max out-of-orderness)</label>
 						</div>
+						<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+							<option value="0">0%</option>
+							<option value="10" selected>10%</option>
+							<option value="20">20%</option>
+							<option value="30">30%</option>
+							<option value="40">40%</option>
+							<option value="50">50%</option>
+							<option value="60">60%</option>
+							<option value="70">70%</option>
+							<option value="80">80%</option>
+							<option value="90">90%</option>
+							<option value="100">100%</option>
+						</select>
 					</div>
 				</div>
 
 				<!-- Div of B -->
-				<div class="col-3">
-					<!-- Default input field for B -->
-					<div class="row">
-						<!-- Select object -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-B">&#945 = &#946</label>
-								</div>
-								<select id="cmp-select-B" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
-									<option value="0">0</option>
-									<option value="0.1">0.1</option>
-									<option value="0.2">0.2</option>
-									<option value="0.3">0.3</option>
-									<option value="0.4">0.4</option>
-									<option value="0.5">0.5</option>
-									<option value="0.6">0.6</option>
-									<option value="0.7">0.7</option>
-									<option value="0.8">0.8</option>
-									<option value="0.9">0.9</option>
-									<option value="1">1</option>
-								</select>
-							</div>
+				<div style="width: 23%;">
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="cmp-select-B">&#945 = &#946</label>
 						</div>
+						<select id="cmp-select-B" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+							<option value="0">0</option>
+							<option value="0.1">0.1</option>
+							<option value="0.2">0.2</option>
+							<option value="0.3" selected>0.3</option>
+							<option value="0.4">0.4</option>
+							<option value="0.5">0.5</option>
+							<option value="0.6">0.6</option>
+							<option value="0.7">0.7</option>
+							<option value="0.8">0.8</option>
+							<option value="0.9">0.9</option>
+							<option value="1">1</option>
+						</select>
 					</div>
 				</div>
 			</div>
-
 			<!-- TODO: Additional inputs, implementation needed-->
 			<!--
 			<div id="cmp-conf-row">
@@ -428,7 +395,18 @@
 								<label class="input-group-text" for="cmp-select-I">I (% inversions)</label>
 							</div>
 							<select id="cmp-select-I" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-								<option value=""></option>
+								<!-- <option value=""></option> -->
+								<option value="0">0</option>
+								<option value="1249750">1,249,750</option>
+								<option value="2499500">2,499,500</option>
+								<option value="3749250">3,749,250</option>
+								<option value="4999000">4,999,000</option>
+								<option value="6248750">6,248,750</option>
+								<option value="7498500">7,498,500</option>
+								<option value="8748250">8,748,250</option>
+								<option value="9998000">9,998,000</option>
+								<option value="11247750">11,247,750</option>
+								<option value="12497500">12,497,500</option>
 							</select>
 						</div>
 					</div>
@@ -545,16 +523,16 @@
 										<span class="dot"></span>
 									</div>
 									<!-- Rectangles below the dots -->
-									<div class="rectangles">
-										<div class="rectangle" style="background-color: #80CBC4;"></div>
-										<div class="rectangle" style="background-color: #80CBC4;""></div>
-										<div class="rectangle" style="background-color: #80CBC4;""></div>
-										<div class="smallerDots">
-											<span class="smallerDot"></span>
-											<span class="smallerDot"></span>
-											<span class="smallerDot"></span>
+									<div class="rectangles-sware">
+										<div class="rectangle-sware"></div>
+										<div class="rectangle-sware"></div>
+										<div class="rectangle-sware"></div>
+										<div class="smallerDots-sware">
+											<span class="smallerDot-sware"></span>
+											<span class="smallerDot-sware"></span>
+											<span class="smallerDot-sware"></span>
 										</div>
-										<div class="rectangle" style="background-color: #80CBC4;" id="last-tree"></div> 
+										<div class="rectangle-sware" id="last-tree"></div> 
 									</div>
 								</div>
 							</div>
@@ -638,18 +616,18 @@
 									</div>
 									<!-- Rectangles below the dots -->
 									<div class="rectangles-quit">
-										<div class="rectangle-quit" style="background-color: #FFB433;"></div>
-										<div class="rectangle-quit" style="background-color: #FFB433;"></div>
-										<div class="rectangle-quit" style="background-color: #FFB433;"></div>
-										<div class="rectangle-quit" style="background-color: #FFB433;"></div>
-										<div class="rectangle-quit" style="background-color: #FFB433;"></div>
-										<div class="rectangle-quit" style="background-color: #FFB433;"></div>
+										<div class="rectangle-quit"></div>
+										<div class="rectangle-quit"></div>
+										<div class="rectangle-quit"></div>
+										<div class="rectangle-quit"></div>
+										<div class="rectangle-quit"></div>
+										<div class="rectangle-quit"></div>
 										<div class="smallerDots-quit">
 											<span class="smallerDot-quit"></span>
 											<span class="smallerDot-quit"></span>
 											<span class="smallerDot-quit"></span>
 										</div>
-										<div class="rectangle-quit" style="background-color: #FFB433;" id="last-tree-quit"></div> 
+										<div class="rectangle-quit" id="last-tree-quit"></div> 
 									</div>
 	
 									<!-- pole arrow -->
@@ -666,6 +644,29 @@
 						<h4>lil</h4>
 						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
 								border-radius: 5px; position: relative;">
+								<div class="triangle"></div>
+									
+								<div class="dots">
+									<span class="dot"></span>
+									<span class="dot"></span>
+									<span class="dot"></span>
+								</div>
+
+								<div class="rectangles-lil">
+									<div class="rectangle-lil"></div>
+									<div class="rectangle-lil"></div>
+									<div class="rectangle-lil"></div>
+									<div class="rectangle-lil"></div>
+									<div class="rectangle-lil"></div>
+									<div class="rectangle-lil"></div>
+									<div class="smallerDots-lil">
+										<span class="smallerDot-lil"></span>
+										<span class="smallerDot-lil"></span>
+										<span class="smallerDot-lil"></span>
+									</div>
+									<div class="rectangle-lil"></div>
+								</div>
+
 						</div>
 					</div>
 					<div id="quit-area" class="container mt-5" style="flex-direction: column;">
