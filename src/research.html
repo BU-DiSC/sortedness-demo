@@ -84,21 +84,21 @@
 	</div>
 
 	<!-- Main section -->
-	<section id="research" style="margin:0px">
+	<section id="research" class="research-section">
 		<!-- Title -->
 		<section id="problem" style="padding-top:0px">
 			<div class="container">
-				<div class="row section-title text-center">
+				<div class="row section-title">
 					<h2> Sortedness </h2>
 				</div>
 			</div>
 		</section>
-		<h4 class="text-center" style="font-size:large; padding-bottom: 20px;">Workload</h4>
+		<h4 class="text-center workload-title">Workload</h4>
 
 			<!-- Input fields for the parameters -->
-			<div id="cmp-conf-row" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+			<div id="cmp-conf-row" class="parameter-row">
 				<!-- Div of N -->
-				<div style="width: 23%;">
+				<div class="parameter-container">
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
 							<label class="input-group-text" for="cmp-select-N">N (# of elements)</label>
@@ -112,7 +112,7 @@
 				</div>
 				
 				<!-- Div of K -->
-				<div style="width: 23%;">
+				<div class="parameter-container">
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
 							<label class="input-group-text" for="cmp-select-K">K (% out-of-order elements)</label>
@@ -134,7 +134,7 @@
 				</div>
 
 				<!-- Div of L -->
-				<div style="width: 23%;">
+				<div class="parameter-container">
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
 							<label class="input-group-text" for="cmp-select-L">L (% max out-of-orderness)</label>
@@ -156,7 +156,7 @@
 				</div>
 
 				<!-- Div of B -->
-				<div style="width: 23%;">
+				<div class="parameter-container">
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
 							<label class="input-group-text" for="cmp-select-B">&#945 = &#946</label>
@@ -177,260 +177,46 @@
 					</div>
 				</div>
 			</div>
-			<!-- TODO: Additional inputs, implementation needed-->
-			<!--
+
+			<h4 class="text-center workload-title">Inversions</h4>
 			<div id="cmp-conf-row">
-
 				<div class="col-3">
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 1</h4>
-
+					<!-- Default input field for Inversions -->
 					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio_new1" id="radio_new1" checked>
-								<label class="form-check-label" for="radio_new1"></label>
-							</div>
-						</div>
+						<!-- Select object -->
 						<div class="col">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-N"></label>
+									<label class="input-group-text" for="cmp-select-I">I (% inversions)</label>
 								</div>
-								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
-									<option value="1000">1000</option>
-									<option value="5000">5000</option>
-									<option value="10000">10000</option>
+								<select id="cmp-select-I" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
+									<!-- <option value=""></option> -->
+									<option value="0">0</option>
+									<option value="1249750">1,249,750</option>
+									<option value="2499500">2,499,500</option>
+									<option value="3749250">3,749,250</option>
+									<option value="4999000">4,999,000</option>
+									<option value="6248750">6,248,750</option>
+									<option value="7498500">7,498,500</option>
+									<option value="8748250">8,748,250</option>
+									<option value="9998000">9,998,000</option>
+									<option value="11247750">11,247,750</option>
+									<option value="12497500">12,497,500</option>
 								</select>
 							</div>
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
-								<label class="form-check-label" for="radioN2"></label>
-							</div>
-						</div>
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualN" type="number" min="0" step="1" class="cmp-input form-control">
-							</div>
-						</div>
-					</div>
-					
-					
-				</div>
-				
-				<div class="col-3">
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 2</h4>
-
-					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioNew2" id="radioNew2" checked>
-								<label class="form-check-label" for="radioNew2"></label>
-							</div>
-						</div>
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-K"></label>
-								</div>
-								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
-									<option value="0">0%</option>
-									<option value="10">10%</option>
-									<option value="20">20%</option>
-									<option value="30">30%</option>
-									<option value="40">40%</option>
-									<option value="50">50%</option>
-									<option value="60">60%</option>
-									<option value="70">70%</option>
-									<option value="80">80%</option>
-									<option value="90">90%</option>
-									<option value="100">100%</option>
-								</select>
-							</div>
-		
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
-								<label class="form-check-label" for="radioK2"></label>
-							</div>
-						</div>
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualK" type="number" min="0" step="1" class="cmp-input form-control">
-							</div>
-						</div>
-					</div>
-				</div>
-
-								<div class="col-3">
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 3</h4>
-
-					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio_new1" id="radio_new1" checked>
-								<label class="form-check-label" for="radio_new1"></label>
-							</div>
-						</div>
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-N"></label>
-								</div>
-								<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
-									<option value="1000">1000</option>
-									<option value="5000">5000</option>
-									<option value="10000">10000</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioN" id="radioN2">
-								<label class="form-check-label" for="radioN2"></label>
-							</div>
-						</div>
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualN" type="number" min="0" step="1" class="cmp-input form-control">
-							</div>
-						</div>
-					</div>
-					
-					
-				</div>
-				
-				<div class="col-3">
-					<h4 class="text-center" style="font-size:large; margin-bottom: 29px">Text 4</h4>
-
-					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioNew2" id="radioNew2" checked>
-								<label class="form-check-label" for="radioNew2"></label>
-							</div>
-						</div>
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-K"></label>
-								</div>
-								<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<option value=""></option>
-									<option value="0">0%</option>
-									<option value="10">10%</option>
-									<option value="20">20%</option>
-									<option value="30">30%</option>
-									<option value="40">40%</option>
-									<option value="50">50%</option>
-									<option value="60">60%</option>
-									<option value="70">70%</option>
-									<option value="80">80%</option>
-									<option value="90">90%</option>
-									<option value="100">100%</option>
-								</select>
-							</div>
-		
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-auto">
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radioK" id="radioK2">
-								<label class="form-check-label" for="radioK2"></label>
-							</div>
-						</div>
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Other: </label>
-								</div>
-								<input id="manualK" type="number" min="0" step="1" class="cmp-input form-control">
-							</div>
-						</div>
-					</div>
-				</div>
-
-
-			</div>
-			-->
-
-			<!-- "Visualize Workload" button -->
-
-		</h4>
-
-		<h4 class="text-center" style="font-size:large; padding-bottom: 20px;">Inversions</h4>
-		<div id="cmp-conf-row">
-			<div class="col-3">
-				<!-- Default input field for Inversions -->
-				<div class="row">
-					<!-- Select object -->
-					<div class="col">
-						<div class="input-group input-group-sm mb-2">
-							<div class="input-group-prepend">
-								<label class="input-group-text" for="cmp-select-I">I (% inversions)</label>
-							</div>
-							<select id="cmp-select-I" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-								<!-- <option value=""></option> -->
-								<option value="0">0</option>
-								<option value="1249750">1,249,750</option>
-								<option value="2499500">2,499,500</option>
-								<option value="3749250">3,749,250</option>
-								<option value="4999000">4,999,000</option>
-								<option value="6248750">6,248,750</option>
-								<option value="7498500">7,498,500</option>
-								<option value="8748250">8,748,250</option>
-								<option value="9998000">9,998,000</option>
-								<option value="11247750">11,247,750</option>
-								<option value="12497500">12,497,500</option>
-							</select>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		</h4>
 
-		<div class="row">
-			<div class="col-md-11 text-right pt-4" style="padding-bottom: 20px";>
-				<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
+			<div class="row">
+				<div class="col-md-11 generate-workload-container">
+					<button onclick="visualize_workload()" type="button" class="btn btn-success">Generate Workload</button>
+				</div>
 			</div>
-		</div>
-
-
-
-
-
-
-
-
 
 			<!-- Charts -->
-			<div class="row gx-0 hidden" style="padding-left: 0px; padding-right:0px" id="chart-column">
+			<div class="row gx-0 hidden chart-column" id="chart-column">
 				<!-- Chart 1 (default) -->
 				<div class="col-6">
 					<div class="container px-0">
@@ -449,34 +235,19 @@
 				</div>
 			</div>
 
-
-
-
-
-
-
-
-
-
 			<!-- "Run" button -->
 			<div class="row">
-				<div id="run-button-container" class="col-md-11 text-right pt-4 hidden">
+				<div id="run-button-container" class="col-md-11 run-button-container hidden">
 					<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
 				</div>
 			</div>
 
 			<!-- Dashed line -->
-			<hr id="dashed-line" style="border-top: dotted 2px;" class="hidden" />
+			<hr id="dashed-line" class="hidden" />
 			
 			<!-- Buttons -->
 			<div id="buttons-container-wrapper" class="hidden">
 				<div class="col text-center" id="buttons-container">
-					<!--
-					<button id="stop-button" onclick="stop_animation()" type="button"><img src="./img/stop.png" alt="Stop" width="20" height="20"></button>					
-					<button id="continue-button" onclick="continue_animation()" type="button"><img src = "./img/continue.png" alt="Continue" widht = 20 height="20"></button>
-					<button id="nextstep-button" onclick="nextstep_animation()" type="button"><img src = "./img/nextstep.png" alt="Nextstep" widht = 20 height="20"></button>
-					<button id="reset-button" onclick="reset()" type="button"><img src = "./img/reset.png" alt="Nextstep" widht = 20 height="20"></button>
-					-->
 					<button id="stop-button" onclick="stop_animation()" type="button" class="btn btn-info"><img src="./img/stop.png" alt="Stop"></button>					
 					<button id="continue-button" onclick="continue_animation()" type="button" class="btn btn-warning"><img src = "./img/continue.png" alt="Continue"></button>
 					<button id="nextstep-button" onclick="nextstep_animation()" type="button" class="btn btn-warning"><img src = "./img/nextstep.png" alt="Nextstep"></button>
@@ -485,13 +256,13 @@
 			</div>
 
 			<div class="hidden" id="animations-div">
-				<div class="container mt-5 d-flex" style="flex-direction: row;">
+				<div class="container mt-5 d-flex animations-container">
 					<!-- Areas for the tree and the buffer -->
 					<div id="buffer-area" class="hidden container mt-5" style="flex-direction: column;">
 							<!-- Area for the buffer -->
 								<h4>Buffer</h4>
-								<div style="height: 120px; border: 2px solid lightgray; border-radius: 5px;">
-									<div class="auto; overflow-x; overflow-y; container mt-5" style="left: 8%; position: relative;">
+								<div class="buffer-container">
+									<div class="auto overflow-x overflow-y container mt-5 buffer-content">
 										<div class="section-labels-sware">
 											<button class="btn btn-primary buffer-btn" id="buffer0"></button>
 											<button class="btn btn-primary buffer-btn" id="buffer1"></button>
@@ -509,8 +280,7 @@
 							<!-- Area for the tree, step 3+ -->
 							<div id="tree-area-step-3+" class="hidden">
 								<h4>Tree</h4>
-								<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-								border-radius: 5px; position: relative;">
+								<div class="tree-container">
 									<!-- Small Circle on Top of the Triangle -->
 									<div id="circle" class="circle"></div>
 									
@@ -537,49 +307,13 @@
 								</div>
 							</div>
 												
-							<!--
-							<div id="tree-area-step-0" class="col-12 hidden">
-								<h4>Tree</h4>
-								<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-								border-radius: 5px; display: flex; justify-content: center; align-items: center;">
-									<div id="rectangle-0-step-0" class="rectangle"></div>
-								</div>
-							</div>
-	
-							<div id="tree-area-step-1" class="col-12 hidden">
-								<h4>Tree</h4>
-								<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-											border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
-									<div id="rectangle-step-top" 
-										class="rectangle" style="width: 100px"></div>
-									<div style="display: flex; justify-content: center; gap: 20px;">
-										<div id="rectangle-0-step-1" class="rectangle"></div>
-										<div id="rectangle-1-step-1" class="rectangle"></div>
-									</div>
-								</div>
-							</div>
-	
-							<div id="tree-area-step-2" class="col-12 hidden">
-								<h4>Tree</h4>
-								<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-											border-radius: 5px; display: flex; flex-direction: column; align-items: center; gap: 20px; justify-content: center;">
-									<div id="rectangle-step-top" 
-										class="rectangle" style="width: 100px"></div>
-									<div style="display: flex; justify-content: center; gap: 20px;">
-										<div id="rectangle-0-step-2" class="rectangle"></div>
-										<div id="rectangle-1-step-2" class="rectangle"></div>
-										<div id="rectangle-2-step-2" class="rectangle"></div>
-									</div>
-								</div>
-							</div>
-							-->
 					</div>
 					<!-- QuIT Part -->
 					<div id="quit-area" class="hidden container mt-5" style="flex-direction: column;">
 						<!-- Area for the buffer -->
 							<h4>Insertions Tree</h4>
-							<div style="height: 120px; border: 2px solid lightgray; border-radius: 5px;">
-								<div class="auto; overflow-x; overflow-y; container mt-5" style="position: relative;">
+							<div class="buffer-container">
+								<div class="auto overflow-x overflow-y container mt-5" style="position: relative;">
 									<div class="section-labels-quit">
 										<button class="btn btn-primary page-btn" id="page0"></button>
 										<button class="btn btn-primary page-btn" id="page1"></button>
@@ -603,8 +337,7 @@
 							<!-- QuIT Tree-->
 							<div id="tree-quit">
 								<h4>QuIT Tree</h4>
-								<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-								border-radius: 5px; position: relative;">
+								<div class="tree-container">
 									
 									<!-- Existing Triangle -->
 									<div class="triangle"></div>
@@ -639,11 +372,10 @@
 					</div>
 				</div>
 	
-				<div class="container mt-5 d-flex" style="flex-direction: row;">
+				<div class="container mt-5 d-flex animations-container">
 					<div id="quit-area" class="container mt-5" style="flex-direction: column;">
 						<h4>lil</h4>
-						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-								border-radius: 5px; position: relative;">
+						<div class="tree-container">
 								<div class="triangle"></div>
 									
 								<div class="dots">
@@ -671,8 +403,7 @@
 					</div>
 					<div id="quit-area" class="container mt-5" style="flex-direction: column;">
 						<h4>pole</h4>
-						<div style="padding: 10px; height: 400px; overflow-y: auto; border: 2px solid lightgray; 
-								border-radius: 5px; position: relative;">
+						<div class="tree-container">
 						</div>
 					</div>
 					
@@ -682,18 +413,18 @@
 
 
 			<!-- Results Panel -->
-			<div id="results-panel" class="hidden container" style="padding-top: 40px;">
+			<div id="results-panel" class="hidden container results-panel">
 				<div id="cost-result" class="container">
 				 	<!-- SWARE and QuIT Titles -->
 					<div class="row">
 						<div class="col text-right">
-							<span style="font-size: 20px; font-weight: normal;" class="cost uncertain">SWARE</span>
+							<span class="sware-quit-title cost uncertain">SWARE</span>
 						</div>
 						<div class="col-2 text-center">
 							<span class="metric-title"></span>
 						</div>
 						<div class="col text-left">
-							<span style="font-size: 20px; font-weight: normal;" class="cost uncertain">QuIT</span>
+							<span class="sware-quit-title cost uncertain">QuIT</span>
 						</div>
 					</div>	
 
@@ -780,35 +511,28 @@
 					</div>
 
 					<!-- lil and pole Titles -->
-					<div class="row" style="padding-top: 40px">
+					<div class="row lil-pole-title-row">
 						<div class="col text-right">
-							<span style="font-size: 20px; font-weight: normal;" class="cost uncertain">lil</span>
+							<span class="sware-quit-title cost uncertain">lil</span>
 						</div>
 						<div class="col-2 text-center">
 							<span class="metric-title"></span>
 						</div>
 						<div class="col text-left">
-							<span style="font-size: 20px; font-weight: normal;" class="cost uncertain">pole</span>
+							<span class="sware-quit-title cost uncertain">pole</span>
 						</div>
 					</div>	
 				</div>
-
-
-
-				
-
-
-
 			</div>
 
 			<!-- Plots -->
 			<div id="plots" class="hidden">
 				<!-- Color Legends -->
 				<hr>
-				<div id="color-legends" class="row justify-content-center" style="text-align: center; padding: 5px; padding-bottom: 20px">
+				<div id="color-legends" class="row justify-content-center color-legends">
 					<div class="col-lg-3 d-flex align-items-center justify-content-center">
 						<div class="d-flex align-items-center">
-							<div style="border: 2px solid #80CBC4; background-color: #80CBC4; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div class="color-legend-box color-legend-sware"></div>
 							<div id="lsm-cmpct-pp-1-legend">
 								<b>SWARE</b>
 							</div>
@@ -816,7 +540,7 @@
 					</div>
 					<div class="col-lg-3 d-flex align-items-center justify-content-center">
 						<div class="d-flex align-items-center">
-							<div style="border: 2px solid #FFB433; background-color: #FFB433; height: 20px; width: 60px; margin-right: 5px;"></div>
+							<div class="color-legend-box color-legend-quit"></div>
 							<div id="lsm-cmpct-pp-2-legend">
 								<b>QuIT</b>
 							</div>
@@ -827,42 +551,28 @@
 				<!-- Charts -->
 				<div class="row no-gutters">
 					<div class="col-lg-4">
-						<div id="sware-sorts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
-						</div>
+						<div id="sware-sorts-chart" class="chart-container"></div>
 					</div>
 					<div class="col-lg-4">
-						<div id="sware-flushes-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
-						</div>
+						<div id="sware-flushes-chart" class="chart-container"></div>
 					</div>
 					<div class="col-lg-4">
-						<div id="sware-average-pages-per-flush-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
-						</div>
+						<div id="sware-average-pages-per-flush-chart" class="chart-container"></div>
 					</div>
 				</div>
 				<div class="row no-gutters">
 					<div class="col-lg-4">
-						<div id="sware-bulk-loads/quit-fast-inserts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
-						</div>
+						<div id="sware-bulk-loads/quit-fast-inserts-chart" class="chart-container"></div>
 					</div>
 					<div class="col-lg-4">
-						<div id="sware-top-inserts/quit-top-inserts-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
-						</div>
+						<div id="sware-top-inserts/quit-top-inserts-chart" class="chart-container"></div>
 					</div>
 					<div class="col-lg-4">
-						<div id="quit-pole-resets-chart" style="height: 300px; border: 2px solid #666666; border-radius: 15px;border-style: dashed;padding:1px">
-						</div>
+						<div id="quit-pole-resets-chart" class="chart-container"></div>
 					</div>
 				</div>
 			</div>
-
-			
 		</div>
-
-
-
-
-
-			
 	</section>
 
 </body>

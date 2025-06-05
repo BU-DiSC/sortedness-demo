@@ -812,19 +812,6 @@ div.fixed {
     transition: none;     
 }
 
-/*
-.triangle {
-    width: 0;
-    height: 0;
-    border-left: 150px solid transparent;
-    border-right: 150px solid transparent;
-    border-bottom: 200px solid #3498db;
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-*/
 
 .triangle {
     height: 60%;
@@ -1170,4 +1157,111 @@ div.fixed {
     color: black;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+}
+
+.chart-column {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.results-panel {
+    padding-top: 40px;
+}
+
+.sware-quit-title {
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.lil-pole-title-row {
+    padding-top: 40px;
+}
+
+.color-legends {
+    text-align: center;
+    padding: 5px;
+    padding-bottom: 20px;
+}
+
+.color-legend-box {
+    height: 20px;
+    width: 60px;
+    margin-right: 5px;
+}
+
+.color-legend-sware {
+    border: 2px solid #80CBC4;
+    background-color: #80CBC4;
+}
+
+.color-legend-quit {
+    border: 2px solid #FFB433;
+    background-color: #FFB433;
+}
+
+.chart-container {
+    height: 300px;
+    border: 2px solid #666666;
+    border-radius: 15px;
+    border-style: dashed;
+    padding: 1px;
+}
+
+.buffer-container {
+    height: 120px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+}
+
+.buffer-content {
+    left: 8%;
+    position: relative;
+}
+
+.tree-container {
+    padding: 10px;
+    height: 400px;
+    overflow-y: auto;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    position: relative;
+}
+
+.animations-container {
+    flex-direction: row;
+}
+
+.research-section {
+    margin: 0px;
+}
+
+.run-button-container {
+    text-align: right;
+    padding-top: 1.5rem;
+}
+
+.section-title {
+    text-align: center;
+}
+
+.workload-title {
+    font-size: large;
+    padding-bottom: 20px;
+}
+
+.parameter-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.parameter-container {
+    width: 23%;
+}
+
+.generate-workload-container {
+    text-align: right;
+    padding-top: 1.5rem;
+    padding-bottom: 20px;
 }
