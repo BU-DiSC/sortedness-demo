@@ -1,4 +1,8 @@
-// One step of the SWARE algorithm
+
+/* 
+ * One step of the SWARE algorithm
+ */
+
 function sware() {
 
     // state == 0 -> Buffer is full, flushing time
@@ -18,9 +22,9 @@ function sware() {
                 tree.push(buffer[0]); // add the first element to the tree
                 const lastTreeElement = document.getElementById("last-tree"); // get the last tree element
                 // Bulk load
-                if (buffer[0][1] > sware_max) {
-                    sware_max = buffer[0][1];
-                    lastTreeElement.innerHTML = "(... , " + sware_max + ")";
+                if (buffer[0][1] > sware_max_tree) {
+                    sware_max_tree = buffer[0][1];
+                    lastTreeElement.innerHTML = "(... , " + sware_max_tree + ")";
                     sware_bulk_loads++;
                 }
                 // Top insert
@@ -46,9 +50,9 @@ function sware() {
                 }
                 const lastTreeElement = document.getElementById("last-tree");
                 // Bulk load
-                if (buffer[lastSortedIndex][1] > sware_max) {
-                    sware_max = buffer[lastSortedIndex][1];
-                    lastTreeElement.innerHTML = "(... , " + sware_max + ")";
+                if (buffer[lastSortedIndex][1] > sware_max_tree) {
+                    sware_max_tree = buffer[lastSortedIndex][1];
+                    lastTreeElement.innerHTML = "(... , " + sware_max_tree + ")";
                     sware_bulk_loads++;
                 }
                 // Top insert
@@ -72,9 +76,9 @@ function sware() {
                 }
                 const lastTreeElement = document.getElementById("last-tree");
                 // Bulk load
-                if (buffer[lastSortedIndex][1] > sware_max) {
-                    sware_max = buffer[lastSortedIndex][1];
-                    lastTreeElement.innerHTML = "(... , " + sware_max + ")";
+                if (buffer[lastSortedIndex][1] > sware_max_tree) {
+                    sware_max_tree = buffer[lastSortedIndex][1];
+                    lastTreeElement.innerHTML = "(... , " + sware_max_tree + ")";
                     sware_bulk_loads++;
                 }
                 // Top insert
@@ -94,9 +98,9 @@ function sware() {
             sware_average_pages_per_flush = (tree.length * 10) / sware_flushes;
             
         }
-        update_colors(); // adjust colors of the buffer
+        update_colors(); // update colors of the buffer
        
-        state = 1;
+        state = 1; // go to next state
     }
     // state == 1 -> Sorting time
     else if (state == 1) {
@@ -126,50 +130,59 @@ function sware() {
         // Update sware parameters
         lastSortedIndex = buffer.length - 1; // last sorted index
         numInsideBuffer = buffer.length; // number of elements inside the buffer
-        sware_max = buffer[buffer.length-1][1]; // max value of the buffer
+        sware_max_tree = buffer[buffer.length-1][1]; // max value of the buffer
 
-        update_colors(); // adjust colors of the buffer
+        update_colors(); // update colors of the buffer
 
-        // next state
-        state = 2;
+        
+        state = 2; // go to next state
     }
     // state == 2 -> Buffer is empty, fill the buffer
     else if (state == 2) {
         // If zones is not empty
         while (zones.length != 0) {
-            // If the buffer is full, break
+            // when the buffer is full, break
             if (numInsideBuffer == 10) {
                 overlapperSet = false; // reset the overlapper set
                 break;
             }
             // If the buffer is not full, fill the buffer
             else {
-                var el = zones.shift(); // get the first element from the zones
+                var el = zones.shift(); // get the next element from zones list
                 buffer.push(el); // add the element to the buffer
                 numInsideBuffer++; // increment the number of elements inside the buffer
-                // If the element is greater than the global max, increment the last sorted index
-                if ((el[0] > sware_max) && (moved == false)) {
+                // If the element is greater than the global max, increment the lastSortedIndex
+                if ((el[0] > sware_max_buffer) && (moved == false)) {
                     lastSortedIndex++; // increment the last sorted index
-                    sware_max = el[1]; // update the global max
+                    sware_max_buffer = el[1]; // update the global max
                 }
                 // Push lastSortedIndex back to its position
                 else {
+                    // If the overlapper is not set, set it (only for visual purposes)
                     if (!overlapperSet) {
                         overlapper = numInsideBuffer - 1;
                         overlapperSet = true;
                     }
+                    // Travers down the buffer
                     for (let i = lastSortedIndex; i >= 0; i--) {
+                        // Edge case: lastSortedIndex is 0
                         if (i == 0) {
+                            // If the current element causes overlap
                             if ((el[0] > buffer[i][0] && el[0] < buffer[i][1]) || (el[0] < buffer[i][0])) {
-                                sware_max = buffer[i][1];
+                                // Move lastSortedIndex back
+                                sware_max_buffer = buffer[i][1];
                                 lastSortedIndex = i - 1;
                                 moved = true;
                                 break;
                             }
                         }
+                        // All other cases
                         else {
-                            if ((el[0] > buffer[i][0] && el[0] < buffer[i][1]) || (el[0] < buffer[i][0] && el[0] > buffer[i-1][1])) {
-                                sware_max = buffer[i][1];
+                            // If the current element causes overlap
+                            if ((el[0] > buffer[i][0] && el[0] < buffer[i][1]) 
+                                || (el[0] < buffer[i][0] && el[0] > buffer[i-1][1])) {
+                                // Move lastSortedIndex back
+                                sware_max_buffer = buffer[i][1];
                                 lastSortedIndex = i - 1;
                                 moved = true;
                                 break;
@@ -180,10 +193,9 @@ function sware() {
             }
         }
 
+        update_colors(); // update colors of the buffer
 
-        update_colors();
-
-        state = 0;
+        state = 0; // go to next state
 
     }
 }

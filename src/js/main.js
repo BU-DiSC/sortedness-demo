@@ -21,7 +21,8 @@ var lastSortedIndex = -1; // last sorted index
 var moved = false; // used to check if the element is moved
 var partitioned_data = []; // partitioned data, 10 elements per partition
 var state = 0; // used to decide which step nextStep() will be performed
-var sware_max = Number.MIN_SAFE_INTEGER; // stores the global max value
+var sware_max_tree = Number.MIN_SAFE_INTEGER; // stores the max value in the tree
+var sware_max_buffer = Number.MIN_SAFE_INTEGER; // stores the max value in the buffer
 var numInsideBuffer = 0; // number of elements inside the buffer
 var overlapped; // stores the overlapped element
 var overlapper; // stores the overlapping element that is added later
@@ -31,7 +32,6 @@ var zones_dict = {}; // dictionary to store the zones
 
 /* Parameters for the QuIT algorithm */
 
-var quit_max = Number.MIN_SAFE_INTEGER; // stores the global max value
 var inserted_data_quit = []; // stores the inserted data
 var leaf_node_size = 10; // size of the leaf node
 var pole = []; // current pole
@@ -208,7 +208,6 @@ function visualize_workload() {
             zones_dict[max] = partitioned_data[i];
         }
     
-    
     } 
     else {
         console.log("Invalid parameters detected, visualization aborted");
@@ -262,6 +261,24 @@ function next_step() {
     update_table();
     update_charts();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -334,36 +351,6 @@ function reset_colors() {
     }
 }
 
-
-function nextStep() {
-
-
-    
-    /*********************************************************/
-    /************** QuIT Algorithm Starts Here ***************/
-    /*********************************************************/
-
-
-
-
-    /*********************************************************/
-    /************** QuIT Algorithm Ends Here *****************/
-    /*********************************************************/
-
-
-    document.getElementById("sware-sorts").innerHTML = sware_sorts;
-    document.getElementById("sware-flushes").innerHTML = sware_flushes;
-    document.getElementById("sware-average-pages-per-flush").innerHTML = sware_average_pages_per_flush.toFixed(2);
-    document.getElementById("sware-bulk-loads").innerHTML = sware_bulk_loads;
-    document.getElementById("sware-top-inserts").innerHTML = sware_top_inserts;
-
-    document.getElementById("quit-fast-inserts").innerHTML = quit_fast_inserts;
-    document.getElementById("quit-top-inserts").innerHTML = quit_top_inserts;
-    document.getElementById("quit-pole-resets").innerHTML = quit_pole_resets;
-
-
-    update_charts();
-}
 
 
 function stop_animation() {

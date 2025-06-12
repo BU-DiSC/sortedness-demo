@@ -8,60 +8,6 @@ function create_data(N, K, L, B) {
   data = map[title];
   console.log(data);
   return data;
-
-  /*
-  const fs = require('fs');
-
-  // Path to the file
-  const filePath = "src/workloads/" + title;
-
-  // Read the file asynchronously
-  fs.readFile(filePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading the file:', err);
-      return;
-    }
-
-    // Split the file content by newline characters and convert to numbers
-    const numberArray = data.split('\n').map(line => parseInt(line, 10)).filter(num => !isNaN(num));
-
-    console.log("Array of numbers:", numberArray);
-  });
-
-  // Log the inputs for the function
-  console.log("generate_data( N=" + N + ", K=" + K + ", L=" + L + ", B=" + B + " )");
-
-  /*
-  sorted = false;
-  // shuffle array function for shuffled data
-    const shuffleArray = array => {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-      }
-    };
-    // our API expects data to be an array of [key, value] pairs
-    // where key is the unique identifier for the data point
-    // and value is the value of the data point
-    let data_points = [];
-    for(let i = 1; i <= N; i++)
-    {
-        data_points.push(i);
-    }
-
-    // copy data and shuffle it randomly 
-    let shuffled_data = data_points.slice();
-    shuffleArray(shuffled_data);
-
-    console.log(shuffled_data);
-
-    return shuffled_data;
-    
-
-    return numberArray;
-    */
 }
 
 function create_inversion_data(N, I) {
