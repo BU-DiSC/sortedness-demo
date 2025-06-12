@@ -152,7 +152,7 @@ function visualize_workload() {
         // ticks. This function manually creates the ticks 
         // using N. 
         function createTicks(selectedN) {
-            tickArr = [];
+            let tickArr = [];
             tickArr.push(0);
             let n =  Math.round(selectedN / tickCount);
             for (let i = n; i < selectedN; i += n) {
