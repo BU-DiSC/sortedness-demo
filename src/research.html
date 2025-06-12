@@ -21,11 +21,12 @@
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<script src="js/packages/plotly.js"></script>
-    <script type="text/javascript" src="js/server.js"></script>
-	<script type="text/javascript" src="js/update.js"></script>
+    <script type="text/javascript" src="js/server/server.js"></script>
+	<script type="text/javascript" src="js/server/update.js"></script>
 	<script type="text/javascript" src="js/data.js"></script>
 	<script type="text/javascript" src="js/algorithms/sware.js"></script>
 	<script type="text/javascript" src="js/algorithms/quit.js"></script>
+	<script type="text/javascript" src="js/helpers.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript">
@@ -244,10 +245,10 @@
 			<!-- Buttons -->
 			<div id="buttons-container-wrapper" class="hidden">
 				<div class="col text-center" id="buttons-container">
-					<button id="stop-button" onclick="stop_animation()" type="button" class="btn btn-info"><img src="./img/stop.png" alt="Stop"></button>					
-					<button id="continue-button" onclick="continue_animation()" type="button" class="btn btn-warning"><img src = "./img/continue.png" alt="Continue"></button>
-					<button id="nextstep-button" onclick="nextstep_animation()" type="button" class="btn btn-warning"><img src = "./img/nextstep.png" alt="Nextstep"></button>
-					<button id="reset-button" onclick="reset()" type="button" class="btn btn-warning"><img src = "./img/reset.png" alt="Nextstep"></button>
+					<button id="stop-button" onclick="stop_button()" type="button" class="btn btn-info"><img src="./img/stop.png" alt="Stop"></button>					
+					<button id="continue-button" onclick="continue_button()" type="button" class="btn btn-warning"><img src = "./img/continue.png" alt="Continue"></button>
+					<button id="nextstep-button" onclick="nextstep_button()" type="button" class="btn btn-warning"><img src = "./img/nextstep.png" alt="Nextstep"></button>
+					<button id="reset-button" onclick="reset_button()" type="button" class="btn btn-warning"><img src = "./img/reset.png" alt="Nextstep"></button>
 				</div>
 			</div>
 

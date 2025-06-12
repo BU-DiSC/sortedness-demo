@@ -1,4 +1,6 @@
-// Config parameters
+/*
+ * Configuration parameters
+ */
 
 var selectedN; // stores the N value selected
 var selectedK; // stores the K value selected
@@ -9,6 +11,7 @@ var selectedI; // stores the I value selected
 var wait = 3; // how many iterations we wait before we show index for SWARE algorithm
 var delay = 1000; // delay between animations
 var total_data = []; // stores the workload data
+var total_inversion_data = []; // stores the inversion data
 var running = true; // flag to check if animation is running
 
 
@@ -78,7 +81,7 @@ function visualize_workload() {
 
     let flag = true; // flag to generate graph when parameters are acceptable
     
-    // Put the inputs in console
+    // Show the inputs in console
     console.log("Input N:", selectedN);
     console.log("Input K:", selectedK);
     console.log("Input L:", selectedL);
@@ -128,16 +131,19 @@ function visualize_workload() {
 
     // If all parameters are valid, generate the visualization
     if (flag) {
-        console.log("All parameters valid, generating visualization");
+        console.log("All parameters valid, generating visualization.");
         
         // Show chart elements
         document.getElementById('chart-column').classList.remove('hidden');
         document.getElementById('run-button-container').classList.remove('hidden');
         
-        // Generate data
+        // Get the data from the imitated server
         running = true;
-        total_data = create_data(selectedN, selectedK, selectedL, selectedB);
-        total_inversion_data = create_inversion_data(selectedN, selectedI);
+        let title = "N" + selectedN + "_K" + selectedK + "_L" + selectedL + "_B" + selectedB;
+        total_data = map[title];
+
+        // TODO: create a seperate inversion data method
+        total_inversion_data = JSON.parse(JSON.stringify(total_data)); 
         
         // Draw charts
         const tickCount = 10;
@@ -158,8 +164,7 @@ function visualize_workload() {
         }
     
         // Adjust data for plotting
-        var plot_data = generate_data(selectedN, total_data); 
-        //console.log(plot_data);
+        var plot_data = adjust_for_plotting(selectedN, total_data); 
         var data = google.visualization.arrayToDataTable(plot_data);
         // Options for the graph
         var options = {
@@ -177,8 +182,7 @@ function visualize_workload() {
         chart.draw(data, options);
     
         // Adjust data for plotting
-        plot_data = generate_data(selectedN, total_inversion_data); 
-        //console.log(plot_data);
+        plot_data = adjust_for_plotting(selectedN, total_inversion_data); 
         data = google.visualization.arrayToDataTable(plot_data);
         // Options for the graph
         var options = {
@@ -237,9 +241,7 @@ function run_operations() {
     document.getElementById("continue-button").disabled = true; // disable continue button
     document.getElementById("nextstep-button").disabled = true; // disable nextstep button
 
-
-    
-    state = 2; // buffer is empty initially
+    state = 2; // SWARE buffer is empty initially
 
     // The main loop
     let interval = setInterval(() => {
@@ -261,375 +263,4 @@ function next_step() {
     update_table();
     update_charts();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function update_colors() {
-    if (state == 0) {
-        // reset the colors
-        reset_colors();
-    }
-    else if (state == 1) {
-        reset_colors();
-        if (lastSortedIndex == -1) {
-            const first = document.getElementById("buffer0");
-            first.style.backgroundColor = "#0097B5"; // dark blue (sorted)
-        }
-        else {
-            for (let i = 0; i <= lastSortedIndex; i++) {
-                const iter = document.getElementById("buffer" + i);
-                if (i % 2 == 0) {
-                    iter.style.backgroundColor = "#0097B5"; // dark blue (sorted)
-                }
-                else {
-                    iter.style.backgroundColor = "#00D5FF"; // light blue (sorted)
-                }
-            }
-        }     
-    }
-    else if (state == 2) {
-        reset_colors();
-        if (lastSortedIndex == -1) {
-            const first = document.getElementById("buffer0");
-            first.style.backgroundColor = "#05B51C"; // dark green (sorted)
-            const next = document.getElementById("buffer1");
-            next.style.backgroundColor = "#FF0000"; // red (overlaps)
-            const d = document.getElementById("buffer" + overlapper);
-            d.style.backgroundColor = "#FF0000"; // red (overlaps)
-        }
-        else {
-            let i;
-            for (i = 0; i <= lastSortedIndex; i++) {
-                const iter = document.getElementById("buffer" + i);
-                if (i % 2 == 0) {
-                    iter.style.backgroundColor = "#05B51C"; // dark green (sorted)
-                }
-                else {
-                    iter.style.backgroundColor = "#00FF22"; // light green (sorted)
-                }
-            }
-            if (i < 10) {
-                const overlapped = document.getElementById("buffer" + i);
-                overlapped.style.backgroundColor = "#FF0000"; // red (overlaps)
-                const d = document.getElementById("buffer" + overlapper);
-                d.style.backgroundColor = "#FF0000"; // red (overlaps)
-            }
-        }     
-    }
-}
-
-function reset_colors() {
-    for (let i = 0; i < 10; i++) {
-        const iter = document.getElementById("buffer" + i);
-        if (i % 2 == 0) {
-            iter.style.backgroundColor = "#808080";
-        }
-        else {
-            iter.style.backgroundColor = "#d3d3d3";
-        }
-    }
-}
-
-
-
-function stop_animation() {
-    running = false;
-    document.getElementById("stop-button").disabled = true;
-    document.getElementById("continue-button").disabled = false;
-    document.getElementById("nextstep-button").disabled = false;
-
-    console.log("Animation stopped.");
-}
-
-function continue_animation() {
-    running = true;
-    document.getElementById("stop-button").disabled = false;
-    document.getElementById("continue-button").disabled = true;
-    document.getElementById("nextstep-button").disabled = true;
-
-    let interval = setInterval(() => {
-        if (running == false) {
-            clearInterval(interval); 
-            return;
-        }
-        nextStep(); 
-    }, delay);
-    console.log("Animation continues.");
-}
-
-
-function nextstep_animation() {
-    running = false;
-    nextStep();
-    console.log("Next step done.")
-}
-function reset() {
-    valsToEliminate = vals.slice();
-
-    function resetDropdown(field, key) {
-        field.length = 0;
-        let op = document.createElement('option');
-        op.value = "";
-        op.text = "";
-        field.appendChild(op);
-
-        let uniqueValues = [...new Set(valsToEliminate.map(p => p[key]))].sort((a, b) => a - b);
-        for (const value of uniqueValues) {
-            let op = document.createElement('option');
-            op.value = value;
-            op.text = value;
-            field.appendChild(op);
-        }
-    }
-
-    // Reset parameters
-    buffer = [];
-    tree = [];
-    lastSortedIndex = -1;
-    moved = false;
-    partitioned_data = [];
-    state = 0; 
-    max = Number.MIN_SAFE_INTEGER;
-    numInsideBuffer = 0;
-    overlapper;
-    overlapperSet = false;
-    overlapped;
-    zones_dict = {};
-    running = false;
-    delay = 1000;
-    wait = 3;
-    sware_sorts = 0;
-    sware_flushes = 0;
-    sware_average_pages_per_flush = 0;
-    sware_bulk_loads = 0;
-    sware_top_inserts = 0;
-
-    quit_fast_inserts = 0;
-    quit_top_inserts = 0;
-    quit_pole_resets = 0;
-
-    leaf_node_size = 10;
-    pole = [];
-    pole_prev = [];
-    pole_next = [];
-
-    sware_sorts_history = [];
-    sware_flushes_history = [];
-    sware_average_pages_per_flush_history = [];
-    sware_bulk_loads_history = [];
-    quit_fast_inserts_history = [];
-    sware_top_inserts_history = [];
-    quit_top_inserts_history = [];
-    quit_pole_resets_history = [];
-
-    // Reset each dropdown
-    resetDropdown(document.getElementById("cmp-select-N"), "N");
-    resetDropdown(document.getElementById("cmp-select-K"), "K");
-    resetDropdown(document.getElementById("cmp-select-L"), "L");
-    resetDropdown(document.getElementById("cmp-select-B"), "B");
-    resetDropdown(document.getElementById("cmp-select-I"), "I");
-
-    // Hide elements that should not be visible initially
-    document.getElementById("chart-column").classList.add("hidden");
-    document.getElementById("buttons-container-wrapper").classList.add("hidden");
-    document.getElementById("tree-area-step-3+").classList.add("hidden");
-    document.getElementById("buffer-area").classList.add("hidden");
-    document.getElementById("dashed-line").classList.add("hidden");
-    document.getElementById("run-button-container").classList.add("hidden");
-    document.getElementById("results-panel").classList.add("hidden");
-    document.getElementById("plots").classList.add("hidden");
-    document.getElementById("animations-div").classList.add("hidden");
-    // stop_animation(); 
-
-    console.log("Reset to default state.");
-}
-
-
-function update_charts() {
-    let plot_data = [];
-    let data;
-
-    /* Number of SWARE Sorts vs. Operation Steps Chart */
-    plot_data.push(['Operation Steps', 'SWARE']);
-    for (let i = 1; i <= sware_sorts_history.length; i++) {
-        plot_data.push([i, sware_sorts_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of SWARE Sorts vs. Operation Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_sorts_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Sorts', minValue: 0, maxValue: Math.max(...sware_sorts_history), ticks: 1},
-        legend: "none",
-        explorer: { 
-            zoomDelta: 0.8,
-        },
-        legends: "none",
-        colors: ["#80CBC4"]
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-sorts-chart"));
-    chart.draw(data, options);
-
-
-    /* Number of SWARE Flushes vs. Operation Steps Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# of SWARE Flushes']);
-    for (let i = 1; i <= sware_flushes_history.length; i++) {
-        plot_data.push([i, sware_flushes_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of SWARE Flushes vs. Operation Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_flushes_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_flushes_history), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-flushes-chart"));
-    chart.draw(data, options);
-    
-    /* Number of Average Pages per SWARE Flush vs. Operation Step Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# of Average Pages per SWARE Flush vs. Operation Step Chart']);
-    for (let i = 1; i <= sware_average_pages_per_flush_history.length; i++) {
-        plot_data.push([i, sware_average_pages_per_flush_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of average pages per SWARE flush vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_average_pages_per_flush_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_average_pages_per_flush_history), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-average-pages-per-flush-chart"));
-    chart.draw(data, options);
-
-    /* Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operation Step Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# SWARE Bulk Loads', '# QuIT Fast Inserts']);
-    for (let i = 1; i <= sware_bulk_loads_history.length; i++) {
-        plot_data.push([i, sware_bulk_loads_history[i], quit_fast_inserts_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_bulk_loads_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_bulk_loads_history), Math.max(...quit_fast_inserts_history)), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4", "#FFB433"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loads/quit-fast-inserts-chart"));
-    chart.draw(data, options);
-
-    /* Number of SWARE Top Inserts / QuIT Top Inserts vs. Operation Steps Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# SWARE Top Inserts', '# QuIT Top Inserts']);
-    for (let i = 1; i <= sware_top_inserts_history.length; i++) {
-        plot_data.push([i, sware_top_inserts_history[i], quit_top_inserts_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of SWARE Top Inserts / QuIT Top Inserts vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_top_inserts_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_top_inserts_history), Math.max(...quit_top_inserts_history)), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4", "#FFB433"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-top-inserts/quit-top-inserts-chart"));
-    chart.draw(data, options);
-
-    /* Number of QuIT Pole Resets Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# QuIT Pole Resets']);
-    for (let i = 1; i <= quit_pole_resets_history.length; i++) {
-        plot_data.push([i, quit_pole_resets_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of QuIT Pole Resets vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: quit_pole_resets_history.length.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(...quit_pole_resets_history), ticks: 1},
-        legend: "none",
-        colors: ["#FFB433"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("quit-pole-resets-chart"));
-    chart.draw(data, options);
-
-
-
-}
-
-function update_history() {
-    sware_sorts_history.push(sware_sorts);
-    sware_flushes_history.push(sware_flushes);
-    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
-    sware_bulk_loads_history.push(sware_bulk_loads);
-    quit_fast_inserts_history.push(quit_fast_inserts);
-    sware_top_inserts_history.push(sware_top_inserts);
-    quit_top_inserts_history.push(quit_top_inserts);
-    quit_pole_resets_history.push(quit_pole_resets);
-}
-
-function update_table() {
-    document.getElementById("sware-sorts").innerHTML = sware_sorts;
-    document.getElementById("sware-flushes").innerHTML = sware_flushes;
-    document.getElementById("sware-average-pages-per-flush").innerHTML = sware_average_pages_per_flush;
-    document.getElementById("sware-bulk-loads").innerHTML = sware_bulk_loads;
-    document.getElementById("quit-fast-inserts").innerHTML = quit_fast_inserts;
-    document.getElementById("sware-top-inserts").innerHTML = sware_top_inserts;
-    document.getElementById("quit-top-inserts").innerHTML = quit_top_inserts;
-    document.getElementById("quit-pole-resets").innerHTML = quit_pole_resets;
-}
-
-
-
-
 
