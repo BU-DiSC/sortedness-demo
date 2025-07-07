@@ -253,6 +253,31 @@ function run_operations() {
     }, delay);
 }
 
+//Function for the data.html file
+function run2_operations() {
+
+    console.log("Starting to run the algorithm.");
+
+    // Show hidden divs
+    document.getElementById('plots').classList.remove("hidden");
+
+    document.getElementById("stop-button").disabled = false; // enable stop button
+    document.getElementById("continue-button").disabled = true; // disable continue button
+    document.getElementById("nextstep-button").disabled = true; // disable nextstep button
+
+    state = 2; // SWARE buffer is empty initially
+
+    // The main loop
+    let interval = setInterval(() => {
+        if (running == false) {
+            clearInterval(interval); 
+            return;
+        }
+        next_step(); 
+    }, delay);
+}
+
+
 /*
  * Runs one step of both algorithms and updates the UI
  */
