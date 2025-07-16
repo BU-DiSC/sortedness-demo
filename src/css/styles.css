@@ -711,21 +711,43 @@ footer .footer-below {
     height: 500px; /* Fixed height */
 }
 
-
-#chart_div {
-    border: 1px solid #ddd;
-    background-color: #fff;
-    padding: 5px;
-    border-radius: 5px;
-    width: 100%;
+.run-button-container {
+    text-align: right;
+    padding-top: 1.5rem;
 }
 
-#chart_div_inversions {
+
+#klCharts, 
+#inversionCharts {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+}
+
+.chart-column,
+#chart-column {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+}
+
+.charts {
+    height: auto !important;
+    overflow: hidden !important;
+}
+
+
+.chart_div {
     border: 1px solid #ddd;
     background-color: #fff;
     padding: 5px;
     border-radius: 5px;
-    width: 100%;
+    box-sizing: border-box;
+    width: calc(100% - 20px) !important;
+    height: calc(100% - 20px) !important;
+    margin: 10px !important;      /* Include padding and border in size */
 }
 
 #info_div {
@@ -1235,9 +1257,36 @@ div.fixed {
     margin: 0px;
 }
 
-.run-button-container {
-    text-align: right;
-    padding-top: 1.5rem;
+
+.deleteButton {
+  position: absolute;
+  top: 2%;       
+  right: 2%;     
+  z-index: 10;
+
+
+  width: 6%;      
+  padding: 1%;    
+
+  background: rgba(220, 53, 69, 0.85);
+  border: none;
+  color: #fff;
+  border-radius: 0.25rem;
+  font-size: 0.8em;   
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background: rgba(220, 53, 69, 1);
+}
+
+#exchangesDone{
+    border: 1px solid lightgray;
+    padding-top:1.5%;
+    padding-right:10%;
+    padding-left:10%;
+    display: flex;
+    justify-content: center;
 }
 
 .section-title {
@@ -1264,4 +1313,122 @@ div.fixed {
     text-align: right;
     padding-top: 1.5rem;
     padding-bottom: 20px;
+}
+
+
+/* new styling */
+#cmp-conf-row, #cmp-conf-row2 {
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+#cmp-conf-row .parameter-container,
+#cmp-conf-row2 .parameter-container {
+    flex: 1;
+    min-width: 300px;
+    width: auto; /* Override the 23% */
+}
+
+#cmp-conf-row .input-group,
+#cmp-conf-row2 .input-group {
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 12px !important;
+    overflow: visible;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    border: none !important;
+    margin-bottom: 0; /* Remove default margin */
+}
+
+#cmp-conf-row .input-group::before,
+#cmp-conf-row2 .input-group::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #28a745 0%, #764ba2 100%);
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+#cmp-conf-row .input-group:hover,
+#cmp-conf-row2 .input-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+#cmp-conf-row .input-group:focus-within::before,
+#cmp-conf-row2 .input-group:focus-within::before {
+    opacity: 0.1;
+}
+
+#cmp-conf-row .input-group-text,
+#cmp-conf-row2 .input-group-text {
+    background: transparent !important;
+    border: none !important;
+    font-size: 12px;
+    font-weight: 700;
+    color: #28a745 !important; /* Override existing color */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 20px;
+    white-space: nowrap;
+}
+
+#cmp-conf-row .form-control,
+#cmp-conf-row2 .form-control {
+    background: transparent !important;
+    border: none !important;
+    font-size: 16px;
+    padding: 12px 20px;
+    font-weight: 500;
+    color: #2d3748;
+    text-align: right; /* Maintain your existing right alignment */
+}
+
+#cmp-conf-row .form-control:focus,
+#cmp-conf-row2 .form-control:focus {
+    box-shadow: none !important;
+    background: rgba(255,255,255,0.5) !important;
+}
+
+/* Enhanced workload title */
+h4.workload-title {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.5rem; /* Override 'large' with specific size */
+    margin: 40px 0 30px;
+    position: relative;
+    padding-bottom: 15px;
+    text-align: center;
+}
+
+h4.workload-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #28a745 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+/* Add icons styling */
+#cmp-conf-row .input-group-text i,
+#cmp-conf-row2 .input-group-text i {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+/* Remove the incrementer styling for cleaner look */
+#cmp-conf-row .incrementer,
+#cmp-conf-row2 .incrementer {
+    display: none; /* Hide if you want a cleaner look */
 }
