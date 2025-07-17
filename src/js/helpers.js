@@ -26,7 +26,7 @@ function adjust_for_plotting(N, data)
 
 function adjust_for_plotly_plotting(data_points) {
     let dataArray = [];
-    for(let i = 1; i <= data_points.length; i++) {
+    for(let i = 0; i < data_points.length; i++) {
         dataArray.push(data_points[i]);
     }
     
@@ -39,7 +39,7 @@ function adjust_for_plotly_plotting(data_points) {
     dataArray.forEach((value, index) => {
         // Check if value is in its correct position
         // (index+2 due to 1-indexing conversion as mentioned in your comment)
-        if (value === (index + 2)) {
+        if (value === (index + 1)) {
             inOrderX.push(index + 1);
             inOrderY.push(value);
         } else {

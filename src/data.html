@@ -102,7 +102,7 @@
         <div class="input-group input-group-sm mb-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="cmp-select-N">
-                    <i class="fas fa-hashtag"></i>N (# of elements)
+                    <i class="fas"></i>N (# of elements)
                 </label>
             </div>
             <input type="number" id="cmp-select-N" class="cmp-input form-control" 
@@ -115,7 +115,7 @@
         <div class="input-group input-group-sm mb-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="cmp-select-K">
-                    <i class="fas fa-percentage"></i>K (% out-of-order)
+                    <i class="fas"></i>K (% out-of-order)
                 </label>
             </div>
             <input type="number" id="cmp-select-K" class="cmp-input form-control" 
@@ -128,7 +128,7 @@
         <div class="input-group input-group-sm mb-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="cmp-select-L">
-                    <i class="fas fa-percentage"></i>L (% max out-of-orderness)
+                    <i class="fas"></i>L (% max out-of-orderness)
                 </label>
             </div>
             <input type="number" id="cmp-select-L" class="cmp-input form-control" 
@@ -137,31 +137,31 @@
     </div>
 </div>
 
-<h4 class="text-center workload-title">Beta Distribution</h4>
+<h4 class="text-center workload-title">Sortedness Distribution</h4>
 
 <div id="cmp-conf-row2" class="parameter-row">
+	<!--Div of A-->
+	<div class="parameter-container">
+        <div class="input-group input-group-sm mb-2">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="cmp-select-A">
+                    <i class="fas fa-chart-area"></i> <span class="specialChar">&alpha;</span> (alpha value)
+                </label>
+            </div>
+            <input type="number" id="cmp-select-A" class="cmp-input form-control" 
+                   value="0.3" min="0.1" max="1" step="0.1" aria-label="#Entries" onchange="update()">
+        </div>
+    </div>
+
     <!-- Div of B -->
     <div class="parameter-container">
         <div class="input-group input-group-sm mb-2">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="cmp-select-B">
-                    <i class="fas fa-chart-line"></i>β (beta value)
+                    <i class="fas fa-chart-line"></i> <span class="specialChar">&beta;</span> (beta value)
                 </label>
             </div>
             <input type="number" id="cmp-select-B" class="cmp-input form-control" 
-                   value="0.3" min="0.1" max="1" step="0.1" aria-label="#Entries" onchange="update()">
-        </div>
-    </div>
-
-    <!-- Div of A -->
-    <div class="parameter-container">
-        <div class="input-group input-group-sm mb-2">
-            <div class="input-group-prepend">
-                <label class="input-group-text" for="cmp-select-A">
-                    <i class="fas fa-chart-area"></i>α (alpha value)
-                </label>
-            </div>
-            <input type="number" id="cmp-select-A" class="cmp-input form-control" 
                    value="0.3" min="0.1" max="1" step="0.1" aria-label="#Entries" onchange="update()">
         </div>
     </div>
@@ -170,7 +170,7 @@
 		<div id="cmp-conf-row4" class="parameter-row">
     		<div class="parameter-container">
         		<div class="d-flex justify-content-center">
-            		<button onclick="visualize_workload()" type="button" class="btn btn-success">Generate Workload</button>
+            		<button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
         		</div>
     		</div>
 		</div>

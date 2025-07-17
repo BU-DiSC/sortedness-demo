@@ -222,11 +222,12 @@ function visualize_workload() {
                     automargin:true
                 },
                 legend: {
-                    x: 1,
-                    y: 0,
+                    orientation:'h',
+                    x: 0.2,
+                    y: 1.05,
                     bgcolor: 'rgba(255, 255, 255, 0.8)',
                     bordercolor: 'black',
-                    borderwidth: 1
+                    borderwidth: 0
                 },
                 showlegend: true  // Ensure legend is shown
             };
@@ -296,11 +297,12 @@ function visualize_workload() {
                     automargin:true
                 },
                 legend: {
-                    x: 1,
-                    y: 0,
+                    x: 0.2,
+                    y: 1.1,
+                    orientation:'h',
                     bgcolor: 'rgba(255, 255, 255, 0.8)',
                     bordercolor: 'black',
-                    borderwidth: 1
+                    borderwidth: 0
                 },
                 showlegend: true  // Ensure legend is shown
             };
@@ -605,13 +607,16 @@ function generateInversion(n,i)
     return array;
     */
     let taken = new Map();
+     //precautionary so no value not in array is swapped
+    taken.set(0,false);
+    taken.set(n+1,false);
     for(let a = 1;a<n+1;a++)
     {
         taken.set(a,true);
     }
 
-    sources1 = generateSources(n,2*inversions,taken);
-    sources2 = generateSources(n,2*inversions,taken);
+    let sources1 = generateSources(n,2*inversions,taken);
+    let sources2 = generateSources(n,2*inversions,taken);
     for(let a = 0;a<inversions;a++)
     {
         swapElements(array,sources1[a],sources2[a])
