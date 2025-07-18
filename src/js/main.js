@@ -151,11 +151,11 @@ function visualize_workload() {
         running = true;
         selectedE = Math.round((selectedN * selectedK) / 200);
         let title = "N" + selectedN + "_K" + selectedK + "_L" + selectedL + "_B" + selectedB;
-        var tempArray = [selectedN, selectedK, selectedL, selectedB, selectedE,selectedA];
+        var tempArray = [selectedN, selectedK, selectedL, selectedB, selectedE, selectedA];
         inputedDataE.push(tempArray);
         inputedDatakl.push(tempArray);
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
-         selectedN, selectedB,selectedA);
+            selectedN, selectedB, selectedA);
         klDatasets.push(total_data);
         // TODO: make exchanges method more randomized
         total_exchanges_data = generateInversion(selectedN, selectedE);
@@ -185,53 +185,64 @@ function visualize_workload() {
         // Force button visibility
         document.getElementById('chart-column').classList.remove('hidden');
         let runBtn;
+        
         //draw kl charts most recently created chart is drawn first
         for (let i = klDatasets.length - 1; i >= 0; i--) {
             // Adjust data for plotting, k-l data
             var plot_data = adjust_for_plotly_plotting(klDatasets[i]);
             // Options for the graph
             const layout = {
-                title:{ text: "Position vs. Value Comparison<br>(N=" + inputedDatakl[i][0] + ", K=" + inputedDatakl[i][1]
-                     + ", L=" + inputedDatakl[i][2] + ", B=" + inputedDatakl[i][3] + ", A=" + inputedDatakl[i][5] + ")",
-                font: {
-                    size: 14,           // Smaller size (default is usually 17-18)
-                    family: 'Arial', 
-                }
-                    
-                    
+                title: {
+                    text: "K-L Metric",
+                    font: {
+                        size: 14,           // Smaller size (default is usually 17-18)
+                        family: 'Arial',
+                    }
                 },
-                //autosize: true,              
-                width: 500,                   
-                height: 500,                  
+                width: 500,
+                height: 500,
                 margin: {
                     l: 60,
                     r: 40,
-                    t: 80,
-                    b: 60
+                    t: 40,
+                    b: 100
                 },
                 xaxis: {
                     title: 'position',
-                    //scaleanchor:'y',
-                    //scaleratio:0.3,
                     range: [0, null],
-                    automargin:true
+                    automargin: true
                 },
                 yaxis: {
                     title: 'value',
                     range: [0, null],
-                    automargin:true
+                    automargin: true
                 },
                 legend: {
-                    orientation:'h',
+                    orientation: 'h',
                     x: 0.2,
                     y: 1.05,
                     bgcolor: 'rgba(255, 255, 255, 0.8)',
                     bordercolor: 'black',
                     borderwidth: 0
                 },
-                showlegend: true  // Ensure legend is shown
+                showlegend: true,
+                annotations: [{
+                    text: "(N=" + inputedDatakl[i][0] + ", K=" + inputedDatakl[i][1]
+                        + ", L=" + inputedDatakl[i][2] + ", B=" + inputedDatakl[i][3] + ", A=" + inputedDatakl[i][5] + ")",
+                    xref: 'paper',
+                    yref: 'paper',
+                    x: 0.5,
+                    y: -0.15,
+                    xanchor: 'center',
+                    yanchor: 'top',
+                    showarrow: false,
+                    font: {
+                        size: 14,
+                        family: 'Arial'
+                    }
+                }]
             };
-
+            
             const config = {
                 responsive: true         // Enable responsive behavior
             };
@@ -253,58 +264,72 @@ function visualize_workload() {
             klChart.id = "chart_div" + i;
             klChart.classList.add("equal-height", "chart_div");
             klChart.style.width = "100%";
-            klChart.style.height = "500px";    
+            klChart.style.height = "500px";
             klChart.style.minHeight = "500px";
-            klChart.style.padding = "0px";    
+            klChart.style.padding = "0px";
             klChartWrapper.appendChild(klChart);
             document.getElementById("klCharts").appendChild(klChartWrapper);
-            Plotly.newPlot("chart_div" + i, plot_data, layout,config);
+            Plotly.newPlot("chart_div" + i, plot_data, layout, config);
             klChartWrapper.appendChild(deleteButton);
         }
+        
         //draw inversions charts, most recently created chart is drawn first
         for (let i = exchangesDatasets.length - 1; i >= 0; i--) {
-             // Adjust data for plotting, k-l data
+            // Adjust data for plotting, k-l data
             var plot_data = adjust_for_plotly_plotting(exchangesDatasets[i]);
             // Options for the graph
             const layout = {
-                title:{ text: "Example exchanges data (N=" + inputedDataE[i][0] + ", E=" + inputedDataE[i][4] + ")",
-                font: {
-                    size: 14,           // Smaller size (default is usually 17-18)
-                    family: 'Arial', 
-                }
-                    
-                    
+                title: {
+                    text: "Exchanges",
+                    font: {
+                        size: 14,           // Smaller size (default is usually 17-18)
+                        family: 'Arial',
+                    }
                 },
                 //autosize:true,
-                width:500,
-                height:500,
-                margin:{
-                    l:60,
-                    r:40,
-                    t:80,
-                    b:60
+                width: 500,
+                height: 500,
+                margin: {
+                    l: 60,
+                    r: 40,
+                    t: 40,
+                    b: 100
                 },
                 xaxis: {
                     title: 'position',
                     //scaleanchor:'y',
                     //scaleratio:0.3,
                     range: [0, null],
-                    automargin:true
+                    automargin: true
                 },
                 yaxis: {
                     title: 'value',
                     range: [0, null],
-                    automargin:true
+                    automargin: true
                 },
                 legend: {
                     x: 0.2,
-                    y: 1.1,
-                    orientation:'h',
+                    y: 1.05,
+                    orientation: 'h',
                     bgcolor: 'rgba(255, 255, 255, 0.8)',
                     bordercolor: 'black',
                     borderwidth: 0
                 },
-                showlegend: true  // Ensure legend is shown
+                showlegend: true,
+                annotations: [{
+                    text: "(N=" + inputedDataE[i][0] + ", E=" + inputedDataE[i][4] + ")",
+                    xref: 'paper',
+                    yref: 'paper',
+                    x: 0.5,
+                    y: -0.15,
+                    xanchor: 'center',
+                    yanchor: 'top',
+                    showarrow: false,
+                    font: {
+                        size: 14,
+                        family: 'Arial'
+                    }
+                }]
             };
 
             const config = {
@@ -329,18 +354,17 @@ function visualize_workload() {
             inversionChart.id = "inversion_chart_div" + i;
             inversionChart.classList.add("equal-height", "chart_div");
             inversionChart.style.width = "100%";
-            inversionChart.style.height = "500px";    
+            inversionChart.style.height = "500px";
             inversionChart.style.minHeight = "500px";
             inversionChart.style.padding = "0px";
             inversionChartWrapper.appendChild(inversionChart);
             document.getElementById("inversionCharts").appendChild(inversionChartWrapper);
-            Plotly.newPlot("inversion_chart_div" + i, plot_data, layout,config);
+            Plotly.newPlot("inversion_chart_div" + i, plot_data, layout, config);
             inversionChartWrapper.appendChild(deleteButton);
         }
 
         document.getElementById("runBtn").classList.remove("hidden");
         document.getElementById("run-button-contain").classList.remove("hidden");
-
 
         // Partition the data    
         for (let i = 0; i < total_data.length; i += 10) {
@@ -361,19 +385,16 @@ function visualize_workload() {
     }
 }
 
-
-
 /*
  * Gets called after "Run" button is clicked
  */
 function run_operations() {
-
     console.log("Starting to run the algorithm.");
 
     // Show hidden divs
     document.getElementById('buffer-area').classList.remove('hidden');
     document.getElementById('buttons-container-wrapper').classList.remove('hidden');
-    document.getElementById('dashed-line').classList.remove('hidden'); 
+    document.getElementById('dashed-line').classList.remove('hidden');
     document.getElementById('quit-area').classList.remove("hidden");
     document.getElementById('results-panel').classList.remove("hidden");
     document.getElementById('plots').classList.remove("hidden");
@@ -388,16 +409,15 @@ function run_operations() {
     // The main loop
     let interval = setInterval(() => {
         if (running == false) {
-            clearInterval(interval); 
+            clearInterval(interval);
             return;
         }
-        next_step(); 
+        next_step();
     }, delay);
 }
 
 //Function for the data.html file
 function run2_operations() {
-
     console.log("Starting to run the algorithm.");
 
     // Show hidden divs
@@ -412,13 +432,12 @@ function run2_operations() {
     // The main loop
     let interval = setInterval(() => {
         if (running == false) {
-            clearInterval(interval); 
+            clearInterval(interval);
             return;
         }
-        next_step(); 
+        next_step();
     }, delay);
 }
-
 
 /*
  * Runs one step of both algorithms and updates the UI
@@ -431,168 +450,141 @@ function next_step() {
     update_charts();
 }
 
-
-function generateSources(n,k,taken){
+function generateSources(n, k, taken) {
     let count = 0;
     let sources = new Array();
     let r;
-    while(count<Math.floor(k/2))
-    {
-        r = Math.floor(Math.random()*n)+1;
-        if(taken.get(r)===true)
-        {
-            taken.set(r,false);
+    while (count < Math.floor(k / 2)) {
+        r = Math.floor(Math.random() * n) + 1;
+        if (taken.get(r) === true) {
+            taken.set(r, false);
             sources.push(r);
             count++;
         }
     }
     return sources;
-
 }
 
-
-
-function swapElements(array, x,y)
-{
+function swapElements(array, x, y) {
     let temp;
     temp = array[x];
-    array[x]=array[y];
+    array[x] = array[y];
     array[y] = temp;
-
 }
 
 //returns a array with numbers of (k-l) sortedness
-function generate(k,l,n,b,a ){
+function generate(k, l, n, b, a) {
     l--;
-    let array=[];
+    let array = [];
     let betaValue;
-    for(let i = 1;i<n+1;i++)
-    {
+    for (let i = 1; i < n + 1; i++) {
         array.push(i);
     }
     let firstSwap;
-    let max,min;
+    let max, min;
     let betaIndex = 0;
     let taken = new Map();
     let sources = new Array();
     let swappingFirst = true;
     let randomPick;
     //precautionary so no value not in array is swapped
-    taken.set(0,false);
-    taken.set(n+1,false);
+    taken.set(0, false);
+    taken.set(n + 1, false);
     //set all array indexes to true because you can swap with any of them
-    for(let i = 0;i<n;i++)
-    {
-        taken.set(i,true);
+    for (let i = 0; i < n; i++) {
+        taken.set(i, true);
     }
     //swap first element by l to ensure there is a max displacement of l
-    if(k<2)
-    {
+    if (k < 2) {
         swappingFirst = false;
     }
-    while(swappingFirst){
-        if(Math.random()<0.5){
-            firstSwap = Math.floor((n-l)*Math.random());
-            if(firstSwap+l<n&&taken.get(firstSwap)&&taken.get(firstSwap+l))
-            {
-                swapElements(array,firstSwap,firstSwap+l);
-                taken.set(firstSwap,false);
-                taken.set(firstSwap+l,false);
+    while (swappingFirst) {
+        if (Math.random() < 0.5) {
+            firstSwap = Math.floor((n - l) * Math.random());
+            if (firstSwap + l < n && taken.get(firstSwap) && taken.get(firstSwap + l)) {
+                swapElements(array, firstSwap, firstSwap + l);
+                taken.set(firstSwap, false);
+                taken.set(firstSwap + l, false);
                 swappingFirst = false;
-                console.log("firstSwap: "+firstSwap,firstSwap+l);
+                console.log("firstSwap: " + firstSwap, firstSwap + l);
             }
         }
-        else{
-            firstSwap = l + Math.floor((n-l)*Math.random());
-            if(firstSwap-l>1&&taken.get(firstSwap)&&taken.get(firstSwap-l))
-            {
-                swapElements(array,firstSwap,firstSwap-l);
-                taken.set(firstSwap,false);
-                taken.set(firstSwap-l,false);
+        else {
+            firstSwap = l + Math.floor((n - l) * Math.random());
+            if (firstSwap - l > 1 && taken.get(firstSwap) && taken.get(firstSwap - l)) {
+                swapElements(array, firstSwap, firstSwap - l);
+                taken.set(firstSwap, false);
+                taken.set(firstSwap - l, false);
                 swappingFirst = false;
-                console.log("firstSwap: "+firstSwap,firstSwap-l);
+                console.log("firstSwap: " + firstSwap, firstSwap - l);
             }
         }
     }
     //indexes of elements we will swap
     let regenerateCount = 0;
-    sources = generateSources(n,k-2,taken);
-    console.log(sources.length,n);
-    while(sources.length!=0&&regenerateCount<5000)
-    {
-        console.log("length: " +sources.length);
-        for(let j = 0;j<(n/100)&&sources.length!=0;j++)
-        {
-            for(let i = 0;i<sources.length;i++)
-            {
-                min = Math.max(0,sources[i]-l);
-                max = Math.min(n-1,sources[i]+l);
-                betaValue = jStat.beta.sample(a,b);
-                if(Math.random()<0.5)
-                {
-                    randomPick = Math.floor(sources[i]-(sources[i]-min)*betaValue);
+    sources = generateSources(n, k - 2, taken);
+    console.log(sources.length, n);
+    while (sources.length != 0 && regenerateCount < 5000) {
+        console.log("length: " + sources.length);
+        for (let j = 0; j < (n / 100) && sources.length != 0; j++) {
+            for (let i = 0; i < sources.length; i++) {
+                min = Math.max(0, sources[i] - l);
+                max = Math.min(n - 1, sources[i] + l);
+                betaValue = jStat.beta.sample(a, b);
+                if (Math.random() < 0.5) {
+                    randomPick = Math.floor(sources[i] - (sources[i] - min) * betaValue);
                 }
-                else{
-                    randomPick = Math.floor(sources[i]+(max-sources[i])*betaValue);
+                else {
+                    randomPick = Math.floor(sources[i] + (max - sources[i]) * betaValue);
                 }
                 //console.log(randomPick);
-                if(taken.get(randomPick)&&randomPick!=sources[i])
-                {
-                    swapElements(array,sources[i],randomPick);
-                    taken.set(randomPick,false);
-                    taken.set(sources[i],false);
-                    sources.splice(i,1);
+                if (taken.get(randomPick) && randomPick != sources[i]) {
+                    swapElements(array, sources[i], randomPick);
+                    taken.set(randomPick, false);
+                    taken.set(sources[i], false);
+                    sources.splice(i, 1);
                     i--;
                 }
             }
         }
         console.log("regenerate");
         regenerateCount++;
-        for(let i = 0;i<sources.length;i++)
-        {
-            taken.set(sources[i],true);
+        for (let i = 0; i < sources.length; i++) {
+            taken.set(sources[i], true);
         }
-        sources = generateSources(n,(2*sources.length),taken);
+        sources = generateSources(n, (2 * sources.length), taken);
     }
-    console.log("final: "+sources.length);
-    for(let i = Math.max(0,sources[0]-l);i<Math.min(n-1,sources[0]+l);i++)
-    {
-        if(taken.get(i))
-        {
-            console.log("index: ",i,"value: ",array[i]);
+    console.log("final: " + sources.length);
+    for (let i = Math.max(0, sources[0] - l); i < Math.min(n - 1, sources[0] + l); i++) {
+        if (taken.get(i)) {
+            console.log("index: ", i, "value: ", array[i]);
         }
     }
     //if odd n swap element that has already been swapped with an element that hasn't already been swapped
-    if(k%2==1)
-    {
-        let odd = Math.floor(Math.random()*n);
-        while(taken.get(odd)&&odd>0)
-        {
-            odd = Math.floor(Math.random()*n);
+    if (k % 2 == 1) {
+        let odd = Math.floor(Math.random() * n);
+        while (taken.get(odd) && odd > 0) {
+            odd = Math.floor(Math.random() * n);
         }
-        min = Math.max(1,odd-l);
-        max = Math.min(n,odd+l);
-        betaValue = jStat.beta.sample(a,b);
+        min = Math.max(1, odd - l);
+        max = Math.min(n, odd + l);
+        betaValue = jStat.beta.sample(a, b);
         let oddSwap;
-        oddSwap = Math.floor(min+(max-min)*betaValue);
-        while(!taken.get(oddSwap)&&!((Math.abs(array[odd] - odd))<l)&&!((Math.abs(array[oddSwap] - oddSwap))<l))
-        {
-            betaValue = jStat.beta.sample(a,b);
-            oddSwap = Math.floor(min+(max-min)*betaValue);
+        oddSwap = Math.floor(min + (max - min) * betaValue);
+        while (!taken.get(oddSwap) && !((Math.abs(array[odd] - odd)) < l) && !((Math.abs(array[oddSwap] - oddSwap)) < l)) {
+            betaValue = jStat.beta.sample(a, b);
+            oddSwap = Math.floor(min + (max - min) * betaValue);
         }
-        swapElements(array,odd,oddSwap);
+        swapElements(array, odd, oddSwap);
     }
     return array;
 }
 
 //returns array of length n with i inversionss
-function generateInversion(n,i)
-{
-
+function generateInversion(n, i) {
     let array = [];
     let inversions = i;
-    for(let a = 1;a<n+1;a++)
-    {
+    for (let a = 1; a < n + 1; a++) {
         array.push(a);
     }
     /*
@@ -607,19 +599,17 @@ function generateInversion(n,i)
     return array;
     */
     let taken = new Map();
-     //precautionary so no value not in array is swapped
-    taken.set(0,false);
-    taken.set(n+1,false);
-    for(let a = 1;a<n+1;a++)
-    {
-        taken.set(a,true);
+    //precautionary so no value not in array is swapped
+    taken.set(0, false);
+    taken.set(n + 1, false);
+    for (let a = 1; a < n + 1; a++) {
+        taken.set(a, true);
     }
 
-    let sources1 = generateSources(n,2*inversions,taken);
-    let sources2 = generateSources(n,2*inversions,taken);
-    for(let a = 0;a<inversions;a++)
-    {
-        swapElements(array,sources1[a],sources2[a])
+    let sources1 = generateSources(n, 2 * inversions, taken);
+    let sources2 = generateSources(n, 2 * inversions, taken);
+    for (let a = 0; a < inversions; a++) {
+        swapElements(array, sources1[a], sources2[a])
     }
     return array;
 }
