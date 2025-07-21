@@ -1,4 +1,5 @@
 
+
 /*
  * Adjust a list of data for Google Charts plotting
  */

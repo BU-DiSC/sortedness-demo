@@ -8,7 +8,14 @@ var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
 var selectedA; // stores the A value selected
 var selectedE; // stores the E value selected
+var selectedA; // stores the A value selected
+var selectedE; // stores the E value selected
 
+var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
+var delay = 1000;                // delay between animations
+var total_data = [];            // stores the workload data
+var total_exchanges_data = [];  // stores the exchanges data
+var running = true;             // flag to check if animation is running
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
 var delay = 1000;                // delay between animations
 var total_data = [];            // stores the workload data
@@ -17,6 +24,14 @@ var running = true;             // flag to check if animation is running
 
 /* Parameters for the SWARE algorithm */
 
+var buffer = [];                      // the buffer
+var tree = [];                        // the tree
+var zones = [];                       // the zones
+var lastSortedIndex = -1;             // last sorted index
+var moved = false;                    // used to check if the element is moved
+var partitioned_data = [];            // partitioned data, 10 elements per partition
+var state = 0;                        // used to decide which step nextStep() will be performed
+var sware_max_tree = Number.MIN_SAFE_INTEGER;   // stores the max value in the tree
 var buffer = [];                      // the buffer
 var tree = [];                        // the tree
 var zones = [];                       // the zones
@@ -389,31 +404,96 @@ function visualize_workload() {
  * Gets called after "Run" button is clicked
  */
 function run_operations() {
-    console.log("Starting to run the algorithm.");
+    // parameters
+    const minN = 20;
+    const maxN = 100000;
+    let flag = true; // flag to generate graph when parameters are acceptable
+    selectedN = parseInt(document.getElementById('cmp-select-N').value);
+    selectedK = parseFloat(document.getElementById('cmp-select-K').value);
+    selectedL = parseFloat(document.getElementById('cmp-select-L').value);
+    selectedB = parseFloat(document.getElementById('cmp-select-B').value);
+    selectedA = parseFloat(document.getElementById('cmp-select-A').value);
 
-    // Show hidden divs
-    document.getElementById('buffer-area').classList.remove('hidden');
-    document.getElementById('buttons-container-wrapper').classList.remove('hidden');
-    document.getElementById('dashed-line').classList.remove('hidden');
-    document.getElementById('quit-area').classList.remove("hidden");
-    document.getElementById('results-panel').classList.remove("hidden");
-    document.getElementById('plots').classList.remove("hidden");
-    document.getElementById('animations-div').classList.remove("hidden");
 
-    document.getElementById("stop-button").disabled = false; // enable stop button
-    document.getElementById("continue-button").disabled = true; // disable continue button
-    document.getElementById("nextstep-button").disabled = true; // disable nextstep button
+    // Validate all parameters before proceeding
+    if (isNaN(selectedN) || selectedN !== parseInt(selectedN)) {
+        alert("N should be an integer");
+        flag = false;
+    } else if (selectedN < minN || selectedN > maxN) {
+        alert("N should be between " + minN + " and " + maxN);
+        flag = false;
+    }
 
-    state = 2; // SWARE buffer is empty initially
+    if (isNaN(selectedK)) {
+        alert("K should be a number");
+        flag = false;
+    } else if (selectedK < 0 || selectedK > 100) {
+        alert("K should be between 0 and 100");
+        flag = false;
+    }
 
-    // The main loop
-    let interval = setInterval(() => {
-        if (running == false) {
-            clearInterval(interval);
-            return;
+    if (isNaN(selectedL)) {
+        alert("L should be a number");
+        flag = false;
+    } else if (selectedL < 0 || selectedL > 100) {
+        alert("L should be between 0 and 100");
+        flag = false;
+    }
+
+    if (isNaN(selectedB) || selectedB !== parseFloat(selectedB)) {
+        alert("B should be a float");
+        flag = false;
+    } else if (selectedB < 0) {
+        alert("B should be greater than 0");
+        flag = false;
+    }
+
+
+    if(flag){
+        total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
+            selectedN, selectedB, selectedA);
+        // Partition the data    
+        for (let i = 0; i < total_data.length; i += 10) {
+            const part = total_data.slice(i, i + 10);
+            partitioned_data.push(part);
         }
-        next_step();
-    }, delay);
+
+        // Fill up zones, zones_dict
+        for (let i = 0; i < partitioned_data.length; i++) {
+            const min = Math.min(...partitioned_data[i]);
+            const max = Math.max(...partitioned_data[i]);
+            zones.push([min, max]);
+            zones_dict[max] = partitioned_data[i];
+        }
+        console.log("Starting to run the algorithm.");
+
+        // Show hidden divs
+        document.getElementById('buffer-area').classList.remove('hidden');
+        document.getElementById('buttons-container-wrapper').classList.remove('hidden');
+        document.getElementById('dashed-line').classList.remove('hidden');
+        document.getElementById('quit-area').classList.remove("hidden");
+        document.getElementById('results-panel').classList.remove("hidden");
+        document.getElementById('plots').classList.remove("hidden");
+        document.getElementById('animations-div').classList.remove("hidden");
+
+        document.getElementById("stop-button").disabled = false; // enable stop button
+        document.getElementById("continue-button").disabled = true; // disable continue button
+        document.getElementById("nextstep-button").disabled = true; // disable nextstep button
+
+        state = 2; // SWARE buffer is empty initially
+
+        // The main loop
+        let interval = setInterval(() => {
+            if (running == false) {
+                clearInterval(interval);
+                return;
+            }
+            next_step();
+        }, delay);
+        }
+    else{
+        console.log('error');
+    }
 }
 
 //Function for the data.html file

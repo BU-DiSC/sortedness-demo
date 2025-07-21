@@ -449,6 +449,7 @@ input[type=number] {
     margin: 0 auto 3px;
     padding: 0px;
     border-radius: 12px;
+    border-radius: 12px;
     vertical-align: top;
 }
 .lsm-btn-group .lsm-btn { /* Override, tree bush result for tiering */

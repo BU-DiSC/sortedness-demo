@@ -19,6 +19,7 @@
 	<!-- Google Material Icon-->
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<script src="js/packages/plotly.js"></script>
     <script type="text/javascript" src="js/server/server.js"></script>
@@ -92,149 +93,81 @@
 		</section>
 		<h4 class="text-center workload-title">Workload</h4>
 
-			<!-- Input fields for the parameters -->
-			<div id="cmp-conf-row" class="parameter-row">
-				<!-- Div of N -->
-				<div class="parameter-container">
-					<div class="input-group input-group-sm mb-2">
-						<div class="input-group-prepend">
-							<label class="input-group-text" for="cmp-select-N">N (# of elements)</label>
-						</div>
-						<select id="cmp-select-N" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value="1000">1000</option>
-							<option value="5000" selected>5000</option>
-							<option value="10000">10000</option>
-						</select>
-					</div>
-				</div>
-				
-				<!-- Div of K -->
-				<div class="parameter-container">
-					<div class="input-group input-group-sm mb-2">
-						<div class="input-group-prepend">
-							<label class="input-group-text" for="cmp-select-K">K (% out-of-order elements)</label>
-						</div>
-						<select id="cmp-select-K" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value="0">0%</option>
-							<option value="10">10%</option>
-							<option value="20" selected>20%</option>
-							<option value="30">30%</option>
-							<option value="40">40%</option>
-							<option value="50">50%</option>
-							<option value="60">60%</option>
-							<option value="70">70%</option>
-							<option value="80">80%</option>
-							<option value="90">90%</option>
-							<option value="100">100%</option>
-						</select>
-					</div>
-				</div>
+			 <!-- Input fields for the parameters -->
+        <div id="cmp-conf-row" class="parameter-row">
+            <!-- Div of N -->
+            <div class="parameter-container">
+                <div class="input-group input-group-sm mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cmp-select-N">
+                            <i class="fas"></i>N (# of elements)
+                        </label>
+                    </div>
+                    <input type="number" id="cmp-select-N" class="cmp-input form-control" 
+                           value="5000" min="20" max="10000" step="1" aria-label="#Entries">
+                </div>
+            </div>
+            
+            <!-- Div of K -->
+            <div class="parameter-container">
+                <div class="input-group input-group-sm mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cmp-select-K">
+                            <i class="fas"></i>K (% out-of-order)
+                        </label>
+                    </div>
+                    <input type="number" id="cmp-select-K" class="cmp-input form-control" 
+                           value="20" min="0" max="100" aria-label="#Entries" onchange="update()">
+                </div>
+            </div>
 
-				<!-- Div of L -->
-				<div class="parameter-container">
-					<div class="input-group input-group-sm mb-2">
-						<div class="input-group-prepend">
-							<label class="input-group-text" for="cmp-select-L">L (% max out-of-orderness)</label>
-						</div>
-						<select id="cmp-select-L" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value="0">0%</option>
-							<option value="10" selected>10%</option>
-							<option value="20">20%</option>
-							<option value="30">30%</option>
-							<option value="40">40%</option>
-							<option value="50">50%</option>
-							<option value="60">60%</option>
-							<option value="70">70%</option>
-							<option value="80">80%</option>
-							<option value="90">90%</option>
-							<option value="100">100%</option>
-						</select>
-					</div>
-				</div>
+            <!-- Div of L -->
+            <div class="parameter-container">
+                <div class="input-group input-group-sm mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cmp-select-L">
+                            <i class="fas"></i>L (% max out-of-orderness)
+                        </label>
+                    </div>
+                    <input type="number" id="cmp-select-L" class="cmp-input form-control" 
+                           value="10" min="0" max="100" aria-label="#Entries" onchange="update()">
+                </div>
+            </div>
+        </div>
 
-				<!-- Div of B -->
-				<div class="parameter-container">
-					<div class="input-group input-group-sm mb-2">
-						<div class="input-group-prepend">
-							<label class="input-group-text" for="cmp-select-B">&#945 = &#946</label>
-						</div>
-						<select id="cmp-select-B" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-							<option value="0">0</option>
-							<option value="0.1">0.1</option>
-							<option value="0.2">0.2</option>
-							<option value="0.3" selected>0.3</option>
-							<option value="0.4">0.4</option>
-							<option value="0.5">0.5</option>
-							<option value="0.6">0.6</option>
-							<option value="0.7">0.7</option>
-							<option value="0.8">0.8</option>
-							<option value="0.9">0.9</option>
-							<option value="1">1</option>
-						</select>
-					</div>
-				</div>
-			</div>
+        <h4 class="text-center workload-title">Sortedness Distribution</h4>
 
-			<h4 class="text-center workload-title">Inversions</h4>
-			<div id="cmp-conf-row">
-				<div class="col-3">
-					<!-- Default input field for Inversions -->
-					<div class="row">
-						<!-- Select object -->
-						<div class="col">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="cmp-select-I">I (% inversions)</label>
-								</div>
-								<select id="cmp-select-I" class="cmp-input form-control" aria-label="#Entries" onchange="update()">
-									<!-- <option value=""></option> -->
-									<option value="0">0</option>
-									<option value="1249750">1,249,750</option>
-									<option value="2499500">2,499,500</option>
-									<option value="3749250">3,749,250</option>
-									<option value="4999000">4,999,000</option>
-									<option value="6248750">6,248,750</option>
-									<option value="7498500">7,498,500</option>
-									<option value="8748250">8,748,250</option>
-									<option value="9998000">9,998,000</option>
-									<option value="11247750">11,247,750</option>
-									<option value="12497500">12,497,500</option>
-								</select>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+        <div id="cmp-conf-row2" class="parameter-row">
+            <!--Div of A-->
+            <div class="parameter-container">
+                <div class="input-group input-group-sm mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cmp-select-A">
+                            <i class="fas fa-chart-area"></i> <span class="specialChar">&alpha;</span> (alpha value)
+                        </label>
+                    </div>
+                    <input type="number" id="cmp-select-A" class="cmp-input form-control" 
+                           value="0.3" min="0.1" max="1" step="0.1" aria-label="#Entries" onchange="update()">
+                </div>
+            </div>
 
-			<div class="row">
-				<div class="col-md-11 generate-workload-container">
-					<button onclick="visualize_workload()" type="button" class="btn btn-success">Generate Workload</button>
-				</div>
-			</div>
-
-			<!-- Charts -->
-			<div class="row gx-0 hidden chart-column" id="chart-column">
-				<!-- Chart 1 (default) -->
-				<div class="col-6">
-					<div class="container px-0">
-						<div class="center equal-height">
-							<div id="chart_div" class="equal-height"></div>
-						</div>
-					</div>
-				</div>
-				<!-- Chart 2 (inversions) -->
-				<div class="col-6">
-					<div class="container px-0">
-						<div class="equal-height">
-							<div id="chart_div_inversions" class="equal-height"></div>
-						</div>
-					</div>
-				</div>
-			</div>
+            <!-- Div of B -->
+            <div class="parameter-container">
+                <div class="input-group input-group-sm mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cmp-select-B">
+                            <i class="fas fa-chart-line"></i> <span class="specialChar">&beta;</span> (beta value)
+                        </label>
+                    </div>
+                    <input type="number" id="cmp-select-B" class="cmp-input form-control" 
+                           value="0.3" min="0.1" max="1" step="0.1" aria-label="#Entries" onchange="update()">
+                </div>
+            </div>
+        </div>
 
 			<!-- "Run" button -->
 			<div class="row">
-				<div id="run-button-container" class="col-md-11 run-button-container hidden">
+				<div id="run-button-container" class="col-md-11 run-button-container">
 					<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
 				</div>
 			</div>
