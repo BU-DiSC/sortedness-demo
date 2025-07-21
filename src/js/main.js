@@ -8,7 +8,14 @@ var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
 var selectedA; // stores the A value selected
 var selectedE; // stores the E value selected
+var selectedA; // stores the A value selected
+var selectedE; // stores the E value selected
 
+var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
+var delay = 1000;                // delay between animations
+var total_data = [];            // stores the workload data
+var total_exchanges_data = [];  // stores the exchanges data
+var running = true;             // flag to check if animation is running
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
 var delay = 1000;                // delay between animations
 var total_data = [];            // stores the workload data
@@ -17,6 +24,14 @@ var running = true;             // flag to check if animation is running
 
 /* Parameters for the SWARE algorithm */
 
+var buffer = [];                      // the buffer
+var tree = [];                        // the tree
+var zones = [];                       // the zones
+var lastSortedIndex = -1;             // last sorted index
+var moved = false;                    // used to check if the element is moved
+var partitioned_data = [];            // partitioned data, 10 elements per partition
+var state = 0;                        // used to decide which step nextStep() will be performed
+var sware_max_tree = Number.MIN_SAFE_INTEGER;   // stores the max value in the tree
 var buffer = [];                      // the buffer
 var tree = [];                        // the tree
 var zones = [];                       // the zones
