@@ -28,7 +28,7 @@ function update() {
     let selectedB = fieldB.value;
     let selectedI = fieldI.value;
 
-
+    /*
     if (!firstChangeDone) {
         firstChangeDone = true;
 
@@ -363,4 +363,5 @@ function update() {
             fieldI.appendChild(op);
         }
     }
+        */
 }

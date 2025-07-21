@@ -22,6 +22,68 @@ function adjust_for_plotting(N, data)
     return plot_data;
 }
 
+
+
+function adjust_for_plotly_plotting(data_points) {
+    let dataArray = [];
+    for(let i = 0; i < data_points.length; i++) {
+        dataArray.push(data_points[i]);
+    }
+    
+    // Separate data into in-order and out-of-order points
+    let inOrderX = [];
+    let inOrderY = [];
+    let outOfOrderX = [];
+    let outOfOrderY = [];
+    
+    dataArray.forEach((value, index) => {
+        // Check if value is in its correct position
+        // (index+2 due to 1-indexing conversion as mentioned in your comment)
+        if (value === (index + 1)) {
+            inOrderX.push(index + 1);
+            inOrderY.push(value);
+        } else {
+            outOfOrderX.push(index + 1);
+            outOfOrderY.push(value);
+        }
+    });
+    
+    // Create separate traces for legend
+    let traces = [];
+    
+    // Add in-order points
+    if (inOrderX.length > 0) {
+        traces.push({
+            x: inOrderX,
+            y: inOrderY,
+            type: 'scatter',
+            mode: 'markers',
+            name: 'In Order',
+            marker: {
+                color: 'blue',
+                size: 6
+            }
+        });
+    }
+    
+    // Add out-of-order points
+    if (outOfOrderX.length > 0) {
+        traces.push({
+            x: outOfOrderX,
+            y: outOfOrderY,
+            type: 'scatter',
+            mode: 'markers',
+            name: 'Out of Order',
+            marker: {
+                color: 'red',
+                size: 6
+            }
+        });
+    }
+    
+    return traces;
+}
+
 /*
  * Update the colors of the SWARE buffer
  */
@@ -410,7 +472,3 @@ function update_charts() {
 
 
 }
-
-
-
-
