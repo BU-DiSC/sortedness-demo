@@ -12,7 +12,6 @@ var selectedA; // stores the A value selected
 var selectedE; // stores the E value selected
 
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
-var delay = 1000;                // delay between animations
 var total_data = [];            // stores the workload data
 var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
@@ -24,17 +23,18 @@ var running = true;             // flag to check if animation is running
 
 /* Parameters for the SWARE algorithm */
 
+var sware_data=[];
 var buffer = [];                      // the buffer
 var tree = [];                        // the tree
 var zones = [];                       // the zones
 var lastSortedIndex = -1;             // last sorted index
 var moved = false;                    // used to check if the element is moved
 var partitioned_data = [];            // partitioned data, 10 elements per partition
-var state = 0;                        // used to decide which step nextStep() will be performed
+var state = 2;                        // used to decide which step nextStep() will be performed
 var sware_max_tree = Number.MIN_SAFE_INTEGER;   // stores the max value in the tree
 var buffer = [];                      // the buffer
 var tree = [];                        // the tree
-var zones = [];                       // the zones
+var zones = [];                       // used to store where leaves are
 var lastSortedIndex = -1;             // last sorted index
 var moved = false;                    // used to check if the element is moved
 var partitioned_data = [];            // partitioned data, 10 elements per partition
@@ -45,7 +45,18 @@ var numInsideBuffer = 0;             // number of elements inside the buffer
 var overlapped;                      // stores the overlapped element
 var overlapper;                      // stores the overlapping element that is added later
 var overlapperSet = false;           // used when calculating lastSortedIndex
-var zones_dict = {};                 // dictionary to store the zones
+var sware_buffer_sorted = true;
+var zones_dict = [];                 // dictionary to store the zones
+var zones_dict_index = 0;
+var amount_of_buffer_flushed;
+var bufferIndex;
+var bufferIndex2;
+var buffer_dict = []; // min and max values for pages in buffer
+var firstPart;
+var secondPart;
+var stop_zones;
+var branch;
+var sortBufferData = [];
 
 /* Parameters for the QuIT algorithm */
 
@@ -54,6 +65,11 @@ var leaf_node_size = 10;     // size of the leaf node
 var pole = [];                // current pole
 var pole_prev = [];           // previous pole
 let pole_next = [];           // next pole
+let zones_quit = [];
+let in_pole_next;
+let poleIndex;
+let quit_max = Number.MIN_SAFE_INTEGER; 
+
 
 /* Parameters for the charts */
 
@@ -381,20 +397,6 @@ function visualize_workload() {
         document.getElementById("runBtn").classList.remove("hidden");
         document.getElementById("run-button-contain").classList.remove("hidden");
 
-        // Partition the data    
-        for (let i = 0; i < total_data.length; i += 10) {
-            const part = total_data.slice(i, i + 10);
-            partitioned_data.push(part);
-        }
-
-        // Fill up zones, zones_dict
-        for (let i = 0; i < partitioned_data.length; i++) {
-            const min = Math.min(...partitioned_data[i]);
-            const max = Math.max(...partitioned_data[i]);
-            zones.push([min, max]);
-            zones_dict[max] = partitioned_data[i];
-        }
-
     } else {
         console.log("Invalid parameters detected, visualization aborted");
     }
@@ -452,18 +454,18 @@ function run_operations() {
     if(flag){
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
+        
         // Partition the data    
         for (let i = 0; i < total_data.length; i += 10) {
             const part = total_data.slice(i, i + 10);
             partitioned_data.push(part);
         }
-
+        sware_data = partitioned_data;
         // Fill up zones, zones_dict
-        for (let i = 0; i < partitioned_data.length; i++) {
+        for (let i = 0; i < partitioned_data.length; i += 1) {
             const min = Math.min(...partitioned_data[i]);
             const max = Math.max(...partitioned_data[i]);
-            zones.push([min, max]);
-            zones_dict[max] = partitioned_data[i];
+            zones_dict.push([min, max]);
         }
         console.log("Starting to run the algorithm.");
 
@@ -524,7 +526,7 @@ function run2_operations() {
  */
 function next_step() {
     sware();
-    quit();
+    //quit();
     update_history();
     update_table();
     update_charts();

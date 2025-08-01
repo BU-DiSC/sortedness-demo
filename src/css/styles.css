@@ -853,6 +853,32 @@ div.fixed {
     clip-path: polygon(50% 0,100% 100%,0 100%);
     background: lightgray;
 }
+
+.triangleSware {
+    top:8%;
+    height: 62%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%) scaleX(1.45); /* Added scaleX to make it wider */
+    --r:20px; /* border radius */
+    aspect-ratio: 1/cos(30deg);
+    --_g:calc(tan(60deg)*var(--r)) bottom var(--r),#000 98%,#0000 101%;
+    -webkit-mask:
+      conic-gradient(from -30deg at 50% calc(200% - 3*var(--r)/2),#000 60deg,#0000 0)
+       0 100%/100% calc(100% - 3*var(--r)/2) no-repeat,
+      radial-gradient(var(--r) at 50% calc(2*var(--r)),#000 98%,#0000 101%),
+      radial-gradient(var(--r) at left  var(--_g)),
+      radial-gradient(var(--r) at right var(--_g));
+    clip-path: polygon(50% 0,100% 100%,0 100%);
+    background: lightgray;
+    z-index:10;
+    opacity:0.5;
+}
+
+.turn-red{
+    background:red;
+
+}
   
 .dots {
     position: absolute;
@@ -901,7 +927,6 @@ div.fixed {
 #last-tree {
     width: 70px;
     height: 20px;
-    background-color: #2ecc71;
     cursor: pointer;
     display: flex;              
     justify-content: center;    
@@ -911,6 +936,10 @@ div.fixed {
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
+}
+
+.turn-green{
+    background-color: #2ecc71;
 }
 
 .hidden {
@@ -997,6 +1026,65 @@ div.fixed {
     }
     100% {
         box-shadow: 0 0 30px rgba(255, 255, 0, 0.8), 0 0 60px rgba(255, 255, 0, 0.8), 0 0 90px rgba(255, 255, 0, 0.8); /* Bigger Bright Yellow */
+    }
+}
+
+
+.glow-red {
+    filter: drop-shadow(0 0 20px rgba(255, 0, 0, 1)) 
+            drop-shadow(0 0 40px rgba(255, 0, 0, 0.8)) 
+            drop-shadow(0 0 60px rgba(255, 0, 0, 0.6))
+            brightness(1.2); 
+    background: linear-gradient(135deg, #ff6b6b, #ff8787) !important;
+    animation: glow-pulse-red 0.3s ease-in-out;
+    transition: all 0.1s ease;
+}
+
+@keyframes glow-pulse-red {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8)) 
+                drop-shadow(0 0 20px rgba(255, 0, 0, 0.6))
+                brightness(1.1);
+        /*transform: translateX(-50%) scale(1);*/
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(255, 0, 0, 1)) 
+                drop-shadow(0 0 50px rgba(255, 0, 0, 0.9)) 
+                drop-shadow(0 0 70px rgba(255, 0, 0, 0.7))
+                brightness(1.3);
+        /*transform: translateX(-50%) scale(1.05);*/
+    }
+    100% {
+        filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8)) 
+                drop-shadow(0 0 20px rgba(255, 0, 0, 0.6))
+                brightness(1.1);
+        /*transform: translateX(-50%) scale(1);*/
+    }
+}
+
+.glow-green {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8)) 
+            drop-shadow(0 0 40px rgba(0, 255, 0, 0.6)) 
+            drop-shadow(0 0 60px rgba(0, 255, 0, 0.4));
+    animation: glow-pulse-green 0.3s ease-in-out;
+    background-color: rgba(0, 255, 0, 0.8);
+}
+
+
+
+@keyframes glow-pulse-green {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.6)) 
+                drop-shadow(0 0 20px rgba(0, 255, 0, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(0, 255, 0, 1)) 
+                drop-shadow(0 0 50px rgba(0, 255, 0, 0.8)) 
+                drop-shadow(0 0 70px rgba(0, 255, 0, 0.6));
+    }
+    100% {
+        filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.6)) 
+                drop-shadow(0 0 20px rgba(0, 255, 0, 0.4));
     }
 }
 
@@ -1435,4 +1523,275 @@ h4.workload-title::after {
 
 #cmp-conf-row4 .btn-success{
     border-radius:12px;
+}
+
+
+/*sware tree styling*/
+.tree-node {
+    border: 1px solid black;
+    height: 3vh;
+    width: 6vw;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+
+}
+
+
+.tree-node.dot {
+    font-size: 14px;
+    letter-spacing: 1px;
+    background-color:white;
+}
+
+/*
+.tree-node.leaf {
+    //background-color: white;
+}
+*/
+
+#root {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10%;
+    
+}
+
+
+#left-dots {
+    left: 20%;
+    transform: translateX(-50%);
+    top: 63.4%;
+}
+
+#left-leaf {
+    left: 20%;
+    transform: translateX(-50%);
+    top: 70%;
+}
+
+
+#center-dots {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 63.4%;
+}
+
+#center-leaf {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 70%;
+}
+
+
+#right-dots {
+    left: 80%;
+    transform: translateX(-50%);
+    top: 63.4%;
+}
+
+#right-leaf {
+    left: 80%;
+    transform: translateX(-50%);
+    top: 70%;
+}
+
+.tree-line {
+    position: absolute;
+    width: 2px;
+    background-color: black;
+    transform-origin: top center;
+}
+
+#line-left-1 {
+    left: 50%;
+    top: calc(10% + 3vh);
+    height: 66.5%; 
+    transform: translateX(-50%) rotate(36.7deg);
+}
+
+#line-left-1:not(.glow-red):not(.glow-green) {
+    background: transparent;
+    filter: none;
+}
+
+#line-left-2 {
+    left: 20%;
+    top: calc(40% + 3vh);
+    height: 18.5%;
+    transform: translateX(-50%); 
+}
+
+
+#line-center-1 {
+    left: 50%;
+    top: calc(10% + 3vh);
+    height: 53.5%;
+    transform: translateX(-50%);
+}
+
+#line-center-1:not(.glow-red):not(.glow-green) {
+    background: transparent;
+    filter: none;
+}
+
+
+#line-center-2 {
+    left: 50%;
+    top: calc(43% + 3vh);
+    height: 15%;
+    transform: translateX(-50%);
+}
+
+
+#line-right-1 {
+    left: 50%;
+    top: calc(10% + 3vh);
+    height: 66.5%;
+    transform: translateX(-50%) rotate(-36.7deg);
+}
+
+#line-right-1:not(.glow-red):not(.glow-green) {
+    background: transparent;
+    filter: none;
+}
+
+#line-right-2 {
+    left: 80%;
+    top: calc(40% + 3vh);
+    height: 18.5%; 
+    transform: translateX(-50%);  
+}
+
+
+/* Position leaf nodes for left branch */
+#left-leaf-1 {
+    left: 10%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+#left-leaf-2 {
+    left: 20%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+#left-leaf-3 {
+    left: 30%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+/* Position leaf nodes for center branch */
+#center-leaf-1 {
+    left: 40%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+#center-leaf-2 {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+#center-leaf-3 {
+    left: 60%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+/* Position leaf nodes for right branch */
+#right-leaf-1 {
+    left: 70%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+#right-leaf-2 {
+    left: 80%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+#right-leaf-3 {
+    left: 90%;
+    transform: translateX(-50%);
+    top: 74%;
+}
+
+/* Lines from left dot to its leaves */
+#line-left-to-leaf1 {
+    left: 20%;
+    top: calc(63.4% + 3vh);
+    height: 14%;
+    transform: translateX(-50%) rotate(67deg);
+}
+
+#line-left-to-leaf2 {
+    left: 20%;
+    top: calc(63.4% + 3vh);
+    height:5.7%;
+    transform: translateX(-50%);
+}
+
+#line-left-to-leaf3 {
+    left: 20%;
+    top: calc(63.4% + 3vh);
+    height: 14%;
+    transform: translateX(-50%) rotate(-67deg);
+}
+
+/* Lines from center dot to its leaves */
+#line-center-to-leaf1 {
+    left: 50%;
+    top: calc(63.4% + 3vh);
+    height: 14%;
+    transform: translateX(-50%) rotate(67deg);
+}
+
+#line-center-to-leaf2 {
+    left: 50%;
+    top: calc(63.4% + 3vh);
+    height: 5.7%;
+    transform: translateX(-50%);
+}
+
+#line-center-to-leaf3 {
+    left: 50%;
+    top: calc(63.4% + 3vh);
+    height: 14%;
+    transform: translateX(-50%) rotate(-67deg);
+}
+
+/* Lines from right dot to its leaves */
+#line-right-to-leaf1 {
+    left: 80%;
+    top: calc(63.4% + 3vh);
+    height: 14%;
+    transform: translateX(-50%) rotate(67deg);
+}
+
+#line-right-to-leaf2 {
+    left: 80%;
+    top: calc(63.4% + 3vh);
+    height: 5.7%;
+    transform: translateX(-50%);
+}
+
+#line-right-to-leaf3 {
+    left: 80%;
+    top: calc(63.4% + 3vh);
+    height: 14%;
+    transform: translateX(-50%) rotate(-67deg);
+}
+
+.tree-node.leaf {
+    font-size: 8px;
+    width: 3.5vw;
+    height: 2.5vh;
+    border-radius:5px;
 }

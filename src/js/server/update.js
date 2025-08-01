@@ -19,14 +19,14 @@ function update() {
     const fieldK = document.getElementById("cmp-select-K");
     const fieldL = document.getElementById("cmp-select-L");
     const fieldB = document.getElementById("cmp-select-B");
-    const fieldI = document.getElementById("cmp-select-I");
+    //const fieldI = document.getElementById("cmp-select-I");
 
     // Gets the value of the select elements
     let selectedN = fieldN.value;
     let selectedK = fieldK.value;
     let selectedL = fieldL.value;
     let selectedB = fieldB.value;
-    let selectedI = fieldI.value;
+    //let selectedI = fieldI.value;
 
     /*
     if (!firstChangeDone) {

@@ -470,6 +470,76 @@ function update_charts() {
     var chart = new google.visualization.LineChart(document.getElementById("quit-pole-resets-chart"));
     chart.draw(data, options);
 
+    /*
+    Sware vs QuIT fast inserts 
+    plot_data = [];
+    plot_data.push(['Sware Bulk Loads', '# QuIT Fast Inserts']);
+    for (let i = 0; i < quit_fast_inserts_history.length&&i<sware_bulk_loads_history.length; i++) {
+        plot_data.push([sware_bulk_loads_history[i], quit_fast_inserts_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of SWARE bulk loads vs QuIT Fast Inserts",
+        hAxis: {title: 'SWARE Bulk Loads', minValue: 0, maxValue: Math.max(...sware_bulk_loads_history), ticks: 1},
+        vAxis: {title: '# QuIT Fast Inserts', minValue: 0, maxValue: Math.max(...quit_fast_inserts_history), ticks: 1},
+        legend: "none",
+        colors: ["#FFB433"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loadsvsquit-fast-inserts-chart"));
+    chart.draw(data, options);
+
+    // Sware vs QuIT top inserts 
+    plot_data = [];
+    plot_data.push(['Sware Top Inserts', '# QuIT Top Inserts']);
+    for (let i = 0; i < quit_top_inserts_history.length&&i<sware_top_inserts_history.length; i++) {
+        plot_data.push([sware_top_inserts_history[i], quit_top_inserts_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of SWARE Top Inserts vs QuIT Top Inserts",
+        hAxis: {title: 'SWARE Top Inserts', minValue: 0, maxValue: Math.max(...sware_top_inserts_history), ticks: 1},
+        vAxis: {title: '# QuIT Top Inserts', minValue: 0, maxValue: Math.max(...quit_top_inserts_history), ticks: 1},
+        legend: "none",
+        colors: ["#FFB433"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-top-insertsvsquit-top-inserts-chart"));
+    chart.draw(data, options);
+
+
+    plot_data = [];
+    plot_data.push(['Sware Bulk Load Percentage', '# QuIT Fast Insert Percentage']);
+    for (let i = 0; i < quit_top_inserts_history.length && i < sware_top_inserts_history.length && i < quit_fast_inserts_history.length && i < sware_bulk_loads_history.length; i++) {
+        plot_data.push([
+            Math.floor(sware_bulk_loads_history[i] / (sware_bulk_loads_history[i]+sware_top_inserts_history[i]) * 100),
+            Math.floor(quit_fast_inserts_history[i] / (quit_fast_inserts_history[i]+quit_top_inserts_history[i]) * 100)
+        ]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Sware Bulk Load percentage vs QuIT Fast Insert percentage",
+        hAxis: {title: '% SWARE Bulk Loads', minValue: 0, maxValue:100, ticks: 1},
+        vAxis: {title: '% QuIT Fast Inserts', minValue: 0, maxValue: 100, ticks: 1},
+        legend: "none",
+        colors: ["#FFB433"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loadsvsquit-fast-inserts-chart-percent"));
+    chart.draw(data, options);
+    */
 
 
 }

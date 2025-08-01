@@ -24,7 +24,6 @@
 	<script src="js/packages/plotly.js"></script>
     <script type="text/javascript" src="js/server/server.js"></script>
 	<script type="text/javascript" src="js/server/update.js"></script>
-	<script type="text/javascript" src="js/data.js"></script>
 	<script type="text/javascript" src="js/algorithms/sware.js"></script>
 	<script type="text/javascript" src="js/algorithms/quit.js"></script>
 	<script type="text/javascript" src="js/helpers.js"></script>
@@ -164,14 +163,14 @@
                 </div>
             </div>
         </div>
-
 			<!-- "Run" button -->
-			<div class="row">
-				<div id="run-button-container" class="col-md-11 run-button-container">
-					<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
+			<div id="cmp-conf-row4" class="parameter-row">
+            	<div class="parameter-container">
+                	<div class="d-flex justify-content-center">
+						<button onclick="run_operations()" type="button" class="btn btn-success">Run</button>
+					</div>
 				</div>
 			</div>
-
 			<!-- Dashed line -->
 			<hr id="dashed-line" class="hidden" />
 			
@@ -211,29 +210,50 @@
 							<div id="tree-area-step-3+" class="hidden">
 								<h4>Tree</h4>
 								<div class="tree-container">
-									<!-- Small Circle on Top of the Triangle -->
-									<div id="circle" class="circle"></div>
-									
-									<!-- Existing Triangle -->
-									<div class="triangle"></div>
-									
-									<div class="dots">
-										<span class="dot"></span>
-										<span class="dot"></span>
-										<span class="dot"></span>
-									</div>
-									<!-- Rectangles below the dots -->
-									<div class="rectangles-sware">
-										<div class="rectangle-sware"></div>
-										<div class="rectangle-sware"></div>
-										<div class="rectangle-sware"></div>
-										<div class="smallerDots-sware">
-											<span class="smallerDot-sware"></span>
-											<span class="smallerDot-sware"></span>
-											<span class="smallerDot-sware"></span>
-										</div>
-										<div class="rectangle-sware" id="last-tree"></div> 
-									</div>
+									<div class="tree-node" id="root">Root</div>
+									<div class="triangleSware" id = "swareTri"></div>
+									<!-- Left branch -->
+									<!--<div class="tree-node leaf" id="left-leaf"></div>-->
+
+									<div class="tree-line" id="line-left-1"></div>
+									<div class="tree-line" id="line-center-1"></div>
+									<div class="tree-line" id="line-right-1"></div>
+
+									<!-- Left branch leaf nodes (3 leaves) -->
+									<div class="tree-node leaf" id="left-leaf-1"></div>
+									<div class="tree-node leaf" id="left-leaf-2"></div>
+									<div class="tree-node leaf" id="left-leaf-3"></div>
+
+									<!-- Center branch -->
+									<!--<div class="tree-node leaf" id="center-leaf"></div>-->
+									<!-- center branch leaf nodes (3 leaves) -->
+									<div class="tree-node leaf" id="center-leaf-1"></div>
+									<div class="tree-node leaf" id="center-leaf-2"></div>
+									<div class="tree-node leaf" id="center-leaf-3"></div>
+
+									<!-- Right branch -->
+									<!--<div class="tree-node leaf" id="right-leaf"></div>-->
+									<!-- Right branch leaf nodes (3 leaves) -->
+									<div class="tree-node leaf" id="right-leaf-1"></div>
+									<div class="tree-node leaf" id="right-leaf-2"></div>
+									<div class="tree-node leaf" id="right-leaf-3"></div>
+
+
+									<!-- Connection lines from left dot to its leaves -->
+									<div class="tree-line" id="line-left-to-leaf1"></div>
+									<div class="tree-line" id="line-left-to-leaf2"></div>
+									<div class="tree-line" id="line-left-to-leaf3"></div>
+
+									<!-- Connection lines from center dot to its leaves -->
+									<div class="tree-line" id="line-center-to-leaf1"></div>
+									<div class="tree-line" id="line-center-to-leaf2"></div>
+									<div class="tree-line" id="line-center-to-leaf3"></div>
+
+									<!-- Connection lines from right dot to its leaves -->
+									<div class="tree-line" id="line-right-to-leaf1"></div>
+									<div class="tree-line" id="line-right-to-leaf2"></div>
+									<div class="tree-line" id="line-right-to-leaf3"></div>
+
 								</div>
 							</div>
 												
@@ -499,6 +519,17 @@
 					</div>
 					<div class="col-lg-4">
 						<div id="quit-pole-resets-chart" class="chart-container"></div>
+					</div>
+				</div>
+				<div class="row no-gutters">
+					<div class="col-lg-4">
+						<div id="sware-bulk-loadsvsquit-fast-inserts-chart" class="chart-container"></div>
+					</div>
+					<div class="col-lg-4">
+						<div id="sware-top-insertsvsquit-top-inserts-chart" class="chart-container"></div>
+					</div>
+					<div class="col-lg-4">
+						<div id="sware-bulk-loadsvsquit-fast-inserts-chart-percent" class="chart-container"></div>
 					</div>
 				</div>
 			</div>
