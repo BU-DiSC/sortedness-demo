@@ -1610,6 +1610,7 @@ h4.workload-title::after {
     top: calc(10% + 3vh);
     height: 66.5%; 
     transform: translateX(-50%) rotate(36.7deg);
+    width: 3px;
 }
 
 #line-left-1:not(.glow-red):not(.glow-green) {
@@ -1630,6 +1631,7 @@ h4.workload-title::after {
     top: calc(10% + 3vh);
     height: 53.5%;
     transform: translateX(-50%);
+    width:3px;
 }
 
 #line-center-1:not(.glow-red):not(.glow-green) {
@@ -1651,6 +1653,7 @@ h4.workload-title::after {
     top: calc(10% + 3vh);
     height: 66.5%;
     transform: translateX(-50%) rotate(-36.7deg);
+    width:3px;
 }
 
 #line-right-1:not(.glow-red):not(.glow-green) {

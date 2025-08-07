@@ -57,6 +57,7 @@ var secondPart;
 var stop_zones;
 var branch;
 var sortBufferData = [];
+var sware_continue = true;
 
 /* Parameters for the QuIT algorithm */
 
@@ -72,11 +73,12 @@ let quit_max = Number.MIN_SAFE_INTEGER;
 
 
 /* Parameters for the charts */
-
 var sware_sorts = 0;
 var sware_sorts_history = [];
 var sware_flushes = 0;
 var sware_flushes_history = [];
+var pages_flushed;
+var total_pages_flushed = 0;
 var sware_average_pages_per_flush = 0;
 var sware_average_pages_per_flush_history = [];
 var sware_bulk_loads = 0;
@@ -468,7 +470,19 @@ function run_operations() {
             zones_dict.push([min, max]);
         }
         console.log("Starting to run the algorithm.");
-
+        //pre-load
+        state = 2;
+        while((sware_bulk_loads_history.length==0)||
+        (sware_bulk_loads_history[sware_bulk_loads_history.length-1]+sware_top_inserts_history[sware_top_inserts_history.length-1])<selectedN/5)
+        {
+            sware();
+            console.log(sware_bulk_loads_history[sware_bulk_loads_history.length-1]+sware_top_inserts_history[sware_top_inserts_history.length-1]);
+        }
+        while((quit_fast_inserts_history.length==0)||
+        (quit_fast_inserts_history[quit_fast_inserts_history.length-1]+quit_top_inserts_history[quit_top_inserts_history.length-1])<selectedN/5)
+        {
+            quit();
+        }
         // Show hidden divs
         document.getElementById('buffer-area').classList.remove('hidden');
         document.getElementById('buttons-container-wrapper').classList.remove('hidden');
@@ -482,17 +496,20 @@ function run_operations() {
         document.getElementById("continue-button").disabled = true; // disable continue button
         document.getElementById("nextstep-button").disabled = true; // disable nextstep button
 
-        state = 2; // SWARE buffer is empty initially
+        //state = 2; // SWARE buffer is empty initially
 
-        // The main loop
+        
         let interval = setInterval(() => {
             if (running == false) {
                 clearInterval(interval);
+                console.log('test');
                 return;
             }
             next_step();
-        }, delay);
-        }
+            console.log(delay);
+        }, delay+(tree.length/10));
+        //increase delay for large values inserted
+    }
     else{
         console.log('error');
     }
@@ -518,15 +535,20 @@ function run2_operations() {
             return;
         }
         next_step();
-    }, delay);
+    }, delay+(tree.length/10));
 }
 
 /*
  * Runs one step of both algorithms and updates the UI
  */
 function next_step() {
-    sware();
-    //quit();
+    //check if sware bulk loaded so then QuIT is called 10 times
+    var tempSwareSize = tree.length;
+    sware(); 
+    for(let i = 0;i<(tree.length-tempSwareSize);i++)
+    {
+        quit();
+    }
     update_history();
     update_table();
     update_charts();
@@ -687,7 +709,7 @@ function generateInversion(n, i) {
     for (let a = 1; a < n + 1; a++) {
         taken.set(a, true);
     }
-
+    //two array to swap
     let sources1 = generateSources(n, 2 * inversions, taken);
     let sources2 = generateSources(n, 2 * inversions, taken);
     for (let a = 0; a < inversions; a++) {

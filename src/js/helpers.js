@@ -148,10 +148,11 @@ function update_colors() {
                 }
             }
             if (i < 10) {
-                const overlapped = document.getElementById("buffer" + i);
-                overlapped.style.backgroundColor = "#FF0000"; // red (overlaps)
-                const d = document.getElementById("buffer" + overlapper);
-                d.style.backgroundColor = "#FF0000"; // red (overlaps)
+                for(i;i<=9;i++)
+                {
+                    const overlapped = document.getElementById("buffer" + i);
+                    overlapped.style.backgroundColor = "#FF0000"; // red (overlaps)
+                }
             }
         }     
     }
@@ -303,13 +304,6 @@ function reset_button() {
  */
 
 function update_history() {
-    sware_sorts_history.push(sware_sorts);
-    sware_flushes_history.push(sware_flushes);
-    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
-    sware_bulk_loads_history.push(sware_bulk_loads);
-    quit_fast_inserts_history.push(quit_fast_inserts);
-    sware_top_inserts_history.push(sware_top_inserts);
-    quit_top_inserts_history.push(quit_top_inserts);
     quit_pole_resets_history.push(quit_pole_resets);
 }
 
@@ -320,8 +314,9 @@ function update_history() {
 function update_table() {
     document.getElementById("sware-sorts").innerHTML = sware_sorts;
     document.getElementById("sware-flushes").innerHTML = sware_flushes;
-    document.getElementById("sware-average-pages-per-flush").innerHTML = sware_average_pages_per_flush;
-    document.getElementById("sware-bulk-loads").innerHTML = sware_bulk_loads;
+    document.getElementById("sware-average-pages-per-flush").innerHTML = Math.round(sware_average_pages_per_flush*10)/10;
+    document.getElementById("sware-bulk-loads").innerHTML = (sware_bulk_loads/10);
+    document.getElementById("sware-fast-inserts").innerHTML = sware_bulk_loads;
     document.getElementById("quit-fast-inserts").innerHTML = quit_fast_inserts;
     document.getElementById("sware-top-inserts").innerHTML = sware_top_inserts;
     document.getElementById("quit-top-inserts").innerHTML = quit_top_inserts;
@@ -339,8 +334,8 @@ function update_charts() {
 
     /* Number of SWARE Sorts vs. Operation Steps Chart */
     plot_data.push(['Operation Steps', 'SWARE']);
-    for (let i = 1; i <= sware_sorts_history.length; i++) {
-        plot_data.push([i, sware_sorts_history[i]]);
+    for (let i = 0; i < sware_sorts_history.length; i++) {
+        plot_data.push([i+1, sware_sorts_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
@@ -363,8 +358,8 @@ function update_charts() {
     /* Number of SWARE Flushes vs. Operation Steps Chart */
     plot_data = [];
     plot_data.push(['Operation Steps', '# of SWARE Flushes']);
-    for (let i = 1; i <= sware_flushes_history.length; i++) {
-        plot_data.push([i, sware_flushes_history[i]]);
+    for (let i = 0; i < sware_flushes_history.length; i++) {
+        plot_data.push([i+1, sware_flushes_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
@@ -384,15 +379,15 @@ function update_charts() {
     
     /* Number of Average Pages per SWARE Flush vs. Operation Step Chart */
     plot_data = [];
-    plot_data.push(['Operation Steps', '# of Average Pages per SWARE Flush vs. Operation Step Chart']);
-    for (let i = 1; i <= sware_average_pages_per_flush_history.length; i++) {
-        plot_data.push([i, sware_average_pages_per_flush_history[i]]);
+    plot_data.push(['Operation Steps', '# of Average Pages per SWARE Flush']);
+    for (let i = 0; i < sware_average_pages_per_flush_history.length; i++) {
+        plot_data.push([i+1, sware_average_pages_per_flush_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
     var options = {
         title: "Number of average pages per SWARE flush vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_average_pages_per_flush_history.length, ticks: 1},
+        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_average_pages_per_flush_history[sware_average_pages_per_flush_history.length], ticks: 1},
         vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_average_pages_per_flush_history), ticks: 1},
         legend: "none",
         colors: ["#80CBC4"],
@@ -407,20 +402,21 @@ function update_charts() {
     /* Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operation Step Chart */
     plot_data = [];
     plot_data.push(['Operation Steps', '# SWARE Bulk Loads', '# QuIT Fast Inserts']);
-    for (let i = 1; i <= sware_bulk_loads_history.length; i++) {
-        plot_data.push([i, sware_bulk_loads_history[i], quit_fast_inserts_history[i]]);
+    for (let i = 0; i < sware_bulk_loads_history.length&&i<quit_fast_inserts_history.length; i++) {
+        plot_data.push([i+1, sware_bulk_loads_history[i], quit_fast_inserts_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
     var options = {
-        title: "Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operations Steps",
+        title: "Number of SWARE Bulk Loads vs. Operations Steps",
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_bulk_loads_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_bulk_loads_history), Math.max(...quit_fast_inserts_history)), ticks: 1},
+        vAxis: {title: '# of SWARE Bulk Loads', minValue: 0, maxValue: Math.max(Math.max(...sware_bulk_loads_history), Math.max(...quit_fast_inserts_history)), ticks: 1},
         legend: "none",
         colors: ["#80CBC4", "#FFB433"],
         explorer: { 
             zoomDelta: 0.8,
-        }
+        },
+        lineWidth: 1
     };
 
     var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loads/quit-fast-inserts-chart"));
@@ -429,15 +425,16 @@ function update_charts() {
     /* Number of SWARE Top Inserts / QuIT Top Inserts vs. Operation Steps Chart */
     plot_data = [];
     plot_data.push(['Operation Steps', '# SWARE Top Inserts', '# QuIT Top Inserts']);
-    for (let i = 1; i <= sware_top_inserts_history.length; i++) {
-        plot_data.push([i, sware_top_inserts_history[i], quit_top_inserts_history[i]]);
+    for (let i = 0; i < sware_top_inserts_history.length&&i<quit_top_inserts_history.length; i++) {
+        plot_data.push([i+1, sware_top_inserts_history[i], quit_top_inserts_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
+
     var options = {
-        title: "Number of SWARE Top Inserts / QuIT Top Inserts vs. Operations Steps",
+        title: "Number of SWARE Top Insertsvs. Operations Steps",
         hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_top_inserts_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_top_inserts_history), Math.max(...quit_top_inserts_history)), ticks: 1},
+        vAxis: {title: '# of SWARE Top Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_top_inserts_history), Math.max(...quit_top_inserts_history)), ticks: 1},
         legend: "none",
         colors: ["#80CBC4", "#FFB433"],
         explorer: { 

@@ -6,7 +6,6 @@ function quit() {
     // Get the page from the data stream
     let page;
     let removedPageIndex = 0; // the page flushed from buffer is always page0
-    console.log(pole_next);
     // If we are at the start state fill the data stream too
     if (total_data.length == selectedN) {
         page = total_data[0];
@@ -61,6 +60,7 @@ function quit() {
         //animateQuitPage(removedPageIndex, 'normal');
         quit_fast_inserts_history.push(quit_fast_inserts);
         quit_top_inserts_history.push(quit_top_inserts);
+        quit_pole_resets_history.push(quit_pole_resets);
         return;
     }
 
@@ -98,6 +98,7 @@ function quit() {
         //animateQuitPage(removedPageIndex, 'bulk-load');
         quit_top_inserts_history.push(quit_top_inserts);
         quit_fast_inserts_history.push(quit_fast_inserts);
+        quit_pole_resets_history.push(quit_pole_resets);
         return;
     }
 
@@ -147,28 +148,29 @@ function quit() {
                 // Pole changes, do animations
                 let random_x = Math.floor(Math.random() * 81) + 10;
                 document.getElementById("pole").style.left = random_x + "%";
-                quit_pole_resets++;
                 quit_fast_inserts++;
                 //animateQuitPage(removedPageIndex, 'bulk-load');
                 quit_top_inserts_history.push(quit_top_inserts);
                 quit_fast_inserts_history.push(quit_fast_inserts);
+                quit_pole_resets_history.push(quit_pole_resets);
                 return;
             } 
             // If pole_next is not catching up, do nothing
             else {
                 console.log("Not catching up - Maintaining pole_prev, pole, and pole_next");
                 //animateQuitPage(removedPageIndex, 'normal');
+                quit_fast_inserts++;
                 quit_top_inserts_history.push(quit_top_inserts);
                 quit_fast_inserts_history.push(quit_fast_inserts);
+                quit_pole_resets_history.push(quit_pole_resets);
                 return;
             }
         }
-
+        quit_fast_inserts++;
         // Fast insert into current pole
         inserted_data_quit.push(page);
         //pole.push(page);
         //pole.sort((a, b) => a - b);
-        quit_fast_inserts++;
 
         console.log("Fast insert complete. New pole:", pole);
 
@@ -200,8 +202,7 @@ function quit() {
             pole_prev = pole;
             pole = pole_next;
             pole_next = [];
-            quit_pole_resets++;
-
+            quit_top_inserts++;
             // Pole changes, do animations
             let random_x = Math.floor(Math.random() * 81) + 10;
             document.getElementById("pole").style.left = random_x + "%";
@@ -224,6 +225,7 @@ function quit() {
     console.log("Finished processing page", page);
     quit_top_inserts_history.push(quit_top_inserts);
     quit_fast_inserts_history.push(quit_fast_inserts);
+    quit_pole_resets_history.push(quit_pole_resets);
 }
 
 /*

@@ -3,10 +3,12 @@
  */
 
 function sware() {
-    //console.log(JSON.parse(JSON.stringify(buffer)));
+    console.log("last sorted index: " ,lastSortedIndex);
     document.getElementById("tree-area-step-3+").classList.remove("hidden");
     // state == 0 -> Buffer is full, flushing time
-    console.log(JSON.parse(JSON.stringify(sware_bulk_loads_history)));
+    if(!sware_continue)
+        delay+=100;
+    sware_continue = false;
     if (state === 0) {
         if (wait-- == 0) {
             document.getElementById("tree-area-step-3+").classList.remove("hidden");// can show the index now
@@ -17,27 +19,32 @@ function sware() {
         }
         // If the buffer is full, flush the buffer
         else {
-            //console.log('zones: ',JSON.parse(JSON.stringify(zones)));  
             const lastTreeElement = document.getElementById("right-leaf-3"); // get the last tree element
             const swareTriangle = document.getElementById("root"); //root of tree
             // If the last sorted index is -1, only one element sorted
-            //console.log(JSON.parse(JSON.stringify(buffer_dict)));
             if (lastSortedIndex == -1) {
-                for(let i = 0;i<buffer[0].length;i++)
-                {
-                    tree.push(buffer[0][i]); // add the first element to the tree
-                }
                 // Bulk load
+                pages_flushed = 1;
                 if (buffer_dict[0][0] > sware_max_tree) {
                     //swareTriangle.classList.remove("turn-red");
-                    //console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
+                    for(let i = 0;i<buffer[0].length;i++)
+                    {
+                        tree.push(buffer[0][i]); // add the element to the tree
+                    }
+                    console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
                     sware_max_tree = buffer_dict[0][1]; // max value of page
+                    //update lower chart stats
                     for(let i = 0;i<10;i++)
                     {
                         sware_bulk_loads++;
                         sware_bulk_loads_history.push(sware_bulk_loads);
                         sware_top_inserts_history.push(sware_top_inserts);
+                        sware_average_pages_per_flush = total_pages_flushed / sware_flushes;
+                        sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+                        sware_flushes_history.push(sware_flushes);
+                        sware_sorts_history.push(sware_sorts);
                     }
+                    //if zones is small just show max else show ranges for a leafs
                     if(zones.length<9)
                         lastTreeElement.innerHTML = "(... , " + sware_max_tree + ")";
                     else
@@ -52,9 +59,11 @@ function sware() {
                     }, delay*0.3);
                     state = 1;
                     buffer.shift();
+                    total_pages_flushed+=pages_flushed;//track pages flushed
                     sware_flushes++;
                     bufferIndex2 = 0; // Reset the index
                     update_colors();  // Update UI
+                    sware_continue = true;
                     return;
                 }
                 // Top insert
@@ -85,28 +94,30 @@ function sware() {
                     //console.log("branch"+branch);
                     if(zones.length>=9)
                         labelZones();
+                    // Trigger the glow effect (top insert)
                     setTimeout(() => {
                         connectLine1.classList.add("glow-red");
                         connectLine2.classList.add("glow-red");
-                        //dots.classList.add("glow-red");
                         setTimeout(()=>{
                             leaf.classList.add("glow-red");
                             setTimeout(()=>{
                                 swareTriangle.classList.remove('glow-red');
                                 connectLine1.classList.remove("glow-red");
                                 connectLine2.classList.remove("glow-red");
-                                //dots.classList.remove("glow-red");
                                 leaf.classList.remove("glow-red");
-                            },delay*0.3);
-                        },delay*0.3);
-                    }, delay*0.3);
-                    // Trigger the glow effect (top insert)
-                    sware_top_inserts++; 
-                    sware_top_inserts_history.push(sware_top_inserts);
+                            },delay*0.2);
+                        },delay*0.2);
+                    }, delay*0.2);
+                    tree.push(buffer[0][bufferIndex2]);
+                    sware_top_inserts++;
                     sware_bulk_loads_history.push(sware_bulk_loads);
+                    sware_top_inserts_history.push(sware_top_inserts);
+                    sware_average_pages_per_flush = total_pages_flushed / sware_flushes;
+                    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+                    sware_flushes_history.push(sware_flushes);
+                    sware_sorts_history.push(sware_sorts);
                 }
                 //console.log(buffer[0][bufferIndex2]);
-                tree.push(buffer[0][bufferIndex2]);
                 if(buffer[0][bufferIndex2]>sware_max_tree)
                 {
                     sware_max_tree = buffer[0][bufferIndex2];
@@ -114,6 +125,7 @@ function sware() {
                 bufferIndex2++;
                 if(bufferIndex2==10)
                 {
+                    total_pages_flushed+=pages_flushed;
                     sware_flushes++;
                     state = 1;
                     buffer.shift();
@@ -126,6 +138,7 @@ function sware() {
                 // Update the tree
                 //tree.push(buffer[bufferIndex][bufferIndex2]);
                 // Bulk load
+                pages_flushed = lastSortedIndex+1;
                 if (buffer_dict[bufferIndex][0] > sware_max_tree) {
                     var tempBuffer = buffer[bufferIndex];
                     tempBuffer.sort((a,b)=>a-b);
@@ -135,13 +148,17 @@ function sware() {
                     {
                         tree.push(buffer[bufferIndex][i]); // add the first element to the tree
                     }
-                    //console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
+                    console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
                     sware_max_tree = buffer_dict[bufferIndex][1];
                     for(let i = 0;i<10;i++)
                     {
                         sware_bulk_loads++;
                         sware_bulk_loads_history.push(sware_bulk_loads);
                         sware_top_inserts_history.push(sware_top_inserts);
+                        sware_average_pages_per_flush = total_pages_flushed / sware_flushes;
+                        sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+                        sware_flushes_history.push(sware_flushes);
+                        sware_sorts_history.push(sware_sorts);
                     }
                     if(zones.length<9)
                         lastTreeElement.innerHTML = "(... , " + sware_max_tree + ")";
@@ -156,12 +173,14 @@ function sware() {
                     bufferIndex2 = 0;
                     if(bufferIndex==lastSortedIndex+1)
                     {
+                        total_pages_flushed+=pages_flushed;
                         sware_flushes++;
                         bufferIndex = 0;
                         bufferIndex2 = 0
                         buffer.splice(0, lastSortedIndex + 1);
                         state=1;
                         //console.log("break");
+                        sware_continue = true;
                         return;
                     }
                 }
@@ -170,9 +189,6 @@ function sware() {
                     branch = findBranch();
                     //console.log("test");
 
-                    sware_top_inserts++; // increment the number of top inserts
-                    sware_top_inserts_history.push(sware_top_inserts);
-                    sware_bulk_loads_history.push(sware_bulk_loads);
                     // Trigger the glow effect (top insert)
                     swareTriangle.classList.add("glow-red");
                     swareTriangle.innerHTML = buffer[bufferIndex][bufferIndex2];
@@ -200,42 +216,53 @@ function sware() {
                     //console.log("branch"+branch);
                     if(zones.length>=9)
                         labelZones();
+                    //top insert glow
                     setTimeout(() => {
                         connectLine1.classList.add("glow-red");
                         connectLine2.classList.add("glow-red");
-                        //dots.classList.add("glow-red");
                         setTimeout(()=>{
                             leaf.classList.add("glow-red");
                             setTimeout(()=>{
                                 swareTriangle.classList.remove('glow-red');
                                 connectLine1.classList.remove("glow-red");
                                 connectLine2.classList.remove("glow-red");
-                                //dots.classList.remove("glow-red");
                                 leaf.classList.remove("glow-red");
-                            },delay*0.3);
-                        },delay*0.3);
-                    }, delay*0.3);
+                            },delay*0.2);
+                        },delay*0.2);
+                    }, delay*0.2);
                     const circle = document.getElementById('circle');
+                    //update for charts and table
                     tree.push(buffer[bufferIndex][bufferIndex2]);
+                    sware_top_inserts++;
+                    sware_bulk_loads_history.push(sware_bulk_loads);
+                    sware_top_inserts_history.push(sware_top_inserts);
+                    sware_average_pages_per_flush = total_pages_flushed / sware_flushes;
+                    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+                    sware_flushes_history.push(sware_flushes);
+                    sware_sorts_history.push(sware_sorts);
                     if(buffer[bufferIndex][bufferIndex2]>sware_max_tree)
                     {
                         sware_max_tree = buffer[bufferIndex][bufferIndex2];
                     }
                     bufferIndex2++;
+                    //page inserted move to next page
                     if(bufferIndex2==10)
                     {
                         bufferIndex++;
                         bufferIndex2=0;
                     }
                 }
+                //buffer flushed move to next stage
                 if(bufferIndex==lastSortedIndex+1)
                 {
+                    total_pages_flushed+=pages_flushed;
                     sware_flushes++;
                     bufferIndex = 0;
                     bufferIndex2 = 0
                     buffer.splice(0, lastSortedIndex + 1);
                     state=1;
                     //console.log("break2");
+                    sware_continue = true;
                     return;
                 }
             }
@@ -245,6 +272,7 @@ function sware() {
                 // Update the tree
                 //tree.push(buffer[bufferIndex]);
                 // Bulk load
+                pages_flushed = 5;
                 if (buffer_dict[bufferIndex][0] > sware_max_tree) {
                     for(let i = 0;i<buffer[0].length;i++)
                     {
@@ -254,13 +282,17 @@ function sware() {
                     tempBuffer.sort((a,b)=>a-b);
                     //console.log("bulk load:"+buffer[0]);
                     zones.push(tempBuffer);
-                    //console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
+                    console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
                     sware_max_tree = buffer_dict[bufferIndex][1];
                     for(let i = 0;i<10;i++)
                     {
                         sware_bulk_loads++;
                         sware_bulk_loads_history.push(sware_bulk_loads);
                         sware_top_inserts_history.push(sware_top_inserts);
+                        sware_average_pages_per_flush = total_pages_flushed / sware_flushes;
+                        sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+                        sware_flushes_history.push(sware_flushes);
+                        sware_sorts_history.push(sware_sorts);
                     }
                     if(zones.length<9)
                         lastTreeElement.innerHTML = "(... , " + sware_max_tree + ")";
@@ -275,12 +307,14 @@ function sware() {
                     bufferIndex2 = 0;
                     if(bufferIndex==lastSortedIndex+1)
                     {
+                        total_pages_flushed+=pages_flushed;
                         sware_flushes++;
                         bufferIndex = 0;
                         bufferIndex2 = 0
                         buffer.splice(0, lastSortedIndex + 1);
                         state=1;
                         //console.log("break");
+                        sware_continue = true;
                         return;
                     }
                 }
@@ -289,9 +323,6 @@ function sware() {
                     branch = findBranch();
                     //console.log("test");
 
-                    sware_top_inserts++; // increment the number of top inserts
-                    sware_top_inserts_history.push(sware_top_inserts);
-                    sware_bulk_loads_history.push(sware_bulk_loads);
                     // Trigger the glow effect (top insert)
                     const circle = document.getElementById('circle');
                     swareTriangle.classList.add("glow-red");
@@ -320,22 +351,29 @@ function sware() {
                     //console.log("branch"+branch);
                     if(zones.length>=9)
                         labelZones();
+                    //top insert animation
                     setTimeout(() => {
                         connectLine1.classList.add("glow-red");
                         connectLine2.classList.add("glow-red");
-                        //dots.classList.add("glow-red");
                         setTimeout(()=>{
                             leaf.classList.add("glow-red");
                             setTimeout(()=>{
                                 swareTriangle.classList.remove('glow-red');
                                 connectLine1.classList.remove("glow-red");
                                 connectLine2.classList.remove("glow-red");
-                                //dots.classList.remove("glow-red");
                                 leaf.classList.remove("glow-red");
-                            },delay*0.3);
-                        },delay*0.3);
-                    }, delay*0.3);
+                            },delay*0.2);
+                        },delay*0.2);
+                    }, delay*0.2);
                     tree.push(buffer[bufferIndex][bufferIndex2]);
+                    sware_top_inserts++;
+                    sware_bulk_loads_history.push(sware_bulk_loads);
+                    sware_top_inserts_history.push(sware_top_inserts);
+                    sware_average_pages_per_flush = total_pages_flushed / sware_flushes;
+                    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+                    sware_flushes_history.push(sware_flushes);
+                    sware_sorts_history.push(sware_sorts);
+                    //update sware max
                     if(buffer[bufferIndex][bufferIndex2]>sware_max_tree)
                     {
                         sware_max_tree = buffer[bufferIndex][bufferIndex2];
@@ -347,21 +385,23 @@ function sware() {
                         bufferIndex2=0;
                     }
                 }
+                //buffer has been flushed move on
                 if(bufferIndex==5)
                 {
+                    total_pages_flushed+=pages_flushed;
                     sware_flushes++;
                     buffer.splice(0, 5);
                     bufferIndex = 0;
                     bufferIndex2 = 0
                     state=1;
                     //console.log("break2");
+                    sware_continue = true;
                     return;
                 }
             } 
-            // Calculate average pages per flush
-            sware_average_pages_per_flush = (tree.length) / sware_flushes;
             
         }
+        sware_continue = true;
         update_colors(); // update colors of the buffer
         // go to next state
     }
@@ -419,7 +459,7 @@ function sware() {
 
         update_colors(); // update colors of the buffer
         sware_max_buffer = buffer[lastSortedIndex];
-        
+        sware_continue = true;
         state = 2; // go to next state
     }
     // state == 2 -> Buffer is empty, fill the buffer
@@ -484,15 +524,14 @@ function sware() {
         bufferIndex = 0;
         bufferIndex2 = 0;
         state = 0; // go to next state
-
+        sware_continue = true;
     }
+    sware_continue = true;
 }
 
 
 function findBranch()
 {
-    console.log(JSON.parse(JSON.stringify(zones)));
-    console.log(buffer[bufferIndex][bufferIndex2]);
     stop_zones = false;
     for(let i = 0;i<zones.length&&!stop_zones;i++)
     {
@@ -644,6 +683,7 @@ function findBranch()
 }
 
 
+//label leaf node in model
 function labelZones()
 {
     let leafId = 0;
