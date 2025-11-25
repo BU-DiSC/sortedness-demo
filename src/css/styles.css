@@ -854,7 +854,7 @@ div.fixed {
     background: lightgray;
 }
 
-.triangleSware {
+.triangle-sware {
     top:8%;
     height: 62%;
     position: relative;
@@ -1029,7 +1029,6 @@ div.fixed {
     }
 }
 
-
 .glow-red {
     filter: drop-shadow(0 0 20px rgba(255, 0, 0, 1)) 
             drop-shadow(0 0 40px rgba(255, 0, 0, 0.8)) 
@@ -1070,8 +1069,6 @@ div.fixed {
     background-color: rgba(0, 255, 0, 0.8);
 }
 
-
-
 @keyframes glow-pulse-green {
     0% {
         filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.6)) 
@@ -1087,7 +1084,6 @@ div.fixed {
                 drop-shadow(0 0 20px rgba(0, 255, 0, 0.4));
     }
 }
-
 
 .page-btn {
     width: 30px;   
@@ -1525,7 +1521,6 @@ h4.workload-title::after {
     border-radius:12px;
 }
 
-
 /*sware tree styling*/
 .tree-node {
     border: 1px solid black;
@@ -1536,9 +1531,7 @@ h4.workload-title::after {
     align-items: center;
     justify-content: center;
     font-size: 12px;
-
 }
-
 
 .tree-node.dot {
     font-size: 14px;
@@ -1546,19 +1539,11 @@ h4.workload-title::after {
     background-color:white;
 }
 
-/*
-.tree-node.leaf {
-    //background-color: white;
-}
-*/
-
 #root {
     left: 50%;
     transform: translateX(-50%);
     top: 10%;
-    
 }
-
 
 #left-dots {
     left: 20%;
@@ -1571,7 +1556,6 @@ h4.workload-title::after {
     transform: translateX(-50%);
     top: 70%;
 }
-
 
 #center-dots {
     left: 50%;
@@ -1624,7 +1608,6 @@ h4.workload-title::after {
     height: 18.5%;
     transform: translateX(-50%); 
 }
-
 
 #line-center-1 {
     left: 50%;

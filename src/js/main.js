@@ -17,7 +17,6 @@ var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
 var delay = 1000;                // delay between animations
-var total_data = [];            // stores the workload data
 var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
 
@@ -472,12 +471,14 @@ function run_operations() {
         console.log("Starting to run the algorithm.");
         //pre-load
         state = 2;
+        
         while((sware_bulk_loads_history.length==0)||
         (sware_bulk_loads_history[sware_bulk_loads_history.length-1]+sware_top_inserts_history[sware_top_inserts_history.length-1])<selectedN/5)
         {
             sware();
             console.log(sware_bulk_loads_history[sware_bulk_loads_history.length-1]+sware_top_inserts_history[sware_top_inserts_history.length-1]);
         }
+            
         while((quit_fast_inserts_history.length==0)||
         (quit_fast_inserts_history[quit_fast_inserts_history.length-1]+quit_top_inserts_history[quit_top_inserts_history.length-1])<selectedN/5)
         {
