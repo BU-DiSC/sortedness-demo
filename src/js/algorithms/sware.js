@@ -3,7 +3,6 @@
  */
 
 function sware() {
-    console.log("last sorted index: " ,lastSortedIndex);
     document.getElementById("tree-area-step-3+").classList.remove("hidden");
     // state == 0 -> Buffer is full, flushing time
     if(!sware_continue)
@@ -31,7 +30,6 @@ function sware() {
                     {
                         tree.push(buffer[0][i]); // add the element to the tree
                     }
-                    console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
                     sware_max_tree = buffer_dict[0][1]; // max value of page
                     //update lower chart stats
                     for(let i = 0;i<10;i++)
@@ -148,7 +146,6 @@ function sware() {
                     {
                         tree.push(buffer[bufferIndex][i]); // add the first element to the tree
                     }
-                    console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
                     sware_max_tree = buffer_dict[bufferIndex][1];
                     for(let i = 0;i<10;i++)
                     {
@@ -282,7 +279,6 @@ function sware() {
                     tempBuffer.sort((a,b)=>a-b);
                     //console.log("bulk load:"+buffer[0]);
                     zones.push(tempBuffer);
-                    console.log("bulk load:"+buffer[bufferIndex]+"max: "+ sware_max_tree);
                     sware_max_tree = buffer_dict[bufferIndex][1];
                     for(let i = 0;i<10;i++)
                     {
@@ -705,7 +701,6 @@ function labelZones()
         maxTemp = zones[i][zones[i].length-1];
     }
     leaf_dict.push([minTemp,sware_max_tree]);
-    //console.log(leaf_dict);
     for(let i = 0;i<9;i++)
     {
         if(i/3<1){

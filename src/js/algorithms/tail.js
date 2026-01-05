@@ -1,54 +1,28 @@
-/* 
- * One step of the QuIT algorithm
- */
-
-function quit() {
-    // Get the page from the data stream
-    let page;
-    page = total_data[0];
-    total_data.shift();
-    quitTree.insert(page);
-    quit_top_inserts_history.push(quitTree.size-quitTree.fastInserts);
-    quit_fast_inserts_history.push(quitTree.fastInserts);
-    quit_pole_resets_history.push(quitTree.poleResets);
-}
-
-class QuIT {
+class Tail {
     constructor(t) {
         this.t = t;
         this.root = new Node(t, true);
+        this.tail = this.root;
         this.fastInserts = 0;
         this.fastInserted = true;
-        this.poleResets = 0;
-        // QuIT poles
-        this.currPole;
-        this.prevPole;
-        this.nextPole;
-        this.missesInRow = 0;
-        this.size = 0;
     }
     insert(page)
     {
-        this.size++;
         let pageLeaf = this.root;
         let temp;
         let stop;
         let tempNode;
         if(!this.root.leaf)
         {
-            //check if we can fast insert
-            if(page>=this.currPole.keys[0]&&(this.currPole.next==null||page<this.currPole.next.keys[0]))
+            if(page>=this.tail.keys[0])
             {
-                pageLeaf = this.currPole;
+                pageLeaf = this.tail;
                 this.fastInserts++;
                 this.fastInserted = true;
-                this.missesInRow = 0;
             }
-            else//top insert
+            else
             {
                 this.fastInserted = false;
-                this.missesInRow++;
-                //find currect leaf
                 while(!(pageLeaf.leaf))
                 {
                     stop = false
@@ -67,54 +41,19 @@ class QuIT {
                     pageLeaf = pageLeaf.children[temp];
                 }
             }
-           
         }
-        else
-        {
+        else{
             this.fastInserts++;
             this.fastInserted = true;
         }
-        //update after 4 misses
-        if(this.missesInRow ==4)
-        {
-            let first;
-            first = this.root;
-            while(!first.leaf)
-            {
-               
-                first = first.children[0];
-            }
-            while(!first.next == pageLeaf)
-            {
-                first = first.next;
-            }
-            this.prevPole = first;
-            this.currPole = pageLeaf;
-            this.nextPole = pageLeaf.next;
-            this.missesInRow = 0;
-        }
         if(pageLeaf.n<this.t)
         {
-            if(pageLeaf == this.nextPole)
-            {
-                this.prevPole = this.currPole;
-                this.currPole = this.nextPole;
-                this.nextPole = null;
-            }
             this.insertInOrder(page,pageLeaf.keys);
             pageLeaf.n++;
         }
         else{
             this.insertInOrder(page,pageLeaf.keys);
             pageLeaf.n++;
-            //pole catchup
-            if(pageLeaf == this.nextPole)
-            {
-                this.prevPole = this.currPole;
-                this.currPole = this.nextPole;
-                this.nextPole = null;
-            }
-           
             do
             {
                 tempNode = this.split(pageLeaf);
@@ -152,7 +91,6 @@ class QuIT {
     {
         if(pageLeaf.leaf == true)
         {
-            //tree consists of 1 node
             if(pageLeaf.parent == null)
             {
                 let newParent = new Node(this.t,false);
@@ -175,8 +113,6 @@ class QuIT {
                 splitNode.parent = newParent;
                 this.root = newParent;
                 this.tail = splitNode;
-                this.currPole = splitNode;
-                this.prevPole = pageLeaf;
                 return newParent;
             }
             else
@@ -184,13 +120,6 @@ class QuIT {
                 //console.log("true");
                 let splitNode = new Node(pageLeaf.t,true);
                 let mid = Math.floor(pageLeaf.n/2);
-                let r,p,q,poleSize,prevPoleSize,x;
-                let poleNode = false;
-                let updatePrev = false;
-                if(pageLeaf == this.prevPole)
-                    updatePrev = true;
-                if(pageLeaf == this.currPole)
-                    poleNode = true;
                 splitNode.n = pageLeaf.n - mid;
                 pageLeaf.n = mid;
                 const left = (pageLeaf.keys).slice(0,mid);
@@ -203,25 +132,10 @@ class QuIT {
                 let index = this.insertInOrder(splitNode.keys[0], pageLeaf.parent.keys);
                 pageLeaf.parent.children.splice(index+1, 0, splitNode);
                 pageLeaf.parent.n++;
-                if(poleNode)
+                if(this.fastInserted)
                 {
-                    this.nextPole = splitNode;
-                    r = this.nextPole.keys[0];
-                    p = this.prevPole.keys[0];
-                    q = this.currPole.keys[0];
-                    poleSize = this.currPole.n;
-                    prevPoleSize = this.prevPole.n;
-                    x = q+(((q-p)/prevPoleSize)*poleSize*1.5);
-                    if(r<=x)
-                    {
-                        this.poleResets++;
-                        this.prevPole = this.currPole;
-                        this.currPole = this.nextPole;
-                        this.nextPole = null;
-                    }
+                    this.tail = splitNode;
                 }
-                else if(updatePrev)
-                    this.prevPole = splitNode;//keeps prevPole as node directly to the left of pole
                 return pageLeaf.parent;
             }
         }
@@ -261,6 +175,7 @@ class QuIT {
             else
             {
                 //not done
+                console.log("true");
                 let splitNode = new Node(pageLeaf.t,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
@@ -287,5 +202,5 @@ class QuIT {
                 return pageLeaf.parent;
             }
         }
-    }  
+    }   
 }

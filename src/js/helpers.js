@@ -1,3 +1,16 @@
+class Node{
+    constructor(t,leaf)
+    {
+        this.t = t;
+        this.leaf = leaf;
+        this.keys = [];
+        this.children = [];
+        this.n = 0//size of node
+        this.next = null;
+        this.parent = null;
+    }
+}
+
 
 
 /*
@@ -299,17 +312,6 @@ function reset_button() {
 
     console.log("Reset to default state.");
 }
-/*
- * Update the history
- */
-
-function update_history() {
-    quit_pole_resets_history.push(quit_pole_resets);
-}
-
-/*
- * Update the table
- */
 
 function update_table() {
     document.getElementById("sware-sorts").innerHTML = sware_sorts;
@@ -317,13 +319,11 @@ function update_table() {
     document.getElementById("sware-average-pages-per-flush").innerHTML = Math.round(sware_average_pages_per_flush*10)/10;
     document.getElementById("sware-bulk-loads").innerHTML = (sware_bulk_loads/10);
     document.getElementById("sware-fast-inserts").innerHTML = sware_bulk_loads;
-    document.getElementById("quit-fast-inserts").innerHTML = quit_fast_inserts;
+    document.getElementById("quit-fast-inserts").innerHTML = quitTree.fastInserts;
     document.getElementById("sware-top-inserts").innerHTML = sware_top_inserts;
-    document.getElementById("quit-top-inserts").innerHTML = quit_top_inserts;
-    document.getElementById("quit-pole-resets").innerHTML = quit_pole_resets;
+    document.getElementById("quit-top-inserts").innerHTML = quitTree.size-quitTree.fastInserts;
+    document.getElementById("quit-pole-resets").innerHTML = quitTree.poleResets;
 }
-
-
 /*
  * Update the charts
  */

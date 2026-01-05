@@ -99,6 +99,12 @@ var inputedDataE = [];
 var inputedDatakl = [];
 var totalCharts = 0;
 
+
+//trees
+let quitTree = new QuIT(20);
+let lilTree = new LilTree(20);
+let tailTree = new Tail(20);
+
 /*
  * Gets called after "Generate Workload" button is clicked
  */
@@ -479,8 +485,7 @@ function run_operations() {
             console.log(sware_bulk_loads_history[sware_bulk_loads_history.length-1]+sware_top_inserts_history[sware_top_inserts_history.length-1]);
         }
             
-        while((quit_fast_inserts_history.length==0)||
-        (quit_fast_inserts_history[quit_fast_inserts_history.length-1]+quit_top_inserts_history[quit_top_inserts_history.length-1])<selectedN/5)
+        while(quitTree.size<selectedN/5)
         {
             quit();
         }
@@ -507,7 +512,6 @@ function run_operations() {
                 return;
             }
             next_step();
-            console.log(delay);
         }, delay+(tree.length/10));
         //increase delay for large values inserted
     }
@@ -550,7 +554,6 @@ function next_step() {
     {
         quit();
     }
-    update_history();
     update_table();
     update_charts();
 }
