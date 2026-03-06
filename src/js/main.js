@@ -22,45 +22,10 @@ var running = true;             // flag to check if animation is running
 
 /* Parameters for the SWARE algorithm */
 
-var sware_data=[];
-var buffer = [];                      // the buffer
-var tree = [];                        // the tree
-var zones = [];                       // the zones
-var lastSortedIndex = -1;             // last sorted index
-var moved = false;                    // used to check if the element is moved
-var partitioned_data = [];            // partitioned data, 10 elements per partition
-var state = 2;                        // used to decide which step nextStep() will be performed
-var sware_max_tree = Number.MIN_SAFE_INTEGER;   // stores the max value in the tree
-var buffer = [];                      // the buffer
-var tree = [];                        // the tree
-var zones = [];                       // used to store where leaves are
-var lastSortedIndex = -1;             // last sorted index
-var moved = false;                    // used to check if the element is moved
-var partitioned_data = [];            // partitioned data, 10 elements per partition
-var state = 0;                        // used to decide which step nextStep() will be performed
-var sware_max_tree = Number.MIN_SAFE_INTEGER;   // stores the max value in the tree
-var sware_max_buffer = Number.MIN_SAFE_INTEGER; // stores the max value in the buffer
-var numInsideBuffer = 0;             // number of elements inside the buffer
-var overlapped;                      // stores the overlapped element
-var overlapper;                      // stores the overlapping element that is added later
-var overlapperSet = false;           // used when calculating lastSortedIndex
-var sware_buffer_sorted = true;
-var zones_dict = [];                 // dictionary to store the zones
-var zones_dict_index = 0;
-var amount_of_buffer_flushed;
-var bufferIndex;
-var bufferIndex2;
-var buffer_dict = []; // min and max values for pages in buffer
-var firstPart;
-var secondPart;
-var stop_zones;
-var branch;
-var sortBufferData = [];
-var sware_continue = true;
+let sware_data = [];
 
 /* Parameters for the QuIT algorithm */
 
-var inserted_data_quit = []; // stores the inserted data
 var leaf_node_size = 10;     // size of the leaf node
 var pole = [];                // current pole
 var pole_prev = [];           // previous pole
@@ -92,6 +57,7 @@ var quit_pole_resets = 0;
 var quit_pole_resets_history = [];
 var exchangesDatasets = [];
 var klDatasets = [];
+let quit_leaf_dict = [];
 
 // array that holds the field user inputted
 // order is [n,k,l,b,exchanges]
@@ -101,9 +67,10 @@ var totalCharts = 0;
 
 
 //trees
-let quitTree = new QuIT(20);
+let quitTree = new QuIT(5);
 let lilTree = new LilTree(20);
 let tailTree = new Tail(20);
+let swareTree = new Sware(5);
 
 /*
  * Gets called after "Generate Workload" button is clicked
@@ -195,7 +162,6 @@ function visualize_workload() {
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
         klDatasets.push(total_data);
-        // TODO: make exchanges method more randomized
         total_exchanges_data = generateInversion(selectedN, selectedE);
         exchangesDatasets.push(total_exchanges_data);
 
@@ -459,38 +425,20 @@ function run_operations() {
 
 
     if(flag){
+        quitTree = new QuIT(5);
+        swareTree = new Sware(5);
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
         
-        // Partition the data    
-        for (let i = 0; i < total_data.length; i += 10) {
-            const part = total_data.slice(i, i + 10);
-            partitioned_data.push(part);
-        }
-        sware_data = partitioned_data;
-        // Fill up zones, zones_dict
-        for (let i = 0; i < partitioned_data.length; i += 1) {
-            const min = Math.min(...partitioned_data[i]);
-            const max = Math.max(...partitioned_data[i]);
-            zones_dict.push([min, max]);
-        }
+        sware_data = [...total_data];
         console.log("Starting to run the algorithm.");
         //pre-load
         state = 2;
-        
-        while((sware_bulk_loads_history.length==0)||
-        (sware_bulk_loads_history[sware_bulk_loads_history.length-1]+sware_top_inserts_history[sware_top_inserts_history.length-1])<selectedN/5)
-        {
-            sware();
-            console.log(sware_bulk_loads_history[sware_bulk_loads_history.length-1]+sware_top_inserts_history[sware_top_inserts_history.length-1]);
-        }
-            
-        while(quitTree.size<selectedN/5)
-        {
-            quit();
-        }
+        initializeQuitVisualization();
         // Show hidden divs
+        //document.getElementById('data-box').classList.remove('hidden');
         document.getElementById('buffer-area').classList.remove('hidden');
+        document.getElementById('tree-area-step-3+').classList.remove('hidden');
         document.getElementById('buttons-container-wrapper').classList.remove('hidden');
         document.getElementById('dashed-line').classList.remove('hidden');
         document.getElementById('quit-area').classList.remove("hidden");
@@ -512,7 +460,8 @@ function run_operations() {
                 return;
             }
             next_step();
-        }, delay+(tree.length/10));
+            delay = delay+(quitTree.size/10);
+        }, delay);
         //increase delay for large values inserted
     }
     else{
@@ -520,40 +469,12 @@ function run_operations() {
     }
 }
 
-//Function for the data.html file
-function run2_operations() {
-    console.log("Starting to run the algorithm.");
-
-    // Show hidden divs
-    document.getElementById('plots').classList.remove("hidden");
-
-    document.getElementById("stop-button").disabled = false; // enable stop button
-    document.getElementById("continue-button").disabled = true; // disable continue button
-    document.getElementById("nextstep-button").disabled = true; // disable nextstep button
-
-    state = 2; // SWARE buffer is empty initially
-
-    // The main loop
-    let interval = setInterval(() => {
-        if (running == false) {
-            clearInterval(interval);
-            return;
-        }
-        next_step();
-    }, delay+(tree.length/10));
-}
-
 /*
  * Runs one step of both algorithms and updates the UI
  */
 function next_step() {
-    //check if sware bulk loaded so then QuIT is called 10 times
-    var tempSwareSize = tree.length;
-    sware(); 
-    for(let i = 0;i<(tree.length-tempSwareSize);i++)
-    {
-        quit();
-    }
+    //sware(); 
+    quit();
     update_table();
     update_charts();
 }
@@ -614,7 +535,7 @@ function generate(k, l, n, b, a) {
                 taken.set(firstSwap, false);
                 taken.set(firstSwap + l, false);
                 swappingFirst = false;
-                console.log("firstSwap: " + firstSwap, firstSwap + l);
+                //console.log("firstSwap: " + firstSwap, firstSwap + l);
             }
         }
         else {
@@ -624,16 +545,15 @@ function generate(k, l, n, b, a) {
                 taken.set(firstSwap, false);
                 taken.set(firstSwap - l, false);
                 swappingFirst = false;
-                console.log("firstSwap: " + firstSwap, firstSwap - l);
+                //console.log("firstSwap: " + firstSwap, firstSwap - l);
             }
         }
     }
     //indexes of elements we will swap
     let regenerateCount = 0;
     sources = generateSources(n, k - 2, taken);
-    console.log(sources.length, n);
+    //console.log(sources.length, n);
     while (sources.length != 0 && regenerateCount < 5000) {
-        console.log("length: " + sources.length);
         for (let j = 0; j < (n / 100) && sources.length != 0; j++) {
             for (let i = 0; i < sources.length; i++) {
                 min = Math.max(0, sources[i] - l);
@@ -655,18 +575,12 @@ function generate(k, l, n, b, a) {
                 }
             }
         }
-        console.log("regenerate");
+        //console.log("regenerate");
         regenerateCount++;
         for (let i = 0; i < sources.length; i++) {
             taken.set(sources[i], true);
         }
         sources = generateSources(n, (2 * sources.length), taken);
-    }
-    console.log("final: " + sources.length);
-    for (let i = Math.max(0, sources[0] - l); i < Math.min(n - 1, sources[0] + l); i++) {
-        if (taken.get(i)) {
-            console.log("index: ", i, "value: ", array[i]);
-        }
     }
     //if odd n swap element that has already been swapped with an element that hasn't already been swapped
     if (k % 2 == 1) {

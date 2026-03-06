@@ -2,30 +2,759 @@
  * One step of the QuIT algorithm
  */
 
+const QUIT_DEFAULT_ORDER = 5;
+const QUIT_MAX_INSERTION_SLOTS = 15;
+const quitVisualRows = [];
+let quitInsertionPanelTimer = null;
+let quitPendingInsertValue = null;
+
 function quit() {
-    // Get the page from the data stream
-    let page;
-    page = total_data[0];
-    total_data.shift();
+    if (quitPendingInsertValue != null) {
+        commitPendingQuitInsert();
+    }
+
+    if (total_data.length === 0) {
+        running = false;
+        return;
+    }
+
+    // Highlight the current head of the insertion stream.
+    updateQuitInsertionsPanel(true);
+
+    // Show the route on the current tree before applying the insertion.
+    const page = total_data[0];
+    const preInsertPath = findQuitPath(page);
+    const willFastInsert = isQuitFastInsertCandidate(page);
+    const topInsertPath = willFastInsert ? [] : preInsertPath;
+    const fastInsertPath = (willFastInsert && quitTree.currPole) ? [quitTree.currPole] : [];
+    renderQuitTree(topInsertPath, fastInsertPath);
+
+    if (quitInsertionPanelTimer != null) {
+        clearTimeout(quitInsertionPanelTimer);
+        quitInsertionPanelTimer = null;
+    }
+    quitPendingInsertValue = page;
+
+    const commitDelay = Math.max(0, Math.floor(delay * 0.2));
+    if (commitDelay === 0) {
+        commitPendingQuitInsert();
+    }
+    else {
+        quitInsertionPanelTimer = setTimeout(() => {
+            quitInsertionPanelTimer = null;
+            commitPendingQuitInsert();
+        }, commitDelay);
+    }
+}
+
+function isQuitFastInsertCandidate(page)
+{
+    if (!quitTree || !quitTree.root) {
+        return false;
+    }
+    if (quitTree.root.leaf) {
+        return true;
+    }
+
+    const pole = quitTree.currPole;
+    if (!pole) {
+        return false;
+    }
+
+    const poleKeys = getQuitNodeKeys(pole);
+    if (poleKeys.length === 0) {
+        return false;
+    }
+    const poleMin = poleKeys[0];
+
+    const nextPole = pole.next;
+    const nextKeys = getQuitNodeKeys(nextPole);
+    const nextMin = nextKeys.length > 0 ? nextKeys[0] : null;
+    return page >= poleMin && (nextMin == null || page < nextMin);
+}
+
+function commitPendingQuitInsert()
+{
+    if (quitPendingInsertValue == null) {
+        return;
+    }
+
+    const page = quitPendingInsertValue;
+    quitPendingInsertValue = null;
+
     quitTree.insert(page);
+    total_data.shift();
+    renderQuitTree([], []);
+    updateQuitInsertionsPanel(false);
+
+    if (total_data.length === 0) {
+        running = false;
+    }
+
     quit_top_inserts_history.push(quitTree.size-quitTree.fastInserts);
     quit_fast_inserts_history.push(quitTree.fastInserts);
     quit_pole_resets_history.push(quitTree.poleResets);
 }
 
+function initializeQuitVisualization()
+{
+    if (quitInsertionPanelTimer != null) {
+        clearTimeout(quitInsertionPanelTimer);
+        quitInsertionPanelTimer = null;
+    }
+    quitPendingInsertValue = null;
+    updateQuitInsertionsPanel(false);
+    renderQuitTree([], []);
+}
+
+function getQuitNodeKeys(node)
+{
+    if (!node || !Array.isArray(node.keys)) {
+        return [];
+    }
+
+    let keyCount = node.keys.length;
+    if (typeof node.n === "number") {
+        keyCount = Math.min(node.n, node.keys.length);
+    }
+    return node.keys.slice(0, keyCount);
+}
+
+function getQuitNodeChildren(node)
+{
+    if (!node || !Array.isArray(node.children)) {
+        return [];
+    }
+    return node.children.filter((child) => child != null);
+}
+
+function collectQuitLevels()
+{
+    if (!quitTree || !quitTree.root) {
+        return [];
+    }
+
+    const levels = [];
+    let current = [quitTree.root];
+
+    while (current.length > 0) {
+        levels.push(current);
+        const next = [];
+        for (const node of current) {
+            if (!node || node.leaf) {
+                continue;
+            }
+            const children = getQuitNodeChildren(node);
+            for (const child of children) {
+                next.push(child);
+            }
+        }
+        current = next;
+    }
+
+    return levels;
+}
+
+function computeQuitRanges(node, rangeMap)
+{
+    if (!node) {
+        return [null, null];
+    }
+
+    const keys = getQuitNodeKeys(node);
+    if (node.leaf) {
+        let minKey = null;
+        let maxKey = null;
+        if (keys.length > 0) {
+            minKey = keys[0];
+            maxKey = keys[keys.length - 1];
+        }
+        const range = [minKey, maxKey];
+        rangeMap.set(node, range);
+        return range;
+    }
+
+    const children = getQuitNodeChildren(node);
+    let minChild = null;
+    let maxChild = null;
+    for (const child of children) {
+        const childRange = computeQuitRanges(child, rangeMap);
+        if (childRange[0] != null && minChild == null) {
+            minChild = childRange[0];
+        }
+        if (childRange[1] != null) {
+            maxChild = childRange[1];
+        }
+    }
+    const range = [minChild, maxChild];
+    rangeMap.set(node, range);
+    return range;
+}
+
+function formatQuitRange(range)
+{
+    if (!range || range[0] == null || range[1] == null) {
+        return "[-, -]";
+    }
+    return "[" + range[0] + ", " + range[1] + "]";
+}
+
+function getQuitNodeCapacity(node)
+{
+    if (!node) {
+        return 1;
+    }
+
+    const fallbackCapacity = (typeof node.t === "number" && node.t > 0)
+        ? node.t
+        : Math.max(getQuitNodeKeys(node).length, 1);
+    if (!quitTree) {
+        return fallbackCapacity;
+    }
+
+    const treeCapacity = node.leaf ? quitTree.t : quitTree.internalSize;
+    if (typeof treeCapacity !== "number" || treeCapacity < 1) {
+        return fallbackCapacity;
+    }
+
+    return Math.max(1, treeCapacity);
+}
+
+function getQuitKeyColumnCount(slotCount)
+{
+    if (!Number.isFinite(slotCount) || slotCount < 1) {
+        return 1;
+    }
+    return Math.min(slotCount, 6);
+}
+
+function createQuitNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafNextPointer, isPoleNode)
+{
+    const keys = getQuitNodeKeys(node);
+    const nodeCapacity = getQuitNodeCapacity(node);
+    const slotCount = Math.max(nodeCapacity, keys.length, 1);
+    const keyColumns = getQuitKeyColumnCount(slotCount);
+    const keyRows = Math.max(1, Math.ceil(slotCount / keyColumns));
+    const card = document.createElement("div");
+    card.className = "quit-node-card";
+    card.classList.add(node.leaf ? "leaf" : "internal");
+    if (depth === 0) {
+        card.classList.add("root");
+    }
+    if (isPathNode) {
+        card.classList.add("quit-path-active");
+    }
+    if (isFastNode) {
+        card.classList.add("quit-fast-active");
+    }
+    if (isPoleNode) {
+        card.classList.add("quit-pole-node");
+    }
+
+    const header = document.createElement("div");
+    header.className = "quit-node-header";
+    let headerLabel;
+    if (depth === 0) {
+        headerLabel = "Root";
+    }
+    else {
+        headerLabel = node.leaf ? "Leaf" : "Internal";
+    }
+    if (isPoleNode) {
+        headerLabel += " (pole)";
+    }
+    header.textContent = headerLabel;
+
+    const rangeLabel = document.createElement("div");
+    rangeLabel.className = "quit-node-range";
+    rangeLabel.textContent = "Range " + formatQuitRange(range);
+
+    const keyRow = document.createElement("div");
+    keyRow.className = "quit-node-keys";
+    keyRow.style.setProperty("--quit-key-columns", keyColumns.toString());
+    keyRow.style.setProperty("--quit-key-rows", keyRows.toString());
+    for (let i = 0; i < slotCount; i++) {
+        const keyCell = document.createElement("span");
+        keyCell.className = "quit-key-cell";
+        if (i < keys.length) {
+            keyCell.textContent = keys[i];
+        }
+        else {
+            keyCell.textContent = ".";
+            keyCell.classList.add("quit-key-empty");
+        }
+        keyRow.appendChild(keyCell);
+    }
+
+    card.appendChild(header);
+    card.appendChild(rangeLabel);
+    card.appendChild(keyRow);
+
+    if (node.leaf && hasLeafNextPointer) {
+        const leafPointer = document.createElement("div");
+        leafPointer.className = "quit-leaf-pointer";
+        leafPointer.textContent = "next ->";
+        card.appendChild(leafPointer);
+    }
+
+    return card;
+}
+
+function createQuitEllipsisCard(isPathNode)
+{
+    const card = document.createElement("div");
+    card.className = "quit-node-ellipsis";
+    if (isPathNode) {
+        card.classList.add("quit-ellipsis-path-active");
+    }
+    card.textContent = "...";
+    return card;
+}
+
+function createQuitLayerEllipsisCard(isPathNode, hiddenLayerCount)
+{
+    const card = document.createElement("div");
+    card.className = "quit-node-ellipsis quit-layer-ellipsis";
+    if (isPathNode) {
+        card.classList.add("quit-ellipsis-path-active");
+    }
+    card.style.setProperty("--quit-layer-span", Math.max(1, hiddenLayerCount).toString());
+
+    const dots = document.createElement("div");
+    dots.className = "quit-layer-dot-stack";
+    for (let i = 0; i < 3; i++) {
+        const line = document.createElement("span");
+        line.className = "quit-layer-dot-line";
+        line.textContent = "...";
+        dots.appendChild(line);
+    }
+    card.appendChild(dots);
+    return card;
+}
+
+function getPathFromRoot(node)
+{
+    if (!node) {
+        return [];
+    }
+
+    const reversePath = [];
+    let cursor = node;
+    while (cursor) {
+        reversePath.push(cursor);
+        cursor = cursor.parent;
+    }
+    return reversePath.reverse();
+}
+
+function compressQuitLevel(nodes, focusNode, preferMiddleNode)
+{
+    if (!nodes || nodes.length <= 5) {
+        return nodes.map((node) => ({ type: "node", node: node }));
+    }
+
+    let focusIndex;
+    if (preferMiddleNode) {
+        focusIndex = Math.floor((nodes.length - 1) / 2);
+    }
+    else {
+        focusIndex = nodes.indexOf(focusNode);
+        if (focusIndex === -1) {
+            focusIndex = Math.floor((nodes.length - 1) / 2);
+        }
+    }
+
+    const keepSet = new Set([0, focusIndex, nodes.length - 1]);
+    const keepIndexes = Array.from(keepSet).sort((a, b) => a - b);
+    const compressed = [];
+
+    for (let i = 0; i < keepIndexes.length; i++) {
+        if (i > 0 && keepIndexes[i] - keepIndexes[i - 1] > 1) {
+            compressed.push({
+                type: "ellipsis",
+                startIndex: keepIndexes[i - 1] + 1,
+                endIndex: keepIndexes[i] - 1
+            });
+        }
+        compressed.push({ type: "node", node: nodes[keepIndexes[i]] });
+    }
+
+    return compressed;
+}
+
+function isQuitEllipsisOnPath(item, levelNodes, pathSet)
+{
+    if (!item || item.type !== "ellipsis") {
+        return false;
+    }
+    if (!levelNodes || !pathSet || pathSet.size === 0) {
+        return false;
+    }
+
+    const start = item.startIndex;
+    const end = item.endIndex;
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start > end) {
+        return false;
+    }
+
+    for (let i = start; i <= end && i < levelNodes.length; i++) {
+        if (pathSet.has(levelNodes[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function getQuitVisibleLevelIndexes(levelCount)
+{
+    if (levelCount <= 5) {
+        return Array.from({ length: levelCount }, (_, index) => index);
+    }
+
+    return [0, 1, levelCount - 2, levelCount - 1];
+}
+
+function isQuitLayerEllipsisOnPath(startLevel, endLevel, levels, pathSet)
+{
+    if (!levels || !pathSet || pathSet.size === 0) {
+        return false;
+    }
+    for (let level = startLevel; level <= endLevel && level < levels.length; level++) {
+        const nodes = levels[level] || [];
+        for (const node of nodes) {
+            if (pathSet.has(node)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function getQuitDisplayRows(levels, insertionPath, pathSet)
+{
+    const displayRows = [];
+    if (!levels || levels.length === 0) {
+        return displayRows;
+    }
+
+    const poleLeaf = quitTree.currPole && quitTree.currPole.leaf
+        ? quitTree.currPole
+        : (insertionPath.length > 0 ? insertionPath[insertionPath.length - 1] : null);
+    const polePath = getPathFromRoot(poleLeaf);
+    const visibleLevels = getQuitVisibleLevelIndexes(levels.length);
+
+    for (let i = 0; i < visibleLevels.length; i++) {
+        const level = visibleLevels[i];
+        const nodes = levels[level];
+        const isLeafLevel = nodes.length > 0 && nodes[0].leaf;
+        const focusNode = isLeafLevel ? (polePath[level] || insertionPath[level] || null) : null;
+        displayRows.push({
+            type: "level",
+            levelIndex: level,
+            items: compressQuitLevel(nodes, focusNode, !isLeafLevel)
+        });
+
+        if (i < visibleLevels.length - 1) {
+            const nextLevel = visibleLevels[i + 1];
+            if (nextLevel - level > 1) {
+                displayRows.push({
+                    type: "layer-ellipsis",
+                    startLevel: level + 1,
+                    endLevel: nextLevel - 1,
+                    isPathNode: isQuitLayerEllipsisOnPath(level + 1, nextLevel - 1, levels, pathSet)
+                });
+            }
+        }
+    }
+
+    return displayRows;
+}
+
+function renderQuitTree(pathNodes, fastNodes)
+{
+    const quitGrid = document.getElementById("quit-tree-grid");
+    if (!quitGrid) {
+        return;
+    }
+
+    const levels = collectQuitLevels();
+    const pathSet = new Set(pathNodes || []);
+    const fastSet = new Set(fastNodes || []);
+    const displayRows = getQuitDisplayRows(levels, pathNodes || [], pathSet);
+    const nodeSlotMap = new Map();
+
+    const rangeMap = new Map();
+    if (quitTree && quitTree.root) {
+        computeQuitRanges(quitTree.root, rangeMap);
+    }
+
+    while (quitVisualRows.length < displayRows.length) {
+        const row = document.createElement("div");
+        row.className = "quit-tree-row";
+        quitGrid.appendChild(row);
+        quitVisualRows.push({ row: row, slots: [] });
+    }
+
+    for (let rowIndex = 0; rowIndex < displayRows.length; rowIndex++) {
+        const rowData = quitVisualRows[rowIndex];
+        const row = rowData.row;
+        const rowInfo = displayRows[rowIndex];
+
+        row.classList.remove("hidden");
+        row.classList.remove("quit-row-layer-ellipsis");
+
+        if (rowInfo.type === "layer-ellipsis") {
+            row.classList.add("quit-row-layer-ellipsis");
+            row.style.setProperty("--quit-cols", "1");
+
+            while (rowData.slots.length < 1) {
+                const slot = document.createElement("div");
+                slot.className = "quit-node-slot hidden";
+                row.appendChild(slot);
+                rowData.slots.push(slot);
+            }
+
+            for (let i = 0; i < rowData.slots.length; i++) {
+                const slot = rowData.slots[i];
+                if (i > 0) {
+                    slot.classList.add("hidden");
+                    slot.innerHTML = "";
+                    continue;
+                }
+                slot.classList.remove("hidden");
+                slot.innerHTML = "";
+                const hiddenLayerCount = (rowInfo.endLevel - rowInfo.startLevel) + 1;
+                slot.appendChild(createQuitLayerEllipsisCard(rowInfo.isPathNode, hiddenLayerCount));
+            }
+            continue;
+        }
+
+        const levelIndex = rowInfo.levelIndex;
+        const displayItems = rowInfo.items;
+        const nodes = levels[levelIndex];
+        const isLeafLevel = nodes.length > 0 && nodes[0].leaf;
+        row.style.setProperty("--quit-cols", Math.max(displayItems.length, 1));
+
+        while (rowData.slots.length < displayItems.length) {
+            const slot = document.createElement("div");
+            slot.className = "quit-node-slot hidden";
+            row.appendChild(slot);
+            rowData.slots.push(slot);
+        }
+
+        for (let i = 0; i < rowData.slots.length; i++) {
+            const slot = rowData.slots[i];
+            if (i >= displayItems.length) {
+                slot.classList.add("hidden");
+                slot.innerHTML = "";
+                continue;
+            }
+
+            const item = displayItems[i];
+            slot.classList.remove("hidden");
+            slot.innerHTML = "";
+            if (item.type === "ellipsis") {
+                const ellipsisOnPath = isQuitEllipsisOnPath(item, nodes, pathSet);
+                slot.appendChild(createQuitEllipsisCard(ellipsisOnPath));
+                continue;
+            }
+
+            const node = item.node;
+            const card = createQuitNodeCard(
+                node,
+                levelIndex,
+                rangeMap.get(node),
+                pathSet.has(node),
+                fastSet.has(node),
+                isLeafLevel && hasVisibleNextLeaf(displayItems, i),
+                node === quitTree.currPole
+            );
+            slot.appendChild(card);
+            nodeSlotMap.set(node, slot);
+        }
+    }
+
+    for (let rowIndex = displayRows.length; rowIndex < quitVisualRows.length; rowIndex++) {
+        const rowData = quitVisualRows[rowIndex];
+        rowData.row.classList.add("hidden");
+        rowData.row.classList.remove("quit-row-layer-ellipsis");
+        for (const slot of rowData.slots) {
+            slot.classList.add("hidden");
+            slot.innerHTML = "";
+        }
+    }
+
+    requestAnimationFrame(() => {
+        drawQuitConnections(levels, nodeSlotMap);
+    });
+}
+
+function hasVisibleNextLeaf(displayItems, currentIndex)
+{
+    for (let i = currentIndex + 1; i < displayItems.length; i++) {
+        if (displayItems[i].type === "node") {
+            return true;
+        }
+    }
+    return false;
+}
+
+function drawQuitConnections(levels, nodeSlotMap)
+{
+    const quitGrid = document.getElementById("quit-tree-grid");
+    const linkLayer = document.getElementById("quit-tree-links");
+    if (!quitGrid || !linkLayer) {
+        return;
+    }
+
+    const gridRect = quitGrid.getBoundingClientRect();
+    const layerWidth = Math.max(quitGrid.scrollWidth, quitGrid.clientWidth);
+    const layerHeight = Math.max(quitGrid.scrollHeight, quitGrid.clientHeight);
+    linkLayer.setAttribute("width", layerWidth.toString());
+    linkLayer.setAttribute("height", layerHeight.toString());
+    linkLayer.setAttribute("viewBox", "0 0 " + layerWidth + " " + layerHeight);
+    linkLayer.innerHTML = "";
+
+    if (!levels || levels.length <= 1) {
+        return;
+    }
+
+    for (let level = 0; level < levels.length - 1; level++) {
+        const parents = levels[level];
+        for (const parent of parents) {
+            const parentSlot = nodeSlotMap.get(parent);
+            if (!parentSlot) {
+                continue;
+            }
+
+            const parentRect = parentSlot.getBoundingClientRect();
+            const parentX = (parentRect.left - gridRect.left) + (parentRect.width / 2);
+            const parentY = (parentRect.top - gridRect.top) + parentRect.height;
+            const children = getQuitNodeChildren(parent);
+
+            for (const child of children) {
+                const childSlot = nodeSlotMap.get(child);
+                if (!childSlot) {
+                    continue;
+                }
+
+                const childRect = childSlot.getBoundingClientRect();
+                const childX = (childRect.left - gridRect.left) + (childRect.width / 2);
+                const childY = (childRect.top - gridRect.top);
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute(
+                    "d",
+                    "M " + parentX + " " + parentY +
+                    " L " + childX + " " + childY
+                );
+                path.setAttribute("class", "quit-tree-link-path");
+                linkLayer.appendChild(path);
+            }
+        }
+    }
+}
+
+function findQuitPath(page)
+{
+    const path = [];
+    let node = quitTree.root;
+    while (node) {
+        path.push(node);
+        if (node.leaf) {
+            break;
+        }
+
+        const keys = getQuitNodeKeys(node);
+        let childIndex = 0;
+        while (childIndex < keys.length && page >= keys[childIndex]) {
+            childIndex++;
+        }
+        node = node.children[childIndex] || null;
+    }
+    return path;
+}
+
+function clearQuitInsertionsPanel()
+{
+    const slotCount = syncQuitInsertionPanelCapacity();
+    for (let i = 0; i < slotCount; i++) {
+        const pageSlot = document.getElementById("page" + i);
+        if (!pageSlot) {
+            continue;
+        }
+        pageSlot.innerHTML = "";
+        pageSlot.classList.remove("glow-green");
+        pageSlot.classList.remove("glow-red");
+    }
+    return slotCount;
+}
+
+function updateQuitInsertionsPanel(highlightFirst)
+{
+    const slotCount = clearQuitInsertionsPanel();
+    for (let i = 0; i < total_data.length && i < slotCount; i++) {
+        const pageSlot = document.getElementById("page" + i);
+        if (!pageSlot) {
+            continue;
+        }
+        pageSlot.innerHTML = total_data[i];
+    }
+
+    if (highlightFirst) {
+        const firstSlot = document.getElementById("page0");
+        if (firstSlot && firstSlot.innerHTML !== "") {
+            firstSlot.classList.add("glow-green");
+        }
+    }
+}
+
+function getQuitPoleCapacity()
+{
+    return QUIT_MAX_INSERTION_SLOTS;
+}
+
+function syncQuitInsertionPanelCapacity()
+{
+    const capacity = getQuitPoleCapacity();
+    for (let i = 0; i < QUIT_MAX_INSERTION_SLOTS; i++) {
+        const pageSlot = document.getElementById("page" + i);
+        if (!pageSlot) {
+            continue;
+        }
+
+        if (i < capacity) {
+            pageSlot.classList.remove("hidden");
+        }
+        else {
+            pageSlot.classList.add("hidden");
+            pageSlot.innerHTML = "";
+            pageSlot.classList.remove("glow-green");
+            pageSlot.classList.remove("glow-red");
+        }
+    }
+    return capacity;
+}
+
+
+
+//don't change anything below this
 class QuIT {
     constructor(t) {
         this.t = t;
         this.root = new Node(t, true);
+        this.firstLeaf = this.root;
         this.fastInserts = 0;
         this.fastInserted = true;
         this.poleResets = 0;
         // QuIT poles
-        this.currPole;
-        this.prevPole;
-        this.nextPole;
+        this.currPole = this.root;
+        this.prevPole = this.root;
+        this.nextPole = null;
         this.missesInRow = 0;
         this.size = 0;
+        this.leafs = 1;
+        this.internalSize = calculate_internal(t);
     }
     insert(page)
     {
@@ -74,9 +803,9 @@ class QuIT {
             this.fastInserts++;
             this.fastInserted = true;
         }
-        //update after 4 misses
-        if(this.missesInRow ==4)
+        if(this.missesInRow ==(Math.floor(Math.sqrt(this.t))+1))
         {
+            console.log("pole reset");
             let first;
             first = this.root;
             while(!first.leaf)
@@ -93,7 +822,7 @@ class QuIT {
             this.nextPole = pageLeaf.next;
             this.missesInRow = 0;
         }
-        if(pageLeaf.n<this.t)
+        if(pageLeaf.n<pageLeaf.t)
         {
             if(pageLeaf == this.nextPole)
             {
@@ -120,7 +849,7 @@ class QuIT {
                 tempNode = this.split(pageLeaf);
                 pageLeaf = tempNode;
             }
-            while(pageLeaf.n>this.t);
+            while(pageLeaf.n>pageLeaf.t);
         }
     }
     insertInOrder(page,array)
@@ -152,10 +881,11 @@ class QuIT {
     {
         if(pageLeaf.leaf == true)
         {
+            this.leafs++;
             //tree consists of 1 node
             if(pageLeaf.parent == null)
             {
-                let newParent = new Node(this.t,false);
+                let newParent = new Node(this.internalSize,false);
                 let splitNode = new Node(pageLeaf.t,true);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid;
@@ -174,9 +904,9 @@ class QuIT {
                 pageLeaf.parent = newParent;
                 splitNode.parent = newParent;
                 this.root = newParent;
-                this.tail = splitNode;
                 this.currPole = splitNode;
                 this.prevPole = pageLeaf;
+                this.firstLeaf = pageLeaf;
                 return newParent;
             }
             else
@@ -229,8 +959,8 @@ class QuIT {
         {
             if(pageLeaf.parent == null)
             {
-                let newParent = new Node(this.t,false);
-                let splitNode = new Node(pageLeaf.t,false);
+                let newParent = new Node(this.internalSize,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;
@@ -260,8 +990,7 @@ class QuIT {
             }
             else
             {
-                //not done
-                let splitNode = new Node(pageLeaf.t,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;

@@ -12,6 +12,15 @@ class Node{
 }
 
 
+function calculate_internal(size)
+{
+    let node_info = 8*2+2*2;//size for 2 pointers and 2 16 bit ints
+    let block_size = size*4+node_info+size*8;
+    let internal_node_size = Math.floor((block_size-node_info-8)/12);
+    return internal_node_size;
+}
+
+
 
 /*
  * Adjust a list of data for Google Charts plotting
@@ -250,6 +259,7 @@ function reset_button() {
     wait = 3; 
     delay = 1000; 
     total_data = []; 
+    sware_data = [];
     total_inversion_data = [];
     running = true; 
 
@@ -290,6 +300,11 @@ function reset_button() {
     quit_top_inserts_history = []; 
     quit_pole_resets = 0;
     quit_pole_resets_history = [];
+    quitTree = new QuIT(15);
+    swareTree = new Sware(5);
+    quit_leaf_dict = [];
+    initializeQuitVisualization();
+    initializeSwareVisualization();
 
     // Reset each dropdown
     resetDropdown(document.getElementById("cmp-select-N"), "N");
