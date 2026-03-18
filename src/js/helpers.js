@@ -312,12 +312,21 @@ function reset_button() {
     resetDropdown(document.getElementById("cmp-select-L"), "L");
     resetDropdown(document.getElementById("cmp-select-B"), "B");
     resetDropdown(document.getElementById("cmp-select-I"), "I");
+    const indexStructure1 = document.getElementById("cmp-select-index-1");
+    const indexStructure2 = document.getElementById("cmp-select-index-2");
+    if (indexStructure1) {
+        indexStructure1.value = "SWARE";
+    }
+    if (indexStructure2) {
+        indexStructure2.value = "QuIT";
+    }
 
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
     document.getElementById("buttons-container-wrapper").classList.add("hidden");
     document.getElementById("tree-area-step-3+").classList.add("hidden");
     document.getElementById("buffer-area").classList.add("hidden");
+    document.getElementById("insertions-area").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
     document.getElementById("run-button-container").classList.add("hidden");
     document.getElementById("results-panel").classList.add("hidden");

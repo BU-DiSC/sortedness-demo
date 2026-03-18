@@ -80,6 +80,10 @@
 			<div class="rcorners-text-3"><a href="research.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a></div>
 			<!-- <img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" /> -->
 		</div>
+		<div class="rcorners-4" style="background-color:8288B4">
+			<a href="data.html"><span class="rcorners-click"></span></a>
+			<div class="rcorners-text-4"><a href="data.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Data</a></div>
+		</div>
 	</div>
 
 	<!-- Main section -->
@@ -136,6 +140,42 @@
             </div>
         </div>
 
+        <h4 class="text-center workload-title">Index Structure</h4>
+
+        <div id="cmp-conf-row3" class="parameter-row">
+            <div class="parameter-container">
+                <div class="input-group input-group-sm mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cmp-select-index-1">
+                            <i class="fas fa-database"></i> Index Structure 1
+                        </label>
+                    </div>
+                    <select id="cmp-select-index-1" class="cmp-input form-control" aria-label="First index structure">
+                        <option value="SWARE" selected>SWARE</option>
+                        <option value="QuIT">QuIT</option>
+                        <option value="Tail">Tail</option>
+                        <option value="lil">lil</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="parameter-container">
+                <div class="input-group input-group-sm mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cmp-select-index-2">
+                            <i class="fas fa-database"></i> Index Structure 2
+                        </label>
+                    </div>
+                    <select id="cmp-select-index-2" class="cmp-input form-control" aria-label="Second index structure">
+                        <option value="SWARE">SWARE</option>
+                        <option value="QuIT" selected>QuIT</option>
+                        <option value="Tail">Tail</option>
+                        <option value="lil">lil</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <h4 class="text-center workload-title">Sortedness Distribution</h4>
 
         <div id="cmp-conf-row2" class="parameter-row">
@@ -179,41 +219,21 @@
 			<!-- Buttons -->
 			<div id="buttons-container-wrapper" class="hidden">
 				<div class="col text-center" id="buttons-container">
-					<button id="stop-button" onclick="stop_button()" type="button" class="btn btn-info"><img src="./img/stop.png" alt="Stop"></button>					
-					<button id="continue-button" onclick="continue_button()" type="button" class="btn btn-warning"><img src = "./img/continue.png" alt="Continue"></button>
-					<button id="nextstep-button" onclick="nextstep_button()" type="button" class="btn btn-warning"><img src = "./img/nextstep.png" alt="Nextstep"></button>
-					<button id="reset-button" onclick="reset_button()" type="button" class="btn btn-warning"><img src = "./img/reset.png" alt="Nextstep"></button>
+					<button id="stop-button" onclick="stop_button()" type="button" class="btn btn-info control-button" aria-label="Pause">
+						<span class="material-icons" aria-hidden="true">pause_circle</span>
+					</button>
+					<button id="continue-button" onclick="continue_button()" type="button" class="btn btn-warning control-button" aria-label="Play">
+						<span class="material-icons" aria-hidden="true">play_circle</span>
+					</button>
 				</div>
 			</div>
 			<!--<div id="data-box" class="hidden data-container"></div>-->
-			<div class="hidden" id="animations-div">
-				<div class="container-fluid mt-5 d-flex animations-container">
-					<!-- Areas for the tree and the buffer -->
-					<div id="buffer-area" class="hidden container mt-5" style="flex-direction: column;">
-							<!-- Area for the buffer -->
-								<h4>Buffer</h4>
-									<div class="buffer-container">
-										<div class="auto overflow-x overflow-y container mt-5 buffer-content">
-											<div class="section-labels-sware" id="sware-buffer-grid"></div>
-										</div>
-									</div>						
-								<!-- Area for the tree, step 3+ -->
-								<div id="tree-area-step-3+" class="hidden">
-									<h4>SWARE</h4>
-									<div class="tree-container quit-bplus-tree">
-										<div class="quit-tree-grid" id="sware-tree-grid">
-											<svg class="quit-tree-links" id="sware-tree-links"></svg>
-										</div>
-									</div>
-								</div>
-												
-					</div>
-					<!-- QuIT Part -->
-					<div id="quit-area" class="hidden container mt-5" style="flex-direction: column;">
-						<!-- Area for insertion stream -->
+				<div class="hidden" id="animations-div">
+					<div class="container-fluid mt-5 animations-layout">
+						<div id="insertions-area" class="insertions-panel hidden">
 							<h4>Insertions</h4>
-							<div class="buffer-container">
-								<div class="auto overflow-x overflow-y container mt-5" style="position: relative;">
+							<div class="buffer-container panel-box">
+								<div class="auto overflow-x overflow-y buffer-content" style="position: relative;">
 									<div class="section-labels-quit">
 										<button class="btn btn-primary page-btn" id="page0"></button>
 										<button class="btn btn-primary page-btn" id="page1"></button>
@@ -232,21 +252,39 @@
 										<button class="btn btn-primary page-btn" id="page14"></button>
 									</div>
 								</div>
-							</div>		
-							
-							<!-- QuIT Tree-->
-							<div id="tree-quit">
-								<h4>QuIT Tree</h4>
-								<div class="tree-container quit-bplus-tree">
-									<div class="quit-tree-grid" id="quit-tree-grid">
-										<svg class="quit-tree-links" id="quit-tree-links"></svg>
+							</div>
+						</div>
+						<div class="d-flex animations-container">
+							<!-- Areas for the tree and the buffer -->
+							<div id="buffer-area" class="hidden container mt-5 animation-column">
+								<h4>SWARE</h4>
+								<div id="sware-box" class="tree-container quit-bplus-tree panel-box sware-box">
+									<div class="buffer-container panel-box">
+										<div class="auto overflow-x overflow-y buffer-content">
+											<div class="section-labels-sware" id="sware-buffer-grid"></div>
+										</div>
+									</div>
+									<div id="tree-area-step-3+" class="hidden sware-tree-panel">
+										<div class="quit-tree-grid" id="sware-tree-grid">
+											<svg class="quit-tree-links" id="sware-tree-links"></svg>
+										</div>
 									</div>
 								</div>
 							</div>
-	
-	
+							<!-- QuIT Part -->
+							<div id="quit-area" class="hidden container mt-5 animation-column">
+								<!-- QuIT Tree-->
+								<div id="tree-quit">
+									<h4>QuIT Tree</h4>
+									<div id="quit-box" class="tree-container quit-bplus-tree panel-box">
+										<div class="quit-tree-grid" id="quit-tree-grid">
+											<svg class="quit-tree-links" id="quit-tree-links"></svg>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
 	
 				<div class="container mt-5 d-flex animations-container hidden">
 					<div id="quit-area" class="container mt-5 hidden" style="flex-direction: column;">

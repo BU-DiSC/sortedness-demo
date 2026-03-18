@@ -8,6 +8,8 @@ var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
 var selectedA; // stores the A value selected
 var selectedE; // stores the E value selected
+var selectedIndexStructure1 = "SWARE";
+var selectedIndexStructure2 = "QuIT";
 var selectedA; // stores the A value selected
 var selectedE; // stores the E value selected
 
@@ -67,10 +69,18 @@ var totalCharts = 0;
 
 
 //trees
-let quitTree = new QuIT(5);
+let quitTree = new QuIT(10);
 let lilTree = new LilTree(20);
 let tailTree = new Tail(20);
-let swareTree = new Sware(5);
+let swareTree = new Sware(10);
+let nextStepInProgress = false;
+
+function readSelectedIndexStructures() {
+    const firstSelect = document.getElementById('cmp-select-index-1');
+    const secondSelect = document.getElementById('cmp-select-index-2');
+    selectedIndexStructure1 = firstSelect ? firstSelect.value : "SWARE";
+    selectedIndexStructure2 = secondSelect ? secondSelect.value : "QuIT";
+}
 
 /*
  * Gets called after "Generate Workload" button is clicked
@@ -88,6 +98,7 @@ function visualize_workload() {
     selectedL = parseFloat(document.getElementById('cmp-select-L').value);
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
     selectedA = parseFloat(document.getElementById('cmp-select-A').value);
+    readSelectedIndexStructures();
     // selectedE = parseInt(document.getElementById('cmp-select-E').value);
 
     let flag = true; // flag to generate graph when parameters are acceptable
@@ -388,6 +399,7 @@ function run_operations() {
     selectedL = parseFloat(document.getElementById('cmp-select-L').value);
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
     selectedA = parseFloat(document.getElementById('cmp-select-A').value);
+    readSelectedIndexStructures();
 
 
     // Validate all parameters before proceeding
@@ -425,8 +437,6 @@ function run_operations() {
 
 
     if(flag){
-        quitTree = new QuIT(5);
-        swareTree = new Sware(5);
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
         
@@ -435,6 +445,7 @@ function run_operations() {
         //pre-load
         state = 2;
         initializeQuitVisualization();
+        initializeSwareVisualization();
         // Show hidden divs
         //document.getElementById('data-box').classList.remove('hidden');
         document.getElementById('buffer-area').classList.remove('hidden');
@@ -442,17 +453,18 @@ function run_operations() {
         document.getElementById('buttons-container-wrapper').classList.remove('hidden');
         document.getElementById('dashed-line').classList.remove('hidden');
         document.getElementById('quit-area').classList.remove("hidden");
+        document.getElementById('insertions-area').classList.remove("hidden");
         document.getElementById('results-panel').classList.remove("hidden");
         document.getElementById('plots').classList.remove("hidden");
         document.getElementById('animations-div').classList.remove("hidden");
 
         document.getElementById("stop-button").disabled = false; // enable stop button
         document.getElementById("continue-button").disabled = true; // disable continue button
-        document.getElementById("nextstep-button").disabled = true; // disable nextstep button
+        const nextstepButton = document.getElementById("nextstep-button");
+        if (nextstepButton) {
+            nextstepButton.disabled = true;
+        }
 
-        //state = 2; // SWARE buffer is empty initially
-
-        
         let interval = setInterval(() => {
             if (running == false) {
                 clearInterval(interval);
@@ -472,11 +484,80 @@ function run_operations() {
 /*
  * Runs one step of both algorithms and updates the UI
  */
-function next_step() {
-    //sware(); 
-    quit();
-    update_table();
-    update_charts();
+function setAlgorithmBoxActive(boxId, active)
+{
+    const box = document.getElementById(boxId);
+    if (!box) {
+        return;
+    }
+    box.classList.toggle("algo-box-active", active);
+}
+
+function setAlgorithmBoxFlushing(boxId, active)
+{
+    const box = document.getElementById(boxId);
+    if (!box) {
+        return;
+    }
+    box.classList.toggle("algo-box-flushing", active);
+}
+
+function runQuitPhase()
+{
+    return new Promise((resolve) => {
+        if (total_data.length === 0) {
+            resolve();
+            return;
+        }
+
+        const beforeLen = total_data.length;
+        quit();
+        const startedAt = Date.now();
+        const maxWaitMs = Math.max(2500, Math.floor(delay * 2));
+
+        const poll = () => {
+            if (total_data.length < beforeLen || (Date.now() - startedAt) > maxWaitMs) {
+                resolve();
+                return;
+            }
+            requestAnimationFrame(poll);
+        };
+        poll();
+    });
+}
+
+async function next_step() {
+    if (nextStepInProgress) {
+        return;
+    }
+    if (total_data.length === 0 || sware_data.length === 0) {
+        running = false;
+        return;
+    }
+
+    nextStepInProgress = true;
+    updateQuitInsertionsPanel(true);
+
+    try {
+        setAlgorithmBoxActive("sware-box", true);
+        await animateSwarePhase();
+        setAlgorithmBoxActive("sware-box", false);
+
+        if (total_data.length === 0) {
+            running = false;
+            return;
+        }
+
+        setAlgorithmBoxActive("quit-box", true);
+        await runQuitPhase();
+        setAlgorithmBoxActive("quit-box", false);
+    }
+    finally {
+        setAlgorithmBoxActive("sware-box", false);
+        setAlgorithmBoxFlushing("sware-box", false);
+        setAlgorithmBoxActive("quit-box", false);
+        nextStepInProgress = false;
+    }
 }
 
 function generateSources(n, k, taken) {
