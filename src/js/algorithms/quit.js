@@ -19,7 +19,7 @@ function quit() {
     }
 
     // Highlight the current head of the insertion stream.
-    updateQuitInsertionsPanel(true);
+    updateInsertionsPanel(true);
 
     // Show the route on the current tree before applying the insertion.
     const page = total_data[0];
@@ -85,7 +85,7 @@ function commitPendingQuitInsert()
     quitTree.insert(page);
     total_data.shift();
     renderQuitTree([], []);
-    updateQuitInsertionsPanel(false);
+    updateInsertionsPanel(false);
 
     if (total_data.length === 0) {
         running = false;
@@ -103,7 +103,7 @@ function initializeQuitVisualization()
         quitInsertionPanelTimer = null;
     }
     quitPendingInsertValue = null;
-    updateQuitInsertionsPanel(false);
+    updateInsertionsPanel(false);
     renderQuitTree([], []);
 }
 
@@ -675,7 +675,7 @@ function findQuitPath(page)
     return path;
 }
 
-function clearQuitInsertionsPanel()
+function clearInsertionsPanel()
 {
     const slotCount = syncQuitInsertionPanelCapacity();
     for (let i = 0; i < slotCount; i++) {
@@ -690,9 +690,9 @@ function clearQuitInsertionsPanel()
     return slotCount;
 }
 
-function updateQuitInsertionsPanel(highlightFirst)
+function updateInsertionsPanel(highlightFirst)
 {
-    const slotCount = clearQuitInsertionsPanel();
+    const slotCount = clearInsertionsPanel();
     for (let i = 0; i < total_data.length && i < slotCount; i++) {
         const pageSlot = document.getElementById("page" + i);
         if (!pageSlot) {
@@ -1168,7 +1168,7 @@ function findAuxiliaryPath(tree, page)
 
 
 
-//don't change anything below this
+
 class QuIT {
     constructor(t) {
         this.t = t;

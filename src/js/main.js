@@ -339,7 +339,7 @@ function fastForwardStructureInsert(structureName)
 function refreshSelectedStructureViews()
 {
     initializeSelectedStructureVisuals();
-    updateQuitInsertionsPanel(false);
+    updateInsertionsPanel(false);
 }
 
 function waitForStepToFinish()
@@ -881,7 +881,7 @@ function run_operations() {
             swareTreeArea.classList.toggle("hidden", !getSelectedStructureNames().includes("SWARE"));
         }
         initializeQuitVisualization();
-        updateQuitInsertionsPanel(false);
+        updateInsertionsPanel(false);
         initializeSelectedStructureVisuals();
         // Show hidden divs
         //document.getElementById('data-box').classList.remove('hidden');
@@ -987,7 +987,7 @@ async function next_step() {
     }
 
     nextStepInProgress = true;
-    updateQuitInsertionsPanel(true);
+    updateInsertionsPanel(true);
 
     try {
         const executionOrder = getStructureExecutionOrder();
@@ -1010,7 +1010,7 @@ async function next_step() {
 
         if (!selectedStructures.includes("QuIT")) {
             total_data.shift();
-            updateQuitInsertionsPanel(false);
+            updateInsertionsPanel(false);
         }
 
         if (total_data.length === 0) {
