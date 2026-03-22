@@ -3,12 +3,16 @@ class LilTree {
         this.t = t;
         this.root = new Node(t, true);
         this.lil = this.root;
+        this.size= 0;
         this.fastInserts = 0;
         this.fastInserted = false;
+        this.fastPathResets = 0;
         this.page;
+        this.internalSize = calculate_internal(t);
     }
     insert(page)
     {
+        this.size++;
         let pageLeaf = this.root;
         this.page = page;
         let temp;
@@ -24,6 +28,7 @@ class LilTree {
             }
             else
             {
+                this.fastPathResets++;
                 this.fastInserted = false;
                 while(!(pageLeaf.leaf))
                 {
@@ -97,7 +102,7 @@ class LilTree {
         {
             if(pageLeaf.parent == null)
             {
-                let newParent = new Node(this.t,false);
+                let newParent = new Node(this.internalSize,false);
                 let splitNode = new Node(pageLeaf.t,true);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid;
@@ -146,8 +151,8 @@ class LilTree {
         {
             if(pageLeaf.parent == null)
             {
-                let newParent = new Node(this.t,false);
-                let splitNode = new Node(pageLeaf.t,false);
+                let newParent = new Node(this.internalSize,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;
@@ -179,7 +184,7 @@ class LilTree {
             {
                 //not done
                 console.log("true");
-                let splitNode = new Node(pageLeaf.t,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;
@@ -209,4 +214,80 @@ class LilTree {
 
 
    
+}
+
+function isLilFastInsertCandidate(page)
+{
+    if (!lilTree || !lilTree.root) {
+        return false;
+    }
+    if (lilTree.root.leaf) {
+        return true;
+    }
+
+    const lilLeaf = lilTree.lil;
+    if (!lilLeaf) {
+        return false;
+    }
+
+    const lilKeys = getAuxiliaryNodeKeys(lilLeaf);
+    if (lilKeys.length === 0) {
+        return false;
+    }
+
+    const nextLeaf = lilLeaf.next;
+    const nextKeys = getAuxiliaryNodeKeys(nextLeaf);
+    const nextMin = nextKeys.length > 0 ? nextKeys[0] : null;
+    return page >= lilKeys[0] && (nextMin == null || page < nextMin);
+}
+
+function renderLilTree(pathNodes, fastNodes)
+{
+    const focusNode = lilTree && lilTree.lil ? lilTree.lil : (lilTree ? lilTree.root : null);
+    renderAuxiliaryTree(
+        lilTree,
+        "lil-tree-grid",
+        "lil-tree-links",
+        focusNode,
+        "lil",
+        pathNodes || [],
+        fastNodes || []
+    );
+}
+
+function initializeLilVisualization()
+{
+    renderLilTree([], []);
+}
+
+function runLilPhase()
+{
+    return new Promise((resolve) => {
+        if (!Array.isArray(lil_data) || lil_data.length === 0) {
+            resolve();
+            return;
+        }
+
+        const page = lil_data[0];
+        const willFastInsert = isLilFastInsertCandidate(page);
+        const topInsertPath = willFastInsert ? [] : findAuxiliaryPath(lilTree, page);
+        const fastInsertPath = (willFastInsert && lilTree && lilTree.lil) ? [lilTree.lil] : [];
+        renderLilTree(topInsertPath, fastInsertPath);
+
+        const commitDelay = Math.max(0, Math.floor(delay * 0.2));
+        if (commitDelay === 0) {
+            lilTree.insert(page);
+            lil_data.shift();
+            renderLilTree([], []);
+            resolve();
+            return;
+        }
+
+        setTimeout(() => {
+            lilTree.insert(page);
+            lil_data.shift();
+            renderLilTree([], []);
+            resolve();
+        }, commitDelay);
+    });
 }

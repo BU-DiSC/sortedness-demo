@@ -147,7 +147,7 @@
                 <div class="input-group input-group-sm mb-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="cmp-select-index-1">
-                            <i class="fas fa-database"></i> Index Structure 1
+                            <i class="fas fa-database"></i> Structure 1
                         </label>
                     </div>
                     <select id="cmp-select-index-1" class="cmp-input form-control" aria-label="First index structure">
@@ -163,7 +163,7 @@
                 <div class="input-group input-group-sm mb-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="cmp-select-index-2">
-                            <i class="fas fa-database"></i> Index Structure 2
+                            <i class="fas fa-database"></i> Structure 2
                         </label>
                     </div>
                     <select id="cmp-select-index-2" class="cmp-input form-control" aria-label="Second index structure">
@@ -225,104 +225,93 @@
 					<button id="continue-button" onclick="continue_button()" type="button" class="btn btn-warning control-button" aria-label="Play">
 						<span class="material-icons" aria-hidden="true">play_circle</span>
 					</button>
+					<button onclick="fast_forward_button(1)" type="button" class="btn btn-secondary control-button skip-button" aria-label="Skip forward 1 insertion">
+						<span class="ff-icon ff-icon-1" aria-hidden="true"><span class="ff-triangle"></span></span>
+						<span class="skip-button-label">1</span>
+					</button>
+					<button onclick="fast_forward_button(10)" type="button" class="btn btn-secondary control-button skip-button" aria-label="Skip forward 10 insertions">
+						<span class="ff-icon ff-icon-2" aria-hidden="true"><span class="ff-triangle"></span><span class="ff-triangle"></span></span>
+						<span class="skip-button-label">10</span>
+					</button>
+					<button onclick="fast_forward_button(100)" type="button" class="btn btn-secondary control-button skip-button" aria-label="Skip forward 100 insertions">
+						<span class="ff-icon ff-icon-3" aria-hidden="true"><span class="ff-triangle"></span><span class="ff-triangle"></span><span class="ff-triangle"></span></span>
+						<span class="skip-button-label">100</span>
+					</button>
 				</div>
 			</div>
 			<!--<div id="data-box" class="hidden data-container"></div>-->
-				<div class="hidden" id="animations-div">
-					<div class="container-fluid mt-5 animations-layout">
-						<div id="insertions-area" class="insertions-panel hidden">
-							<h4>Insertions</h4>
-							<div class="buffer-container panel-box">
-								<div class="auto overflow-x overflow-y buffer-content" style="position: relative;">
-									<div class="section-labels-quit">
-										<button class="btn btn-primary page-btn" id="page0"></button>
-										<button class="btn btn-primary page-btn" id="page1"></button>
-										<button class="btn btn-primary page-btn" id="page2"></button>
-										<button class="btn btn-primary page-btn" id="page3"></button>
-										<button class="btn btn-primary page-btn" id="page4"></button>
-										<button class="btn btn-primary page-btn" id="page5"></button>
-										<button class="btn btn-primary page-btn" id="page6"></button>
-										<button class="btn btn-primary page-btn" id="page7"></button>
-										<button class="btn btn-primary page-btn" id="page8"></button>
-										<button class="btn btn-primary page-btn" id="page9"></button>
-										<button class="btn btn-primary page-btn" id="page10"></button>
-										<button class="btn btn-primary page-btn" id="page11"></button>
-										<button class="btn btn-primary page-btn" id="page12"></button>
-										<button class="btn btn-primary page-btn" id="page13"></button>
-										<button class="btn btn-primary page-btn" id="page14"></button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="d-flex animations-container">
-							<!-- Areas for the tree and the buffer -->
-							<div id="buffer-area" class="hidden container mt-5 animation-column">
-								<h4>SWARE</h4>
-								<div id="sware-box" class="tree-container quit-bplus-tree panel-box sware-box">
-									<div class="buffer-container panel-box">
-										<div class="auto overflow-x overflow-y buffer-content">
-											<div class="section-labels-sware" id="sware-buffer-grid"></div>
-										</div>
-									</div>
-									<div id="tree-area-step-3+" class="hidden sware-tree-panel">
-										<div class="quit-tree-grid" id="sware-tree-grid">
-											<svg class="quit-tree-links" id="sware-tree-links"></svg>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- QuIT Part -->
-							<div id="quit-area" class="hidden container mt-5 animation-column">
-								<!-- QuIT Tree-->
-								<div id="tree-quit">
-									<h4>QuIT Tree</h4>
-									<div id="quit-box" class="tree-container quit-bplus-tree panel-box">
-										<div class="quit-tree-grid" id="quit-tree-grid">
-											<svg class="quit-tree-links" id="quit-tree-links"></svg>
-										</div>
-									</div>
+			<div class="hidden" id="animations-div">
+				<div class="container-fluid mt-5 animations-layout">
+					<div id="insertions-area" class="insertions-panel hidden">
+						<h4>Insertions</h4>
+						<div class="buffer-container panel-box">
+							<div class="auto overflow-x overflow-y buffer-content" style="position: relative;">
+								<div class="section-labels-quit">
+									<button class="btn btn-primary page-btn" id="page0"></button>
+									<button class="btn btn-primary page-btn" id="page1"></button>
+									<button class="btn btn-primary page-btn" id="page2"></button>
+									<button class="btn btn-primary page-btn" id="page3"></button>
+									<button class="btn btn-primary page-btn" id="page4"></button>
+									<button class="btn btn-primary page-btn" id="page5"></button>
+									<button class="btn btn-primary page-btn" id="page6"></button>
+									<button class="btn btn-primary page-btn" id="page7"></button>
+									<button class="btn btn-primary page-btn" id="page8"></button>
+									<button class="btn btn-primary page-btn" id="page9"></button>
+									<button class="btn btn-primary page-btn" id="page10"></button>
+									<button class="btn btn-primary page-btn" id="page11"></button>
+									<button class="btn btn-primary page-btn" id="page12"></button>
+									<button class="btn btn-primary page-btn" id="page13"></button>
+									<button class="btn btn-primary page-btn" id="page14"></button>
 								</div>
 							</div>
 						</div>
 					</div>
-	
-				<div class="container mt-5 d-flex animations-container hidden">
-					<div id="quit-area" class="container mt-5 hidden" style="flex-direction: column;">
-						<h4>lil</h4>
-						<div class="tree-container">
-								<div class="triangle"></div>
-									
-								<div class="dots">
-									<span class="dot"></span>
-									<span class="dot"></span>
-									<span class="dot"></span>
-								</div>
-
-								<div class="rectangles-lil">
-									<div class="rectangle-lil"></div>
-									<div class="rectangle-lil"></div>
-									<div class="rectangle-lil"></div>
-									<div class="rectangle-lil"></div>
-									<div class="rectangle-lil"></div>
-									<div class="rectangle-lil"></div>
-									<div class="smallerDots-lil">
-										<span class="smallerDot-lil"></span>
-										<span class="smallerDot-lil"></span>
-										<span class="smallerDot-lil"></span>
-									</div>
-									<div class="rectangle-lil"></div>
-								</div>
-
-						</div>
+					<div class="d-flex animations-container">
+						<div id="buffer-area" class="hidden container mt-5 animation-column structure-slot"></div>
+						<div id="quit-area" class="hidden container mt-5 animation-column structure-slot"></div>
 					</div>
-					<div id="quit-area" class="container mt-5 hidden" style="flex-direction: column;">
-						<h4>pole</h4>
-						<div class="tree-container">
-						</div>
-					</div>
-					
 				</div>
-	
+				<div id="structure-panel-store" class="hidden">
+					<div id="structure-panel-sware" class="structure-panel animation-column">
+						<h4>SWARE</h4>
+						<div id="sware-box" class="tree-container quit-bplus-tree panel-box sware-box">
+							<div class="buffer-container panel-box">
+								<div class="auto overflow-x overflow-y buffer-content">
+									<div class="section-labels-sware" id="sware-buffer-grid"></div>
+								</div>
+							</div>
+							<div id="tree-area-step-3+" class="hidden sware-tree-panel">
+								<div class="quit-tree-grid" id="sware-tree-grid">
+									<svg class="quit-tree-links" id="sware-tree-links"></svg>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="structure-panel-quit" class="structure-panel animation-column">
+						<h4>QuIT Tree</h4>
+						<div id="quit-box" class="tree-container quit-bplus-tree panel-box">
+							<div class="quit-tree-grid" id="quit-tree-grid">
+								<svg class="quit-tree-links" id="quit-tree-links"></svg>
+							</div>
+						</div>
+					</div>
+					<div id="structure-panel-tail" class="structure-panel animation-column">
+						<h4>Tail</h4>
+						<div id="tail-box" class="tree-container quit-bplus-tree panel-box">
+							<div class="quit-tree-grid" id="tail-tree-grid">
+								<svg class="quit-tree-links" id="tail-tree-links"></svg>
+							</div>
+						</div>
+					</div>
+					<div id="structure-panel-lil" class="structure-panel animation-column">
+						<h4>lil</h4>
+						<div id="lil-box" class="tree-container quit-bplus-tree panel-box">
+							<div class="quit-tree-grid" id="lil-tree-grid">
+								<svg class="quit-tree-links" id="lil-tree-links"></svg>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 
@@ -342,115 +331,87 @@
 						</div>
 					</div>	
 
-					<!-- #Sorts -->
+					<!-- Number of pages manually sorted -->
 					<div class="row">
 						<div class="col text-right">
-							<span id="sware-sorts" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
 						</div>
 						<div class="col-2 text-center">
 							<span class="metric-title" data-toggle="tooltip" data-placement="left"
-								title="The number of times a requested page is not found in the bufferpool.">#Sorts</span>
+								title="The number of pages that were manually sorted before insertion.">Number of Pages Manually Sorted</span>
 						</div>
 						<div class="col text-left">
-							<span class="cost uncertain"></span>
+							<span class="cost uncertain">N/A</span>
 						</div>
 					</div>
 
-					<!-- #Buffer Flushes -->
+					<!-- Average pages per flush -->
 					<div class="row">
 						<div class="col text-right">
-							<span id="sware-flushes" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
 						</div>
 						<div class="col-2 text-center">
-							<span class="metric-title" data-toggle="tooltip" data-placement="left"
-								title="The number of times a requested page is in the bufferpool.">#Buffer Flushes</span>
+							<span class="metric-title">Average Pages per Flush</span>
 						</div>
 						<div class="col text-left">
-							<span class="cost uncertain"></span>
+							<span class="cost uncertain">N/A</span>
 						</div>
 					</div>
 
-					<!-- #Average Pages per Flush -->
+					<!-- Number of pages bulkloaded -->
 					<div class="row">
 						<div class="col text-right">
-							<span id="sware-average-pages-per-flush" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
 						</div>
 						<div class="col-2 text-center">
-							<span class="metric-title">#Average Pages per Flush</span>
+							<span class="metric-title">Number of Pages Bulkloaded</span>
 						</div>
 						<div class="col text-left">
-							<span class="cost uncertain"></span>
+							<span class="cost uncertain">N/A</span>
 						</div>
 					</div>
-
-					<!-- #Bulk Loads -->
-					<div class="row">
-						<div class="col text-right">
-							<span id="sware-bulk-loads" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
-						</div>
-						<div class="col-2 text-center">
-							<span class="metric-title" data-toggle="tooltip" data-placement="left"
-								title="The number of dirty pages written.">#Bulk Loads</span>
-						</div>
-						<div class="col text-left">
-							<span class="cost uncertain"></span>
-						</div>
-					</div>
-
 
 					<!-- #Fast Inserts -->
 					<div class="row">
 						<div class="col text-right">
-							<span id="sware-fast-inserts" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
 						</div>
 						<div class="col-2 text-center">
 							<span class="metric-title" data-toggle="tooltip" data-placement="left"
-								title="The number of dirty pages written.">#Fast Inserts</span>
+								title="The number of dirty pages written.">Number of Fast Inserts</span>
 						</div>
 						<div class="col text-left">
-							<span id="quit-fast-inserts" class="cost uncertain">0</span>
+							<span class="cost uncertain">0</span>
 						</div>
 					</div>
 
-					<!-- #Top Inserts -->
+					<!-- Number of Top Inserts -->
 					<div class="row">
 						<div class="col text-right">
-							<span id="sware-top-inserts" class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
 						</div>
 						<div class="col-2 text-center">
 							<span class="metric-title" data-toggle="tooltip" data-placement="left"
-								title="The number of pages processed from a workload.">#Top Inserts</span>
+								title="The number of pages processed from a workload.">Number of Top Inserts</span>
 						</div>
 						<div class="col text-left">
-							<span id="quit-top-inserts" class="cost uncertain">0</span>
+							<span class="cost uncertain">0</span>
 						</div>
 					</div>
 
-					<!-- #Pole Resets -->
+					<!-- Number of fast path resets -->
 					<div class="row">
 						<div class="col text-right">
-							<span class="cost uncertain" data-toggle="tooltip" data-placement="right"></span>
+							<span class="cost uncertain" data-toggle="tooltip" data-placement="right">N/A</span>
 						</div>
 						<div class="col-2 text-center">
-							<span class="metric-title">#Pole Resets</span>
+							<span class="metric-title">Number of Fast Path Resets</span>
 						</div>
 						<div class="col text-left">
-							<span id="quit-pole-resets" class="cost uncertain">0</span>
+							<span class="cost uncertain">N/A</span>
 						</div>
 					</div>
 
-					<!-- lil and pole Titles -->
-					<div class="row lil-pole-title-row">
-						<div class="col text-right">
-							<span class="sware-quit-title cost uncertain">lil</span>
-						</div>
-						<div class="col-2 text-center">
-							<span class="metric-title"></span>
-						</div>
-						<div class="col text-left">
-							<span class="sware-quit-title cost uncertain">pole</span>
-						</div>
-					</div>	
 				</div>
 			</div>
 
@@ -461,7 +422,7 @@
 				<div id="color-legends" class="row justify-content-center color-legends">
 					<div class="col-lg-3 d-flex align-items-center justify-content-center">
 						<div class="d-flex align-items-center">
-							<div class="color-legend-box color-legend-sware"></div>
+							<div id="comparison-legend-1-box" class="color-legend-box color-legend-sware"></div>
 							<div id="lsm-cmpct-pp-1-legend">
 								<b>SWARE</b>
 							</div>
@@ -469,7 +430,7 @@
 					</div>
 					<div class="col-lg-3 d-flex align-items-center justify-content-center">
 						<div class="d-flex align-items-center">
-							<div class="color-legend-box color-legend-quit"></div>
+							<div id="comparison-legend-2-box" class="color-legend-box color-legend-quit"></div>
 							<div id="lsm-cmpct-pp-2-legend">
 								<b>QuIT</b>
 							</div>
@@ -480,24 +441,13 @@
 				<!-- Charts -->
 				<div class="row no-gutters">
 					<div class="col-lg-4">
-						<div id="sware-sorts-chart" class="chart-container"></div>
+						<div id="comparison-top-inserts-chart" class="chart-container"></div>
 					</div>
 					<div class="col-lg-4">
-						<div id="sware-flushes-chart" class="chart-container"></div>
+						<div id="comparison-fast-inserts-chart" class="chart-container"></div>
 					</div>
 					<div class="col-lg-4">
-						<div id="sware-average-pages-per-flush-chart" class="chart-container"></div>
-					</div>
-				</div>
-				<div class="row no-gutters">
-					<div class="col-lg-4">
-						<div id="sware-bulk-loads/quit-fast-inserts-chart" class="chart-container"></div>
-					</div>
-					<div class="col-lg-4">
-						<div id="sware-top-inserts/quit-top-inserts-chart" class="chart-container"></div>
-					</div>
-					<div class="col-lg-4">
-						<div id="quit-pole-resets-chart" class="chart-container"></div>
+						<div id="comparison-fast-path-resets-chart" class="chart-container"></div>
 					</div>
 				</div>
 			</div>

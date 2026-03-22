@@ -204,3 +204,76 @@ class Tail {
         }
     }   
 }
+
+function isTailFastInsertCandidate(page)
+{
+    if (!tailTree || !tailTree.root) {
+        return false;
+    }
+    if (tailTree.root.leaf) {
+        return true;
+    }
+
+    const tailLeaf = tailTree.tail;
+    if (!tailLeaf) {
+        return false;
+    }
+
+    const tailKeys = getAuxiliaryNodeKeys(tailLeaf);
+    if (tailKeys.length === 0) {
+        return false;
+    }
+
+    return page >= tailKeys[0];
+}
+
+function renderTailTree(pathNodes, fastNodes)
+{
+    const focusNode = tailTree && tailTree.tail ? tailTree.tail : (tailTree ? tailTree.root : null);
+    renderAuxiliaryTree(
+        tailTree,
+        "tail-tree-grid",
+        "tail-tree-links",
+        focusNode,
+        "tail",
+        pathNodes || [],
+        fastNodes || []
+    );
+}
+
+function initializeTailVisualization()
+{
+    renderTailTree([], []);
+}
+
+function runTailPhase()
+{
+    return new Promise((resolve) => {
+        if (!Array.isArray(tail_data) || tail_data.length === 0) {
+            resolve();
+            return;
+        }
+
+        const page = tail_data[0];
+        const willFastInsert = isTailFastInsertCandidate(page);
+        const topInsertPath = willFastInsert ? [] : findAuxiliaryPath(tailTree, page);
+        const fastInsertPath = (willFastInsert && tailTree && tailTree.tail) ? [tailTree.tail] : [];
+        renderTailTree(topInsertPath, fastInsertPath);
+
+        const commitDelay = Math.max(0, Math.floor(delay * 0.2));
+        if (commitDelay === 0) {
+            tailTree.insert(page);
+            tail_data.shift();
+            renderTailTree([], []);
+            resolve();
+            return;
+        }
+
+        setTimeout(() => {
+            tailTree.insert(page);
+            tail_data.shift();
+            renderTailTree([], []);
+            resolve();
+        }, commitDelay);
+    });
+}

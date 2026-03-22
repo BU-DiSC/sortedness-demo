@@ -234,13 +234,37 @@ function sware()
         return null;
     }
 
+    const fastInsertsBefore = swareTree && typeof swareTree.fastInserts === "number"
+        ? swareTree.fastInserts
+        : 0;
+    const topInsertsBefore = swareTree && typeof swareTree.topInserts === "number"
+        ? swareTree.topInserts
+        : 0;
+    const sortPagesBefore = swareTree && typeof swareTree.sortPages === "number"
+        ? swareTree.sortPages
+        : 0;
     const preFlushTreeState = isSwareFlushTrigger(swareTree)
         ? cloneSwareTreeState(swareTree)
         : null;
     const page = sware_data[0];
     swareTree.insert(page);
     sware_data.shift();
-    return attachSwareAnimationTrace(swareTree.lastInsertInfo || null, preFlushTreeState);
+    const trace = attachSwareAnimationTrace(swareTree.lastInsertInfo || null, preFlushTreeState);
+    if (trace) {
+        trace.fastInsertsBefore = fastInsertsBefore;
+        trace.topInsertsBefore = topInsertsBefore;
+        trace.sortPagesBefore = sortPagesBefore;
+        trace.fastInsertsAfter = swareTree && typeof swareTree.fastInserts === "number"
+            ? swareTree.fastInserts
+            : fastInsertsBefore;
+        trace.topInsertsAfter = swareTree && typeof swareTree.topInserts === "number"
+            ? swareTree.topInserts
+            : topInsertsBefore;
+        trace.sortPagesAfter = swareTree && typeof swareTree.sortPages === "number"
+            ? swareTree.sortPages
+            : sortPagesBefore;
+    }
+    return trace;
 }
 
 async function animateSwarePhase()
@@ -251,6 +275,28 @@ async function animateSwarePhase()
         renderCurrentSwareView();
         return null;
     }
+
+    let previewFastInserts = Number.isInteger(trace.fastInsertsBefore)
+        ? trace.fastInsertsBefore
+        : (swareTree && typeof swareTree.fastInserts === "number" ? swareTree.fastInserts : 0);
+    let previewTopInserts = Number.isInteger(trace.topInsertsBefore)
+        ? trace.topInsertsBefore
+        : (swareTree && typeof swareTree.topInserts === "number" ? swareTree.topInserts : 0);
+    let previewSortPages = Number.isInteger(trace.sortPagesBefore)
+        ? trace.sortPagesBefore
+        : (swareTree && typeof swareTree.sortPages === "number" ? swareTree.sortPages : 0);
+    const updateSwareMetricPreview = () => {
+        if (typeof setSwareComparisonPreview !== "function") {
+            return;
+        }
+        setSwareComparisonPreview({
+            fastInserts: previewFastInserts,
+            topInserts: previewTopInserts,
+            sortPages: previewSortPages
+        });
+    };
+
+    updateSwareMetricPreview();
 
     let flushDelay = 0;
     let flushHighlightActive = false;
@@ -364,6 +410,8 @@ async function animateSwarePhase()
                             pathNodes: [],
                             highlightFastTailDots: false
                         });
+                        previewFastInserts += 1;
+                        updateSwareMetricPreview();
                         await sleepSware(Math.max(260, Math.floor(flushDelay * 0.42)));
                         currentTreeState = treeAfter;
                         currentPageIndex = null;
@@ -397,6 +445,8 @@ async function animateSwarePhase()
                         pathNodes: [],
                         highlightFastTailDots: false
                     });
+                    previewTopInserts += 1;
+                    updateSwareMetricPreview();
                     await sleepSware(Math.max(320, Math.floor(flushDelay * 0.5)));
 
                     const pageFinished = !nextStep || nextStep.pageIndex !== step.pageIndex;
@@ -424,6 +474,8 @@ async function animateSwarePhase()
                     pathNodes: [],
                     highlightFastTailDots: false
                 });
+                previewSortPages = Number.isInteger(trace.sortPagesAfter) ? trace.sortPagesAfter : previewSortPages;
+                updateSwareMetricPreview();
                 await sleepSware(Math.max(stepDelay, Math.floor(flushDelay * 0.7)));
             }
         }
@@ -732,12 +784,47 @@ function createSwareDotsNodeCard(isPathNode, highlightFast)
     return card;
 }
 
+function createSwareLayerEllipsisCard(isPathNode, hiddenLayerCount)
+{
+    const card = document.createElement("div");
+    card.className = "quit-node-ellipsis quit-layer-ellipsis";
+    if (isPathNode) {
+        card.classList.add("quit-ellipsis-path-active");
+    }
+    card.style.setProperty("--quit-layer-span", Math.max(1, hiddenLayerCount).toString());
+
+    const dots = document.createElement("div");
+    dots.className = "quit-layer-dot-stack";
+    for (let i = 0; i < 3; i++) {
+        const line = document.createElement("span");
+        line.className = "quit-layer-dot-line";
+        line.textContent = "...";
+        dots.appendChild(line);
+    }
+    card.appendChild(dots);
+    return card;
+}
+
 function compressSwareInternalLevel(nodes, focusNode)
 {
-    if (!nodes) {
+    if (!nodes || nodes.length === 0) {
         return [];
     }
-    return nodes.map((node) => ({ type: "node", node: node }));
+    if (nodes.length <= 5) {
+        return nodes.map((node) => ({ type: "node", node: node }));
+    }
+
+    const middleIndex = Math.floor((nodes.length - 1) / 2);
+    const items = [{ type: "node", node: nodes[0] }];
+    if (middleIndex > 1) {
+        items.push({ type: "ellipsis-range", start: 1, end: middleIndex - 1 });
+    }
+    items.push({ type: "node", node: nodes[middleIndex] });
+    if (middleIndex < nodes.length - 2) {
+        items.push({ type: "ellipsis-range", start: middleIndex + 1, end: nodes.length - 2 });
+    }
+    items.push({ type: "node", node: nodes[nodes.length - 1] });
+    return items;
 }
 
 function compressSwareLeafLevel(nodes, pathSet, focusNode)
@@ -797,6 +884,70 @@ function hasVisibleNextLeafSware(displayItems, currentIndex)
     return false;
 }
 
+function isSwareLayerEllipsisOnPath(startLevel, endLevel, levels, pathSet)
+{
+    if (!levels || !pathSet || pathSet.size === 0) {
+        return false;
+    }
+    for (let level = startLevel; level <= endLevel && level < levels.length; level++) {
+        const nodes = levels[level] || [];
+        for (const node of nodes) {
+            if (pathSet.has(node)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function getSwareDisplayRows(levels, insertionPath, pathSet)
+{
+    const displayRows = [];
+    if (!levels || levels.length === 0) {
+        return displayRows;
+    }
+
+    if (levels.length > 3) {
+        displayRows.push({
+            type: "level",
+            levelIndex: 0,
+            levelNodes: levels[0],
+            items: compressSwareInternalLevel(levels[0], null)
+        });
+        displayRows.push({
+            type: "layer-ellipsis",
+            startLevel: 1,
+            endLevel: levels.length - 2,
+            isPathNode: isSwareLayerEllipsisOnPath(1, levels.length - 2, levels, pathSet)
+        });
+        displayRows.push({
+            type: "level",
+            levelIndex: levels.length - 1,
+            levelNodes: levels[levels.length - 1],
+            items: compressSwareLeafLevel(
+                levels[levels.length - 1],
+                pathSet,
+                insertionPath[levels.length - 1] || null
+            )
+        });
+        return displayRows;
+    }
+
+    for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+        const levelNodes = levels[levelIndex];
+        const isLeafLevel = levelNodes.length > 0 && levelNodes[0].leaf;
+        displayRows.push({
+            type: "level",
+            levelIndex: levelIndex,
+            levelNodes: levelNodes,
+            items: isLeafLevel
+                ? compressSwareLeafLevel(levelNodes, pathSet, insertionPath[levelIndex] || null)
+                : compressSwareInternalLevel(levelNodes, null)
+        });
+    }
+    return displayRows;
+}
+
 function renderSwareTree(pathNodes, highlightFastTailDots, treeState)
 {
     const visualState = getSwareVisualState();
@@ -814,29 +965,56 @@ function renderSwareTree(pathNodes, highlightFastTailDots, treeState)
         ? highlightFastTailDots
         : !!(visualState && visualState.highlightFastTailDots);
     const pathSet = new Set(resolvedPathNodes || []);
+    const displayRows = getSwareDisplayRows(levels, resolvedPathNodes || [], pathSet);
     const nodeSlotMap = new Map();
     const rangeMap = new Map();
     computeSwareRanges(activeTree.root, rangeMap);
 
-    while (swareVisualRows.length < levels.length) {
+    while (swareVisualRows.length < displayRows.length) {
         const row = document.createElement("div");
         row.className = "quit-tree-row";
         swareGrid.appendChild(row);
         swareVisualRows.push({ row: row, slots: [] });
     }
 
-    for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
-        const rowData = swareVisualRows[levelIndex];
+    for (let rowIndex = 0; rowIndex < displayRows.length; rowIndex++) {
+        const rowData = swareVisualRows[rowIndex];
         const row = rowData.row;
-        const levelNodes = levels[levelIndex];
-        const isLeafLevel = levelNodes.length > 0 && levelNodes[0].leaf;
-        const focusNode = resolvedPathNodes && resolvedPathNodes[levelIndex] ? resolvedPathNodes[levelIndex] : null;
-        const displayItems = isLeafLevel
-            ? compressSwareLeafLevel(levelNodes, pathSet, focusNode)
-            : compressSwareInternalLevel(levelNodes, focusNode);
+        const rowInfo = displayRows[rowIndex];
 
         row.classList.remove("hidden");
         row.classList.remove("quit-row-layer-ellipsis");
+
+        if (rowInfo.type === "layer-ellipsis") {
+            row.classList.add("quit-row-layer-ellipsis");
+            row.style.setProperty("--quit-cols", "1");
+
+            while (rowData.slots.length < 1) {
+                const slot = document.createElement("div");
+                slot.className = "quit-node-slot hidden";
+                row.appendChild(slot);
+                rowData.slots.push(slot);
+            }
+
+            for (let slotIndex = 0; slotIndex < rowData.slots.length; slotIndex++) {
+                const slot = rowData.slots[slotIndex];
+                if (slotIndex > 0) {
+                    slot.classList.add("hidden");
+                    slot.innerHTML = "";
+                    continue;
+                }
+                slot.classList.remove("hidden");
+                slot.innerHTML = "";
+                const hiddenLayerCount = (rowInfo.endLevel - rowInfo.startLevel) + 1;
+                slot.appendChild(createSwareLayerEllipsisCard(rowInfo.isPathNode, hiddenLayerCount));
+            }
+            continue;
+        }
+
+        const levelIndex = rowInfo.levelIndex;
+        const levelNodes = rowInfo.levelNodes;
+        const displayItems = rowInfo.items;
+        const isLeafLevel = levelNodes.length > 0 && levelNodes[0].leaf;
         row.style.setProperty("--quit-cols", Math.max(displayItems.length, 1));
 
         while (rowData.slots.length < displayItems.length) {
@@ -902,8 +1080,8 @@ function renderSwareTree(pathNodes, highlightFastTailDots, treeState)
         }
     }
 
-    for (let levelIndex = levels.length; levelIndex < swareVisualRows.length; levelIndex++) {
-        const rowData = swareVisualRows[levelIndex];
+    for (let rowIndex = displayRows.length; rowIndex < swareVisualRows.length; rowIndex++) {
+        const rowData = swareVisualRows[rowIndex];
         rowData.row.classList.add("hidden");
         rowData.row.classList.remove("quit-row-layer-ellipsis");
         for (const slot of rowData.slots) {
@@ -1003,6 +1181,7 @@ class Sware {
         this.tail = this.root;
         this.fastInserts = 0;
         this.fastInserted = true;
+        this.topInserts = 0;
         this.lastSortedIndex = 0;
         this.insertIndexX = 0;
         this.insertIndexY = 0;
@@ -1011,9 +1190,13 @@ class Sware {
         this.tempArray = [];
         this.full = false;
         this.size = 0;
+        this.bufferFlushes = 0;
         this.leafs = 1;
         this.lastInsertInfo = null;
         this.visualState = null;
+        this.sortPages = 0;
+        this.avgPages = 0;
+        this.totalPagesFlushed = 0;
         for(let i = 0;i<t;i++)
         {
             this.buffer.push([]);
@@ -1022,6 +1205,7 @@ class Sware {
     }
     insert(page)
     {
+        this.size++;
         const insertTrace = {
             inputPage: page,
             bufferSlot: {
@@ -1069,7 +1253,7 @@ class Sware {
                         this.tail.parent.keys.push(this.buffer[i][0]);
                         newTail = new Node(this.t,true);
                         this.leafs++;
-                        this.size+=this.t;
+                        //this.size+=this.t;
                         newTail.n=this.t;
                         newTail.keys = [...this.buffer[i]];
                         this.tail.next = newTail;
@@ -1081,7 +1265,7 @@ class Sware {
                             tempNode = this.split(tempNode);
                         pageLeaf = this.root;
                         this.tail = newTail;
-                        this.fastInserts++;
+                        this.fastInserts+=10;
                         this.fastInserted = true;
                         pushSwareFastVisualStep(insertTrace, this, i);
                     }
@@ -1090,7 +1274,8 @@ class Sware {
                         this.fastInserted = false;
                         for(let j = 0;j<this.t;j++)
                         {
-                            this.size++;
+                            this.topInserts++;
+                            //this.size++;
                             page = this.buffer[i][j];
                             insertTrace.topInsertOccurred = true;
                             const topTreeBefore = cloneSwareTreeState(this);
@@ -1187,7 +1372,7 @@ class Sware {
                         secondLeaf.n = this.t;
                         this.tail = secondLeaf;
                         this.leafs=2;
-                        this.size = 2*this.t;
+                        //this.size = 2*this.t;
                         this.root = newRoot;
                         this.fastInserted = true;
                         insertTrace.fastInsertOccurred = true;
@@ -1207,7 +1392,7 @@ class Sware {
                             0
                         );
                         pushSwareFastVisualStep(insertTrace, this, 1);
-                        this.fastInserts+=2;
+                        this.fastInserts+=20;
                         for(let i = 2;i<=this.lastSortedIndex&&i<=Math.floor((this.t/2)-1);i++)
                         {
                             if(this.bufferDict[i][0]>=this.tail.keys[this.tail.n-1])
@@ -1222,7 +1407,7 @@ class Sware {
                                 this.tail.parent.keys.push(this.buffer[i][0]);
                                 newTail = new Node(this.t,true);
                                 this.leafs++;
-                                this.size+=this.t;
+                                //this.size+=this.t;
                                 newTail.n=this.t;
                                 newTail.keys = [...this.buffer[i]];
                                 this.tail.next = newTail;
@@ -1233,7 +1418,7 @@ class Sware {
                                 while(tempNode.n>tempNode.t)
                                     tempNode = this.split(tempNode);
                                 this.tail = newTail;
-                                this.fastInserts++;
+                                this.fastInserts+=10;
                                 this.fastInserted = true;
                                 pushSwareFastVisualStep(insertTrace, this, i);
                             }
@@ -1242,7 +1427,8 @@ class Sware {
                                 this.fastInserted = false;
                                 for(let j = 0;j<this.t;j++)
                                 {
-                                    this.size++;
+                                    this.topInserts++;
+                                    //this.size++;
                                     page = this.buffer[i][j];
                                     insertTrace.topInsertOccurred = true;
                                     const topTreeBefore = cloneSwareTreeState(this);
@@ -1302,7 +1488,7 @@ class Sware {
                         this.buffer[0].sort((a,b)=>a-b);
                         this.root.keys = [...this.buffer[0]];
                         this.root.n = this.t;
-                        this.size = this.t;
+                        //this.size = this.t;
                         insertTrace.fastInsertOccurred = true;
                         insertTrace.flushEvents.push({
                             type: "fast",
@@ -1310,7 +1496,7 @@ class Sware {
                             page: this.buffer[0][0]
                         });
                         pushSwareFastVisualStep(insertTrace, this, 0);
-                        this.fastInserts++;
+                        this.fastInserts+=10;
                         this.fastInserted = true;
                     }
                 }
@@ -1334,7 +1520,7 @@ class Sware {
                         secondLeaf.n = this.t;
                         this.tail = secondLeaf;
                         this.leafs=2;
-                        this.size = 2*this.t;
+                        //this.size = 2*this.t;
                         this.root = newRoot;
                         insertTrace.fastInsertOccurred = true;
                         insertTrace.flushEvents.push({
@@ -1344,14 +1530,15 @@ class Sware {
                         });
                         pushSwareFastVisualStep(insertTrace, this, 0);
                         this.fastInserted = true;
-                        this.fastInserts++;
+                        this.fastInserts+=10;
                     }
                     else
                     {
                         this.fastInserted = false;
                         for(let i = 0;i<this.buffer[0].length;i++)
                         {
-                            this.size++;
+                            this.topInserts++;
+                            //this.size++;
                             page = this.buffer[0][i];
                             insertTrace.topInsertOccurred = true;
                             const topTreeBefore = cloneSwareTreeState(this);
@@ -1418,7 +1605,7 @@ class Sware {
                             this.tail.parent.keys.push(this.buffer[i][0]);
                             newTail = new Node(this.t,true);
                             this.leafs++;
-                            this.size+=this.t;
+                            //this.size+=this.t;
                             newTail.n=this.t;
                             newTail.keys = [...this.buffer[i]];
                             this.tail.next = newTail;
@@ -1429,7 +1616,7 @@ class Sware {
                             while(tempNode.n>tempNode.t)
                                 tempNode = this.split(tempNode);
                             this.tail = newTail;
-                            this.fastInserts++;
+                            this.fastInserts+=10;
                             this.fastInserted = true;
                             pushSwareFastVisualStep(insertTrace, this, i);
                         }
@@ -1438,7 +1625,8 @@ class Sware {
                             this.fastInserted = false;
                             for(let j = 0;j<this.t;j++)
                             {
-                                this.size++;
+                                this.topInserts++;
+                                //this.size++;
                                 page = this.buffer[i][j];
                                 insertTrace.topInsertOccurred = true;
                                 const topTreeBefore = cloneSwareTreeState(this);
@@ -1496,6 +1684,7 @@ class Sware {
             }
             insertTrace.bufferSnapshotBeforeReset = this.buffer.map((row) => row.slice());
             insertTrace.lastSortedIndexBeforeReset = this.lastSortedIndex;
+            this.bufferFlushes++;
             this.resetBuffer();
         }
         this.lastInsertInfo = insertTrace;
@@ -1570,7 +1759,10 @@ class Sware {
 
     resetBuffer()
     {
+        console.log(this.sortPages);
         let flushed = Math.min(this.lastSortedIndex,Math.floor((this.t/2)-1));
+        this.totalPagesFlushed+=(flushed+1);
+        this.avgPages = this.totalPagesFlushed/this.bufferFlushes;
         for(let i = 0;i<=flushed;i++)
         {
             this.buffer[i].length = 0;
@@ -1578,6 +1770,7 @@ class Sware {
         }
         for(let i = flushed+1;i<this.t;i++)
         {
+            this.sortPages++;
             for(let j = 0;j<this.t;j++)
             {
                 this.tempArray.push(this.buffer[i][j]);

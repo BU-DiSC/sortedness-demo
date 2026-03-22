@@ -407,11 +407,11 @@ function isQuitEllipsisOnPath(item, levelNodes, pathSet)
 
 function getQuitVisibleLevelIndexes(levelCount)
 {
-    if (levelCount <= 5) {
+    if (levelCount <= 4) {
         return Array.from({ length: levelCount }, (_, index) => index);
     }
 
-    return [0, 1, levelCount - 2, levelCount - 1];
+    return [0, 1, levelCount - 1];
 }
 
 function isQuitLayerEllipsisOnPath(startLevel, endLevel, levels, pathSet)
@@ -736,6 +736,436 @@ function syncQuitInsertionPanelCapacity()
     return capacity;
 }
 
+const auxiliaryStructureVisualRows = {};
+
+function getAuxiliaryStructureRows(gridId)
+{
+    if (!auxiliaryStructureVisualRows[gridId]) {
+        auxiliaryStructureVisualRows[gridId] = [];
+    }
+    return auxiliaryStructureVisualRows[gridId];
+}
+
+function getAuxiliaryNodeKeys(node)
+{
+    if (!node || !Array.isArray(node.keys)) {
+        return [];
+    }
+
+    let keyCount = node.keys.length;
+    if (typeof node.n === "number") {
+        keyCount = Math.min(node.n, node.keys.length);
+    }
+    return node.keys.slice(0, keyCount);
+}
+
+function getAuxiliaryNodeChildren(node)
+{
+    if (!node || !Array.isArray(node.children)) {
+        return [];
+    }
+    return node.children.filter((child) => child != null);
+}
+
+function collectAuxiliaryLevels(tree)
+{
+    if (!tree || !tree.root) {
+        return [];
+    }
+
+    const levels = [];
+    let current = [tree.root];
+    while (current.length > 0) {
+        levels.push(current);
+        const next = [];
+        for (const node of current) {
+            if (!node || node.leaf) {
+                continue;
+            }
+            const children = getAuxiliaryNodeChildren(node);
+            for (const child of children) {
+                next.push(child);
+            }
+        }
+        current = next;
+    }
+    return levels;
+}
+
+function computeAuxiliaryRanges(node, rangeMap)
+{
+    if (!node) {
+        return [null, null];
+    }
+
+    const keys = getAuxiliaryNodeKeys(node);
+    if (node.leaf) {
+        const range = keys.length > 0
+            ? [keys[0], keys[keys.length - 1]]
+            : [null, null];
+        rangeMap.set(node, range);
+        return range;
+    }
+
+    const children = getAuxiliaryNodeChildren(node);
+    let minChild = null;
+    let maxChild = null;
+    for (const child of children) {
+        const childRange = computeAuxiliaryRanges(child, rangeMap);
+        if (childRange[0] != null && minChild == null) {
+            minChild = childRange[0];
+        }
+        if (childRange[1] != null) {
+            maxChild = childRange[1];
+        }
+    }
+
+    const range = [minChild, maxChild];
+    rangeMap.set(node, range);
+    return range;
+}
+
+function getAuxiliaryNodeCapacity(tree, node)
+{
+    if (!node) {
+        return 1;
+    }
+
+    const fallbackCapacity = (typeof node.t === "number" && node.t > 0)
+        ? node.t
+        : Math.max(getAuxiliaryNodeKeys(node).length, 1);
+    if (!tree) {
+        return fallbackCapacity;
+    }
+
+    const internalCapacity = (typeof tree.internalSize === "number" && tree.internalSize > 0)
+        ? tree.internalSize
+        : (typeof tree.t === "number" && tree.t > 0 ? calculate_internal(tree.t) : fallbackCapacity);
+    const treeCapacity = node.leaf ? tree.t : internalCapacity;
+    if (!Number.isFinite(treeCapacity) || treeCapacity < 1) {
+        return fallbackCapacity;
+    }
+
+    return Math.max(1, treeCapacity);
+}
+
+function createAuxiliaryNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafNextPointer, isFocusNode, focusLabel, tree)
+{
+    const keys = getAuxiliaryNodeKeys(node);
+    const nodeCapacity = getAuxiliaryNodeCapacity(tree, node);
+    const slotCount = Math.max(nodeCapacity, keys.length, 1);
+    const keyColumns = getQuitKeyColumnCount(slotCount);
+    const keyRows = Math.max(1, Math.ceil(slotCount / keyColumns));
+    const card = document.createElement("div");
+    card.className = "quit-node-card";
+    card.classList.add(node.leaf ? "leaf" : "internal");
+    if (depth === 0) {
+        card.classList.add("root");
+    }
+    if (isPathNode) {
+        card.classList.add("quit-path-active");
+    }
+    if (isFastNode) {
+        card.classList.add("quit-fast-active");
+    }
+    if (isFocusNode) {
+        card.classList.add("quit-pole-node");
+    }
+
+    const header = document.createElement("div");
+    header.className = "quit-node-header";
+    let headerLabel;
+    if (depth === 0) {
+        headerLabel = "Root";
+    }
+    else {
+        headerLabel = node.leaf ? "Leaf" : "Internal";
+    }
+    if (isFocusNode) {
+        headerLabel += " (" + focusLabel + ")";
+    }
+    header.textContent = headerLabel;
+
+    const rangeLabel = document.createElement("div");
+    rangeLabel.className = "quit-node-range";
+    rangeLabel.textContent = "Range " + formatQuitRange(range);
+
+    const keyRow = document.createElement("div");
+    keyRow.className = "quit-node-keys";
+    keyRow.style.setProperty("--quit-key-columns", keyColumns.toString());
+    keyRow.style.setProperty("--quit-key-rows", keyRows.toString());
+    for (let i = 0; i < slotCount; i++) {
+        const keyCell = document.createElement("span");
+        keyCell.className = "quit-key-cell";
+        if (i < keys.length) {
+            keyCell.textContent = keys[i];
+        }
+        else {
+            keyCell.textContent = ".";
+            keyCell.classList.add("quit-key-empty");
+        }
+        keyRow.appendChild(keyCell);
+    }
+
+    card.appendChild(header);
+    card.appendChild(rangeLabel);
+    card.appendChild(keyRow);
+
+    if (node.leaf && hasLeafNextPointer) {
+        const leafPointer = document.createElement("div");
+        leafPointer.className = "quit-leaf-pointer";
+        leafPointer.textContent = "next ->";
+        card.appendChild(leafPointer);
+    }
+
+    return card;
+}
+
+function getAuxiliaryDisplayRows(tree, levels, insertionPath, pathSet, focusLeaf)
+{
+    const displayRows = [];
+    if (!levels || levels.length === 0) {
+        return displayRows;
+    }
+
+    const focusPath = getPathFromRoot(focusLeaf || (insertionPath.length > 0 ? insertionPath[insertionPath.length - 1] : null));
+    const visibleLevels = getQuitVisibleLevelIndexes(levels.length);
+
+    for (let i = 0; i < visibleLevels.length; i++) {
+        const level = visibleLevels[i];
+        const nodes = levels[level];
+        const isLeafLevel = nodes.length > 0 && nodes[0].leaf;
+        const focusNode = isLeafLevel ? (focusPath[level] || insertionPath[level] || null) : null;
+        displayRows.push({
+            type: "level",
+            levelIndex: level,
+            items: compressQuitLevel(nodes, focusNode, !isLeafLevel)
+        });
+
+        if (i < visibleLevels.length - 1) {
+            const nextLevel = visibleLevels[i + 1];
+            if (nextLevel - level > 1) {
+                displayRows.push({
+                    type: "layer-ellipsis",
+                    startLevel: level + 1,
+                    endLevel: nextLevel - 1,
+                    isPathNode: isQuitLayerEllipsisOnPath(level + 1, nextLevel - 1, levels, pathSet)
+                });
+            }
+        }
+    }
+
+    return displayRows;
+}
+
+function hasVisibleNextLeafAuxiliary(displayItems, currentIndex)
+{
+    for (let i = currentIndex + 1; i < displayItems.length; i++) {
+        if (displayItems[i].type === "node") {
+            return true;
+        }
+    }
+    return false;
+}
+
+function renderAuxiliaryTree(tree, gridId, linksId, focusNode, focusLabel, pathNodes, fastNodes)
+{
+    const grid = document.getElementById(gridId);
+    if (!grid) {
+        return;
+    }
+
+    const levels = collectAuxiliaryLevels(tree);
+    const pathSet = new Set(pathNodes || []);
+    const fastSet = new Set(fastNodes || []);
+    const displayRows = getAuxiliaryDisplayRows(tree, levels, pathNodes || [], pathSet, focusNode);
+    const nodeSlotMap = new Map();
+    const visualRows = getAuxiliaryStructureRows(gridId);
+
+    const rangeMap = new Map();
+    if (tree && tree.root) {
+        computeAuxiliaryRanges(tree.root, rangeMap);
+    }
+
+    while (visualRows.length < displayRows.length) {
+        const row = document.createElement("div");
+        row.className = "quit-tree-row";
+        grid.appendChild(row);
+        visualRows.push({ row: row, slots: [] });
+    }
+
+    for (let rowIndex = 0; rowIndex < displayRows.length; rowIndex++) {
+        const rowData = visualRows[rowIndex];
+        const row = rowData.row;
+        const rowInfo = displayRows[rowIndex];
+
+        row.classList.remove("hidden");
+        row.classList.remove("quit-row-layer-ellipsis");
+
+        if (rowInfo.type === "layer-ellipsis") {
+            row.classList.add("quit-row-layer-ellipsis");
+            row.style.setProperty("--quit-cols", "1");
+
+            while (rowData.slots.length < 1) {
+                const slot = document.createElement("div");
+                slot.className = "quit-node-slot hidden";
+                row.appendChild(slot);
+                rowData.slots.push(slot);
+            }
+
+            for (let i = 0; i < rowData.slots.length; i++) {
+                const slot = rowData.slots[i];
+                if (i > 0) {
+                    slot.classList.add("hidden");
+                    slot.innerHTML = "";
+                    continue;
+                }
+                slot.classList.remove("hidden");
+                slot.innerHTML = "";
+                const hiddenLayerCount = (rowInfo.endLevel - rowInfo.startLevel) + 1;
+                slot.appendChild(createQuitLayerEllipsisCard(rowInfo.isPathNode, hiddenLayerCount));
+            }
+            continue;
+        }
+
+        const levelIndex = rowInfo.levelIndex;
+        const displayItems = rowInfo.items;
+        const levelNodes = levels[levelIndex];
+        const isLeafLevel = levelNodes.length > 0 && levelNodes[0].leaf;
+        row.style.setProperty("--quit-cols", Math.max(displayItems.length, 1));
+
+        while (rowData.slots.length < displayItems.length) {
+            const slot = document.createElement("div");
+            slot.className = "quit-node-slot hidden";
+            row.appendChild(slot);
+            rowData.slots.push(slot);
+        }
+
+        for (let slotIndex = 0; slotIndex < rowData.slots.length; slotIndex++) {
+            const slot = rowData.slots[slotIndex];
+            if (slotIndex >= displayItems.length) {
+                slot.classList.add("hidden");
+                slot.innerHTML = "";
+                continue;
+            }
+
+            const item = displayItems[slotIndex];
+            slot.classList.remove("hidden");
+            slot.innerHTML = "";
+            if (item.type === "ellipsis") {
+                slot.appendChild(createQuitEllipsisCard(isQuitEllipsisOnPath(item, levelNodes, pathSet)));
+                continue;
+            }
+
+            const node = item.node;
+            const card = createAuxiliaryNodeCard(
+                node,
+                levelIndex,
+                rangeMap.get(node),
+                pathSet.has(node),
+                fastSet.has(node),
+                isLeafLevel && hasVisibleNextLeafAuxiliary(displayItems, slotIndex),
+                node === focusNode,
+                focusLabel,
+                tree
+            );
+            slot.appendChild(card);
+            nodeSlotMap.set(node, slot);
+        }
+    }
+
+    for (let rowIndex = displayRows.length; rowIndex < visualRows.length; rowIndex++) {
+        const rowData = visualRows[rowIndex];
+        rowData.row.classList.add("hidden");
+        rowData.row.classList.remove("quit-row-layer-ellipsis");
+        for (const slot of rowData.slots) {
+            slot.classList.add("hidden");
+            slot.innerHTML = "";
+        }
+    }
+
+    requestAnimationFrame(() => {
+        drawAuxiliaryConnections(levels, nodeSlotMap, gridId, linksId, pathNodes || []);
+    });
+}
+
+function drawAuxiliaryConnections(levels, nodeSlotMap, gridId, linksId, pathNodes)
+{
+    const grid = document.getElementById(gridId);
+    const linkLayer = document.getElementById(linksId);
+    if (!grid || !linkLayer) {
+        return;
+    }
+
+    const gridRect = grid.getBoundingClientRect();
+    const layerWidth = Math.max(grid.scrollWidth, grid.clientWidth);
+    const layerHeight = Math.max(grid.scrollHeight, grid.clientHeight);
+    linkLayer.setAttribute("width", layerWidth.toString());
+    linkLayer.setAttribute("height", layerHeight.toString());
+    linkLayer.setAttribute("viewBox", "0 0 " + layerWidth + " " + layerHeight);
+    linkLayer.innerHTML = "";
+
+    if (!levels || levels.length <= 1) {
+        return;
+    }
+
+    const pathSet = new Set(pathNodes || []);
+    for (let level = 0; level < levels.length - 1; level++) {
+        const parents = levels[level];
+        for (const parent of parents) {
+            const parentSlot = nodeSlotMap.get(parent);
+            if (!parentSlot) {
+                continue;
+            }
+
+            const parentRect = parentSlot.getBoundingClientRect();
+            const parentX = (parentRect.left - gridRect.left) + (parentRect.width / 2);
+            const parentY = (parentRect.top - gridRect.top) + parentRect.height;
+            const children = getAuxiliaryNodeChildren(parent);
+
+            for (const child of children) {
+                const childSlot = nodeSlotMap.get(child);
+                if (!childSlot) {
+                    continue;
+                }
+
+                const childRect = childSlot.getBoundingClientRect();
+                const childX = (childRect.left - gridRect.left) + (childRect.width / 2);
+                const childY = (childRect.top - gridRect.top);
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", "M " + parentX + " " + parentY + " L " + childX + " " + childY);
+                let pathClass = "quit-tree-link-path";
+                if (pathSet.has(parent) && pathSet.has(child)) {
+                    pathClass += " quit-tree-link-path-active";
+                }
+                path.setAttribute("class", pathClass);
+                linkLayer.appendChild(path);
+            }
+        }
+    }
+}
+
+function findAuxiliaryPath(tree, page)
+{
+    const path = [];
+    let node = tree && tree.root ? tree.root : null;
+    while (node) {
+        path.push(node);
+        if (node.leaf) {
+            break;
+        }
+
+        const keys = getAuxiliaryNodeKeys(node);
+        let childIndex = 0;
+        while (childIndex < keys.length && page >= keys[childIndex]) {
+            childIndex++;
+        }
+        node = node.children[childIndex] || null;
+    }
+    return path;
+}
+
 
 
 //don't change anything below this
@@ -746,7 +1176,7 @@ class QuIT {
         this.firstLeaf = this.root;
         this.fastInserts = 0;
         this.fastInserted = true;
-        this.poleResets = 0;
+        this.fastPathResets = 0;
         // QuIT poles
         this.currPole = this.root;
         this.prevPole = this.root;
@@ -805,7 +1235,8 @@ class QuIT {
         }
         if(this.missesInRow ==(Math.floor(Math.sqrt(this.t))+1))
         {
-            console.log("pole reset");
+            this.fastPathResets++;
+            //console.log("pole reset");
             let first;
             first = this.root;
             while(!first.leaf)
@@ -944,7 +1375,7 @@ class QuIT {
                     x = q+(((q-p)/prevPoleSize)*poleSize*1.5);
                     if(r<=x)
                     {
-                        this.poleResets++;
+                        //this.poleResets++;
                         this.prevPole = this.currPole;
                         this.currPole = this.nextPole;
                         this.nextPole = null;
