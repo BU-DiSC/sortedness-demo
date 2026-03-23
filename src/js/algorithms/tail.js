@@ -5,6 +5,7 @@ class Tail {
         this.tail = this.root;
         this.fastInserts = 0;
         this.fastInserted = true;
+        this.internalSize = calculate_internal(t);
     }
     insert(page)
     {
@@ -46,7 +47,7 @@ class Tail {
             this.fastInserts++;
             this.fastInserted = true;
         }
-        if(pageLeaf.n<this.t)
+        if(pageLeaf.n<pageLeaf.t)
         {
             this.insertInOrder(page,pageLeaf.keys);
             pageLeaf.n++;
@@ -59,7 +60,7 @@ class Tail {
                 tempNode = this.split(pageLeaf);
                 pageLeaf = tempNode;
             }
-            while(pageLeaf.n>this.t);
+            while(pageLeaf.n>pageLeaf.t);
         }
     }
     insertInOrder(page,array)
@@ -93,7 +94,7 @@ class Tail {
         {
             if(pageLeaf.parent == null)
             {
-                let newParent = new Node(this.t,false);
+                let newParent = new Node(this.internalSize,false);
                 let splitNode = new Node(pageLeaf.t,true);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid;
@@ -143,8 +144,8 @@ class Tail {
         {
             if(pageLeaf.parent == null)
             {
-                let newParent = new Node(this.t,false);
-                let splitNode = new Node(pageLeaf.t,false);
+                let newParent = new Node(this.internalSize,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;
@@ -176,7 +177,7 @@ class Tail {
             {
                 
                 console.log("true");
-                let splitNode = new Node(pageLeaf.t,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;

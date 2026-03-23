@@ -1581,7 +1581,7 @@ class Sware {
                                     }
                                     pageLeaf = pageLeaf.children[temp];
                                 }
-                                if(pageLeaf.n<this.t)
+                                if(pageLeaf.n<pageLeaf.t)
                                 {
                                     this.insertInOrder(page,pageLeaf.keys);
                                     pageLeaf.n++;
@@ -1780,7 +1780,7 @@ class Sware {
             if(pageLeaf.parent == null)
             {
                 let newParent = new Node(this.internalSize,false);
-                let splitNode = new Node(pageLeaf.t,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;
@@ -1811,7 +1811,7 @@ class Sware {
             else
             {
                 
-                let splitNode = new Node(pageLeaf.t,false);
+                let splitNode = new Node(this.internalSize,false);
                 let mid = Math.floor(pageLeaf.n/2);
                 splitNode.n = pageLeaf.n - mid-1;
                 pageLeaf.n = mid;

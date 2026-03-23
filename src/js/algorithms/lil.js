@@ -55,7 +55,7 @@ class LilTree {
             this.fastInserts++;
             this.fastInserted = true;
         }
-        if(pageLeaf.n<this.t)
+        if(pageLeaf.n<pageLeaf.t)
         {
             this.insertInOrder(page,pageLeaf.keys);
             pageLeaf.n++;
@@ -68,7 +68,7 @@ class LilTree {
                 tempNode = this.split(pageLeaf);
                 pageLeaf = tempNode;
             }
-            while(pageLeaf.n>this.t);
+            while(pageLeaf.n>pageLeaf.t);
         }
     }
     insertInOrder(page,array)
