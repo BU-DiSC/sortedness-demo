@@ -1,3 +1,25 @@
+class Node{
+    constructor(t,leaf)
+    {
+        this.t = t;
+        this.leaf = leaf;
+        this.keys = [];
+        this.children = [];
+        this.n = 0//size of node
+        this.next = null;
+        this.parent = null;
+    }
+}
+
+
+function calculate_internal(size)
+{
+    let node_info = 8*2+2*2;//size for 2 pointers and 2 16 bit ints
+    let block_size = size*4+node_info+size*8;
+    let internal_node_size = Math.floor((block_size-node_info-8)/12);
+    return internal_node_size;
+}
+
 
 
 /*
@@ -148,10 +170,11 @@ function update_colors() {
                 }
             }
             if (i < 10) {
-                const overlapped = document.getElementById("buffer" + i);
-                overlapped.style.backgroundColor = "#FF0000"; // red (overlaps)
-                const d = document.getElementById("buffer" + overlapper);
-                d.style.backgroundColor = "#FF0000"; // red (overlaps)
+                for(i;i<=9;i++)
+                {
+                    const overlapped = document.getElementById("buffer" + i);
+                    overlapped.style.backgroundColor = "#FF0000"; // red (overlaps)
+                }
             }
         }     
     }
@@ -164,9 +187,16 @@ function update_colors() {
 
 function stop_button() {
     running = false;
+    if (typeof animationIntervalId !== "undefined" && animationIntervalId != null) {
+        clearInterval(animationIntervalId);
+        animationIntervalId = null;
+    }
     document.getElementById("stop-button").disabled = true;
     document.getElementById("continue-button").disabled = false;
-    document.getElementById("nextstep-button").disabled = false;
+    const nextstepButton = document.getElementById("nextstep-button");
+    if (nextstepButton) {
+        nextstepButton.disabled = false;
+    }
 
     console.log("Animation stopped.");
 }
@@ -177,13 +207,20 @@ function stop_button() {
 
 function continue_button() {
     running = true;
+    if (typeof animationIntervalId !== "undefined" && animationIntervalId != null) {
+        clearInterval(animationIntervalId);
+    }
     document.getElementById("stop-button").disabled = false;
     document.getElementById("continue-button").disabled = true;
-    document.getElementById("nextstep-button").disabled = true;
+    const nextstepButton = document.getElementById("nextstep-button");
+    if (nextstepButton) {
+        nextstepButton.disabled = true;
+    }
 
-    let interval = setInterval(() => {
+    animationIntervalId = setInterval(() => {
         if (running == false) {
-            clearInterval(interval); 
+            clearInterval(animationIntervalId);
+            animationIntervalId = null;
             return;
         }
         next_step(); 
@@ -207,6 +244,10 @@ function nextstep_button() {
  */
 
 function reset_button() {
+    if (typeof animationIntervalId !== "undefined" && animationIntervalId != null) {
+        clearInterval(animationIntervalId);
+        animationIntervalId = null;
+    }
     valsToEliminate = vals.slice();
 
     function resetDropdown(field, key) {
@@ -236,8 +277,12 @@ function reset_button() {
     wait = 3; 
     delay = 1000; 
     total_data = []; 
+    sware_data = [];
+    tail_data = [];
+    lil_data = [];
     total_inversion_data = [];
     running = true; 
+    nextStepInProgress = false;
 
     buffer = [];
     tree = [];
@@ -276,6 +321,22 @@ function reset_button() {
     quit_top_inserts_history = []; 
     quit_pole_resets = 0;
     quit_pole_resets_history = [];
+    quitTree = new QuIT(15);
+    swareTree = new Sware(5);
+    tailTree = new Tail(10);
+    lilTree = new LilTree(10);
+    quit_leaf_dict = [];
+    initializeQuitVisualization();
+    initializeSwareVisualization();
+    if (typeof initializeTailVisualization === "function") {
+        initializeTailVisualization();
+    }
+    if (typeof initializeLilVisualization === "function") {
+        initializeLilVisualization();
+    }
+    if (typeof returnStructurePanelsToStore === "function") {
+        returnStructurePanelsToStore();
+    }
 
     // Reset each dropdown
     resetDropdown(document.getElementById("cmp-select-N"), "N");
@@ -283,12 +344,21 @@ function reset_button() {
     resetDropdown(document.getElementById("cmp-select-L"), "L");
     resetDropdown(document.getElementById("cmp-select-B"), "B");
     resetDropdown(document.getElementById("cmp-select-I"), "I");
+    const indexStructure1 = document.getElementById("cmp-select-index-1");
+    const indexStructure2 = document.getElementById("cmp-select-index-2");
+    if (indexStructure1) {
+        indexStructure1.value = "SWARE";
+    }
+    if (indexStructure2) {
+        indexStructure2.value = "QuIT";
+    }
 
     // Hide elements that should not be visible initially
     document.getElementById("chart-column").classList.add("hidden");
     document.getElementById("buttons-container-wrapper").classList.add("hidden");
     document.getElementById("tree-area-step-3+").classList.add("hidden");
     document.getElementById("buffer-area").classList.add("hidden");
+    document.getElementById("insertions-area").classList.add("hidden");
     document.getElementById("dashed-line").classList.add("hidden");
     document.getElementById("run-button-container").classList.add("hidden");
     document.getElementById("results-panel").classList.add("hidden");
@@ -298,168 +368,461 @@ function reset_button() {
 
     console.log("Reset to default state.");
 }
-/*
- * Update the history
- */
 
-function update_history() {
-    sware_sorts_history.push(sware_sorts);
-    sware_flushes_history.push(sware_flushes);
-    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
-    sware_bulk_loads_history.push(sware_bulk_loads);
-    quit_fast_inserts_history.push(quit_fast_inserts);
-    sware_top_inserts_history.push(sware_top_inserts);
-    quit_top_inserts_history.push(quit_top_inserts);
-    quit_pole_resets_history.push(quit_pole_resets);
+function getResultsPanelRows()
+{
+    const costResult = document.getElementById("cost-result");
+    if (!costResult) {
+        return [];
+    }
+
+    return Array.from(costResult.children).filter((child) => child.classList && child.classList.contains("row"));
 }
 
-/*
- * Update the table
- */
+function getResultsRowBoundarySpans(rows, rowIndex)
+{
+    if (!Array.isArray(rows) || rowIndex < 0 || rowIndex >= rows.length) {
+        return [null, null];
+    }
+
+    const row = rows[rowIndex];
+    const leftContainer = row.children[0] || null;
+    const rightContainer = row.children[2] || null;
+    const leftSpan = leftContainer ? leftContainer.querySelector("span") : null;
+    const rightSpan = rightContainer ? rightContainer.querySelector("span") : null;
+    return [leftSpan, rightSpan];
+}
+
+function setResultsSpanValue(span, value)
+{
+    if (!span) {
+        return;
+    }
+    span.textContent = value == null ? "N/A" : value;
+}
+
+function setResultsTitleValue(span, value)
+{
+    if (!span) {
+        return;
+    }
+    span.textContent = value == null ? "" : value;
+}
+
+function getTreeTopInsertCount(tree)
+{
+    if (!tree) {
+        return null;
+    }
+    if (typeof tree.topInserts === "number") {
+        return tree.topInserts;
+    }
+    const treeSize = getTreeSize(tree);
+    if (typeof treeSize === "number" && typeof tree.fastInserts === "number") {
+        return Math.max(0, treeSize - tree.fastInserts);
+    }
+    return null;
+}
+
+function getTreeSize(tree)
+{
+    if (!tree) {
+        return null;
+    }
+    if (typeof tree.size === "number") {
+        return tree.size;
+    }
+    if (!tree.root) {
+        return null;
+    }
+
+    let total = 0;
+    const stack = [tree.root];
+    while (stack.length > 0) {
+        const node = stack.pop();
+        if (!node) {
+            continue;
+        }
+
+        if (node.leaf) {
+            if (typeof node.n === "number") {
+                total += node.n;
+            }
+            else if (Array.isArray(node.keys)) {
+                total += node.keys.length;
+            }
+            continue;
+        }
+
+        if (Array.isArray(node.children)) {
+            for (let i = node.children.length - 1; i >= 0; i--) {
+                if (node.children[i]) {
+                    stack.push(node.children[i]);
+                }
+            }
+        }
+    }
+
+    return total;
+}
+
+function getSwareManualSortedPageCount()
+{
+    if (swareComparisonPreview && typeof swareComparisonPreview.sortPages === "number") {
+        return swareComparisonPreview.sortPages;
+    }
+    if (!swareTree || typeof swareTree.sortPages !== "number") {
+        return null;
+    }
+    return swareTree.sortPages;
+}
+
+function getSwareAveragePagesPerFlush()
+{
+    if (!swareTree || typeof swareTree.avgPages !== "number") {
+        return 0;
+    }
+    return Math.round(swareTree.avgPages * 10) / 10;
+}
+
+function getSwareBulkloadedPageCount(fastInsertCount)
+{
+    const pageSize = swareTree && typeof swareTree.t === "number" && swareTree.t > 0
+        ? swareTree.t
+        : 10;
+    if (typeof fastInsertCount !== "number" || pageSize <= 0) {
+        return null;
+    }
+    return Math.round((fastInsertCount / pageSize) * 10) / 10;
+}
+
+function getComparisonMetricsByStructure()
+{
+    const swareFastInserts = swareComparisonPreview && typeof swareComparisonPreview.fastInserts === "number"
+        ? swareComparisonPreview.fastInserts
+        : (swareTree && typeof swareTree.fastInserts === "number" ? swareTree.fastInserts : null);
+    const swareTopInsertCount = swareComparisonPreview && typeof swareComparisonPreview.topInserts === "number"
+        ? swareComparisonPreview.topInserts
+        : getTreeTopInsertCount(swareTree);
+    const swareManualSortedPages = getSwareManualSortedPageCount();
+    const swareBulkloadedPages = getSwareBulkloadedPageCount(swareFastInserts);
+    const quitFastInserts = quitTree && typeof quitTree.fastInserts === "number"
+        ? quitTree.fastInserts
+        : null;
+    const lilFastInserts = lilTree && typeof lilTree.fastInserts === "number"
+        ? lilTree.fastInserts
+        : null;
+    const tailFastInserts = tailTree && typeof tailTree.fastInserts === "number"
+        ? tailTree.fastInserts
+        : null;
+
+    return {
+        SWARE: {
+            title: "SWARE",
+            manualSortedPages: swareManualSortedPages,
+            averagePagesPerFlush: getSwareAveragePagesPerFlush(),
+            pagesBulkloaded: swareBulkloadedPages,
+            fastInserts: swareFastInserts,
+            topInserts: swareTopInsertCount,
+            fastPathResets: null
+        },
+        QuIT: {
+            title: "QuIT",
+            manualSortedPages: null,
+            averagePagesPerFlush: null,
+            pagesBulkloaded: null,
+            fastInserts: quitFastInserts,
+            topInserts: getTreeTopInsertCount(quitTree),
+            fastPathResets: quitTree && typeof quitTree.fastPathResets === "number"
+                ? quitTree.fastPathResets
+                : null
+        },
+        Tail: {
+            title: "Tail",
+            manualSortedPages: null,
+            averagePagesPerFlush: null,
+            pagesBulkloaded: null,
+            fastInserts: tailFastInserts,
+            topInserts: getTreeTopInsertCount(tailTree),
+            fastPathResets: null
+        },
+        lil: {
+            title: "lil",
+            manualSortedPages: null,
+            averagePagesPerFlush: null,
+            pagesBulkloaded: null,
+            fastInserts: lilFastInserts,
+            topInserts: getTreeTopInsertCount(lilTree),
+            fastPathResets: lilTree && typeof lilTree.fastPathResets === "number"
+                ? lilTree.fastPathResets
+                : null
+        }
+    };
+}
 
 function update_table() {
-    document.getElementById("sware-sorts").innerHTML = sware_sorts;
-    document.getElementById("sware-flushes").innerHTML = sware_flushes;
-    document.getElementById("sware-average-pages-per-flush").innerHTML = sware_average_pages_per_flush;
-    document.getElementById("sware-bulk-loads").innerHTML = sware_bulk_loads;
-    document.getElementById("quit-fast-inserts").innerHTML = quit_fast_inserts;
-    document.getElementById("sware-top-inserts").innerHTML = sware_top_inserts;
-    document.getElementById("quit-top-inserts").innerHTML = quit_top_inserts;
-    document.getElementById("quit-pole-resets").innerHTML = quit_pole_resets;
+    const rows = getResultsPanelRows();
+    if (rows.length < 7) {
+        return;
+    }
+
+    const selectedStructures = typeof getSelectedStructureNames === "function"
+        ? getSelectedStructureNames()
+        : ["SWARE", "QuIT"];
+    const metrics = getComparisonMetricsByStructure();
+    const fallbackLeft = {
+        title: selectedStructures[0] || "N/A",
+        manualSortedPages: null,
+        averagePagesPerFlush: null,
+        pagesBulkloaded: null,
+        fastInserts: null,
+        topInserts: null,
+        fastPathResets: null
+    };
+    const fallbackRight = {
+        title: selectedStructures[1] || "N/A",
+        manualSortedPages: null,
+        averagePagesPerFlush: null,
+        pagesBulkloaded: null,
+        fastInserts: null,
+        topInserts: null,
+        fastPathResets: null
+    };
+    const leftMetrics = metrics[selectedStructures[0]] || fallbackLeft;
+    const rightMetrics = metrics[selectedStructures[1]] || fallbackRight;
+
+    let spans = getResultsRowBoundarySpans(rows, 0);
+    setResultsTitleValue(spans[0], leftMetrics.title);
+    setResultsTitleValue(spans[1], rightMetrics.title);
+
+    spans = getResultsRowBoundarySpans(rows, 1);
+    setResultsSpanValue(spans[0], leftMetrics.manualSortedPages);
+    setResultsSpanValue(spans[1], rightMetrics.manualSortedPages);
+
+    spans = getResultsRowBoundarySpans(rows, 2);
+    setResultsSpanValue(spans[0], leftMetrics.averagePagesPerFlush);
+    setResultsSpanValue(spans[1], rightMetrics.averagePagesPerFlush);
+
+    spans = getResultsRowBoundarySpans(rows, 3);
+    setResultsSpanValue(spans[0], leftMetrics.pagesBulkloaded);
+    setResultsSpanValue(spans[1], rightMetrics.pagesBulkloaded);
+
+    spans = getResultsRowBoundarySpans(rows, 4);
+    setResultsSpanValue(spans[0], leftMetrics.fastInserts);
+    setResultsSpanValue(spans[1], rightMetrics.fastInserts);
+
+    spans = getResultsRowBoundarySpans(rows, 5);
+    setResultsSpanValue(spans[0], leftMetrics.topInserts);
+    setResultsSpanValue(spans[1], rightMetrics.topInserts);
+
+    spans = getResultsRowBoundarySpans(rows, 6);
+    setResultsSpanValue(spans[0], leftMetrics.fastPathResets);
+    setResultsSpanValue(spans[1], rightMetrics.fastPathResets);
+
 }
 
+function getHistoryMax(history)
+{
+    if (!Array.isArray(history) || history.length === 0) {
+        return 0;
+    }
+    return Math.max(...history);
+}
 
+function getStructureChartColor(structureName)
+{
+    if (typeof STRUCTURE_CHART_COLORS === "undefined" || !STRUCTURE_CHART_COLORS) {
+        return "#80CBC4";
+    }
+    return STRUCTURE_CHART_COLORS[structureName] || "#80CBC4";
+}
+
+function updateComparisonLegends()
+{
+    const selectedStructures = (typeof comparisonChartHistory !== "undefined" && comparisonChartHistory)
+        ? [comparisonChartHistory.leftName, comparisonChartHistory.rightName]
+        : (typeof getSelectedStructureNames === "function" ? getSelectedStructureNames() : ["SWARE", "QuIT"]);
+    const metrics = getComparisonMetricsByStructure();
+    const leftName = metrics[selectedStructures[0]] ? metrics[selectedStructures[0]].title : selectedStructures[0];
+    const rightName = metrics[selectedStructures[1]] ? metrics[selectedStructures[1]].title : selectedStructures[1];
+
+    const leftLabel = document.getElementById("lsm-cmpct-pp-1-legend");
+    const rightLabel = document.getElementById("lsm-cmpct-pp-2-legend");
+    const leftBox = document.getElementById("comparison-legend-1-box");
+    const rightBox = document.getElementById("comparison-legend-2-box");
+
+    if (leftLabel) {
+        leftLabel.innerHTML = "<b>" + leftName + "</b>";
+    }
+    if (rightLabel) {
+        rightLabel.innerHTML = "<b>" + rightName + "</b>";
+    }
+    if (leftBox) {
+        const leftColor = getStructureChartColor(selectedStructures[0]);
+        leftBox.style.backgroundColor = leftColor;
+        leftBox.style.borderColor = leftColor;
+    }
+    if (rightBox) {
+        const rightColor = getStructureChartColor(selectedStructures[1]);
+        rightBox.style.backgroundColor = rightColor;
+        rightBox.style.borderColor = rightColor;
+    }
+}
+
+function clearComparisonCharts()
+{
+    const chartIds = [
+        "comparison-top-inserts-chart",
+        "comparison-fast-inserts-chart",
+        "comparison-fast-path-resets-chart"
+    ];
+    for (const chartId of chartIds) {
+        const chartElement = document.getElementById(chartId);
+        if (chartElement) {
+            chartElement.innerHTML = "";
+        }
+    }
+}
+
+function buildComparisonChartData(leftName, rightName, leftHistory, rightHistory)
+{
+    const rowCount = Math.max(
+        Array.isArray(leftHistory) ? leftHistory.length : 0,
+        Array.isArray(rightHistory) ? rightHistory.length : 0
+    );
+    const plotData = [['Operation Steps', leftName, rightName]];
+    if (rowCount > 0) {
+        plotData.push([0, 0, 0]);
+    }
+    for (let i = 0; i < rowCount; i++) {
+        plotData.push([
+            i + 1,
+            Array.isArray(leftHistory) && typeof leftHistory[i] === "number" ? leftHistory[i] : 0,
+            Array.isArray(rightHistory) && typeof rightHistory[i] === "number" ? rightHistory[i] : 0
+        ]);
+    }
+    return plotData;
+}
+
+function drawComparisonChart(chartElementId, chartTitle, yAxisTitle, leftName, rightName, leftHistory, rightHistory)
+{
+    const chartElement = document.getElementById(chartElementId);
+    if (!chartElement) {
+        return;
+    }
+
+    const plotData = buildComparisonChartData(leftName, rightName, leftHistory, rightHistory);
+    if (plotData.length <= 1) {
+        return;
+    }
+
+    const data = google.visualization.arrayToDataTable(plotData);
+    const maxValue = Math.max(getHistoryMax(leftHistory), getHistoryMax(rightHistory), 1);
+    const stepCount = Math.max(
+        Array.isArray(leftHistory) ? leftHistory.length : 0,
+        Array.isArray(rightHistory) ? rightHistory.length : 0
+    );
+    const selectedStructures = (typeof comparisonChartHistory !== "undefined" && comparisonChartHistory)
+        ? [comparisonChartHistory.leftName, comparisonChartHistory.rightName]
+        : (typeof getSelectedStructureNames === "function" ? getSelectedStructureNames() : ["SWARE", "QuIT"]);
+
+    const options = {
+        title: chartTitle,
+        hAxis: {
+            title: 'Operation Steps',
+            minValue: 0,
+            maxValue: stepCount,
+            ticks: 1,
+            viewWindowMode: 'explicit',
+            viewWindow: {min: 0, max: Math.max(stepCount, 1)}
+        },
+        vAxis: {
+            title: yAxisTitle,
+            minValue: 0,
+            maxValue: maxValue,
+            ticks: 1,
+            viewWindowMode: 'explicit',
+            viewWindow: {min: 0, max: maxValue}
+        },
+        legend: "none",
+        colors: [
+            getStructureChartColor(selectedStructures[0]),
+            getStructureChartColor(selectedStructures[1])
+        ],
+        explorer: {
+            zoomDelta: 0.8,
+        },
+        lineWidth: 2
+    };
+
+    const chart = new google.visualization.LineChart(chartElement);
+    chart.draw(data, options);
+}
 /*
  * Update the charts
  */
 
 function update_charts() {
-    let plot_data = [];
-    let data;
-
-    /* Number of SWARE Sorts vs. Operation Steps Chart */
-    plot_data.push(['Operation Steps', 'SWARE']);
-    for (let i = 1; i <= sware_sorts_history.length; i++) {
-        plot_data.push([i, sware_sorts_history[i]]);
+    if (typeof google === "undefined" || !google.visualization) {
+        return;
     }
-    data = google.visualization.arrayToDataTable(plot_data);
+    if (!comparisonChartHistory) {
+        return;
+    }
 
-    var options = {
-        title: "Number of SWARE Sorts vs. Operation Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_sorts_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Sorts', minValue: 0, maxValue: Math.max(...sware_sorts_history), ticks: 1},
-        legend: "none",
-        explorer: { 
-            zoomDelta: 0.8,
-        },
-        legends: "none",
-        colors: ["#80CBC4"]
-    };
+    updateComparisonLegends();
 
-    var chart = new google.visualization.LineChart(document.getElementById("sware-sorts-chart"));
-    chart.draw(data, options);
+    const metrics = getComparisonMetricsByStructure();
+    const leftTitle = metrics[comparisonChartHistory.leftName]
+        ? metrics[comparisonChartHistory.leftName].title
+        : comparisonChartHistory.leftName;
+    const rightTitle = metrics[comparisonChartHistory.rightName]
+        ? metrics[comparisonChartHistory.rightName].title
+        : comparisonChartHistory.rightName;
 
+    drawComparisonChart(
+        "comparison-top-inserts-chart",
+        "Number of Top Inserts vs. Operation Steps",
+        "# of Top Inserts",
+        leftTitle,
+        rightTitle,
+        comparisonChartHistory.topInsertsLeft,
+        comparisonChartHistory.topInsertsRight
+    );
 
-    /* Number of SWARE Flushes vs. Operation Steps Chart */
+    drawComparisonChart(
+        "comparison-fast-inserts-chart",
+        "Number of Fast Inserts vs. Operation Steps",
+        "# of Fast Inserts",
+        leftTitle,
+        rightTitle,
+        comparisonChartHistory.fastInsertsLeft,
+        comparisonChartHistory.fastInsertsRight
+    );
+
+    drawComparisonChart(
+        "comparison-fast-path-resets-chart",
+        "Number of Fast Path Resets vs. Operation Steps",
+        "# of Fast Path Resets",
+        leftTitle,
+        rightTitle,
+        comparisonChartHistory.fastPathResetsLeft,
+        comparisonChartHistory.fastPathResetsRight
+    );
+
+    /*
+    Sware vs QuIT fast inserts 
     plot_data = [];
-    plot_data.push(['Operation Steps', '# of SWARE Flushes']);
-    for (let i = 1; i <= sware_flushes_history.length; i++) {
-        plot_data.push([i, sware_flushes_history[i]]);
+    plot_data.push(['Sware Bulk Loads', '# QuIT Fast Inserts']);
+    for (let i = 0; i < quit_fast_inserts_history.length&&i<sware_bulk_loads_history.length; i++) {
+        plot_data.push([sware_bulk_loads_history[i], quit_fast_inserts_history[i]]);
     }
     data = google.visualization.arrayToDataTable(plot_data);
 
     var options = {
-        title: "Number of SWARE Flushes vs. Operation Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_flushes_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_flushes_history), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-flushes-chart"));
-    chart.draw(data, options);
-    
-    /* Number of Average Pages per SWARE Flush vs. Operation Step Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# of Average Pages per SWARE Flush vs. Operation Step Chart']);
-    for (let i = 1; i <= sware_average_pages_per_flush_history.length; i++) {
-        plot_data.push([i, sware_average_pages_per_flush_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of average pages per SWARE flush vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_average_pages_per_flush_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Flushes', minValue: 0, maxValue: Math.max(...sware_average_pages_per_flush_history), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-average-pages-per-flush-chart"));
-    chart.draw(data, options);
-
-    /* Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operation Step Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# SWARE Bulk Loads', '# QuIT Fast Inserts']);
-    for (let i = 1; i <= sware_bulk_loads_history.length; i++) {
-        plot_data.push([i, sware_bulk_loads_history[i], quit_fast_inserts_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of SWARE Bulk Loads / QuIT Fast Inserts vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_bulk_loads_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_bulk_loads_history), Math.max(...quit_fast_inserts_history)), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4", "#FFB433"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loads/quit-fast-inserts-chart"));
-    chart.draw(data, options);
-
-    /* Number of SWARE Top Inserts / QuIT Top Inserts vs. Operation Steps Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# SWARE Top Inserts', '# QuIT Top Inserts']);
-    for (let i = 1; i <= sware_top_inserts_history.length; i++) {
-        plot_data.push([i, sware_top_inserts_history[i], quit_top_inserts_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of SWARE Top Inserts / QuIT Top Inserts vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: sware_top_inserts_history.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(Math.max(...sware_top_inserts_history), Math.max(...quit_top_inserts_history)), ticks: 1},
-        legend: "none",
-        colors: ["#80CBC4", "#FFB433"],
-        explorer: { 
-            zoomDelta: 0.8,
-        }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById("sware-top-inserts/quit-top-inserts-chart"));
-    chart.draw(data, options);
-
-    /* Number of QuIT Pole Resets Chart */
-    plot_data = [];
-    plot_data.push(['Operation Steps', '# QuIT Pole Resets']);
-    for (let i = 1; i <= quit_pole_resets_history.length; i++) {
-        plot_data.push([i, quit_pole_resets_history[i]]);
-    }
-    data = google.visualization.arrayToDataTable(plot_data);
-
-    var options = {
-        title: "Number of QuIT Pole Resets vs. Operations Steps",
-        hAxis: {title: 'Operation Steps', minValue: 0, maxValue: quit_pole_resets_history.length.length, ticks: 1},
-        vAxis: {title: '# of SWARE Bulk Loads / QuIT Fast Inserts', minValue: 0, maxValue: Math.max(...quit_pole_resets_history), ticks: 1},
+        title: "Number of SWARE bulk loads vs QuIT Fast Inserts",
+        hAxis: {title: 'SWARE Bulk Loads', minValue: 0, maxValue: Math.max(...sware_bulk_loads_history), ticks: 1},
+        vAxis: {title: '# QuIT Fast Inserts', minValue: 0, maxValue: Math.max(...quit_fast_inserts_history), ticks: 1},
         legend: "none",
         colors: ["#FFB433"],
         explorer: { 
@@ -467,9 +830,56 @@ function update_charts() {
         }
     };
 
-    var chart = new google.visualization.LineChart(document.getElementById("quit-pole-resets-chart"));
+    var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loadsvsquit-fast-inserts-chart"));
     chart.draw(data, options);
 
+    // Sware vs QuIT top inserts 
+    plot_data = [];
+    plot_data.push(['Sware Top Inserts', '# QuIT Top Inserts']);
+    for (let i = 0; i < quit_top_inserts_history.length&&i<sware_top_inserts_history.length; i++) {
+        plot_data.push([sware_top_inserts_history[i], quit_top_inserts_history[i]]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Number of SWARE Top Inserts vs QuIT Top Inserts",
+        hAxis: {title: 'SWARE Top Inserts', minValue: 0, maxValue: Math.max(...sware_top_inserts_history), ticks: 1},
+        vAxis: {title: '# QuIT Top Inserts', minValue: 0, maxValue: Math.max(...quit_top_inserts_history), ticks: 1},
+        legend: "none",
+        colors: ["#FFB433"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-top-insertsvsquit-top-inserts-chart"));
+    chart.draw(data, options);
+
+
+    plot_data = [];
+    plot_data.push(['Sware Bulk Load Percentage', '# QuIT Fast Insert Percentage']);
+    for (let i = 0; i < quit_top_inserts_history.length && i < sware_top_inserts_history.length && i < quit_fast_inserts_history.length && i < sware_bulk_loads_history.length; i++) {
+        plot_data.push([
+            Math.floor(sware_bulk_loads_history[i] / (sware_bulk_loads_history[i]+sware_top_inserts_history[i]) * 100),
+            Math.floor(quit_fast_inserts_history[i] / (quit_fast_inserts_history[i]+quit_top_inserts_history[i]) * 100)
+        ]);
+    }
+    data = google.visualization.arrayToDataTable(plot_data);
+
+    var options = {
+        title: "Sware Bulk Load percentage vs QuIT Fast Insert percentage",
+        hAxis: {title: '% SWARE Bulk Loads', minValue: 0, maxValue:100, ticks: 1},
+        vAxis: {title: '% QuIT Fast Inserts', minValue: 0, maxValue: 100, ticks: 1},
+        legend: "none",
+        colors: ["#FFB433"],
+        explorer: { 
+            zoomDelta: 0.8,
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("sware-bulk-loadsvsquit-fast-inserts-chart-percent"));
+    chart.draw(data, options);
+    */
 
 
 }

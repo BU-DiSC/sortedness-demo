@@ -8,59 +8,59 @@ var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
 var selectedA; // stores the A value selected
 var selectedE; // stores the E value selected
+var selectedIndexStructure1 = "SWARE";
+var selectedIndexStructure2 = "QuIT";
 var selectedA; // stores the A value selected
 var selectedE; // stores the E value selected
 
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
-var delay = 1000;                // delay between animations
 var total_data = [];            // stores the workload data
 var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
 var delay = 1000;                // delay between animations
-var total_data = [];            // stores the workload data
 var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
 
 /* Parameters for the SWARE algorithm */
 
-var buffer = [];                      // the buffer
-var tree = [];                        // the tree
-var zones = [];                       // the zones
-var lastSortedIndex = -1;             // last sorted index
-var moved = false;                    // used to check if the element is moved
-var partitioned_data = [];            // partitioned data, 10 elements per partition
-var state = 0;                        // used to decide which step nextStep() will be performed
-var sware_max_tree = Number.MIN_SAFE_INTEGER;   // stores the max value in the tree
-var buffer = [];                      // the buffer
-var tree = [];                        // the tree
-var zones = [];                       // the zones
-var lastSortedIndex = -1;             // last sorted index
-var moved = false;                    // used to check if the element is moved
-var partitioned_data = [];            // partitioned data, 10 elements per partition
-var state = 0;                        // used to decide which step nextStep() will be performed
-var sware_max_tree = Number.MIN_SAFE_INTEGER;   // stores the max value in the tree
-var sware_max_buffer = Number.MIN_SAFE_INTEGER; // stores the max value in the buffer
-var numInsideBuffer = 0;             // number of elements inside the buffer
-var overlapped;                      // stores the overlapped element
-var overlapper;                      // stores the overlapping element that is added later
-var overlapperSet = false;           // used when calculating lastSortedIndex
-var zones_dict = {};                 // dictionary to store the zones
+let sware_data = [];
+let tail_data = [];
+let lil_data = [];
+
+const STRUCTURE_PANEL_IDS = {
+    SWARE: "structure-panel-sware",
+    QuIT: "structure-panel-quit",
+    Tail: "structure-panel-tail",
+    lil: "structure-panel-lil"
+};
+
+const STRUCTURE_BOX_IDS = {
+    SWARE: "sware-box",
+    QuIT: "quit-box",
+    Tail: "tail-box",
+    lil: "lil-box"
+};
 
 /* Parameters for the QuIT algorithm */
 
-var inserted_data_quit = []; // stores the inserted data
 var leaf_node_size = 10;     // size of the leaf node
 var pole = [];                // current pole
 var pole_prev = [];           // previous pole
 let pole_next = [];           // next pole
+let zones_quit = [];
+let in_pole_next;
+let poleIndex;
+let quit_max = Number.MIN_SAFE_INTEGER; 
+
 
 /* Parameters for the charts */
-
 var sware_sorts = 0;
 var sware_sorts_history = [];
 var sware_flushes = 0;
 var sware_flushes_history = [];
+var pages_flushed;
+var total_pages_flushed = 0;
 var sware_average_pages_per_flush = 0;
 var sware_average_pages_per_flush_history = [];
 var sware_bulk_loads = 0;
@@ -73,14 +73,425 @@ var quit_top_inserts = 0;
 var quit_top_inserts_history = [];
 var quit_pole_resets = 0;
 var quit_pole_resets_history = [];
+var swareComparisonPreview = null;
+var comparisonChartHistory = null;
 var exchangesDatasets = [];
 var klDatasets = [];
+let quit_leaf_dict = [];
+
+const STRUCTURE_CHART_COLORS = {
+    SWARE: "#80CBC4",
+    QuIT: "#FFB433",
+    Tail: "#5b8ecb",
+    lil: "#d96c6c"
+};
 
 // array that holds the field user inputted
 // order is [n,k,l,b,exchanges]
 var inputedDataE = [];
 var inputedDatakl = [];
 var totalCharts = 0;
+
+
+//trees
+let quitTree = new QuIT(10);
+let lilTree = new LilTree(10);
+let tailTree = new Tail(10);
+let swareTree = new Sware(10);
+let nextStepInProgress = false;
+let fastForwardInProgress = false;
+let animationIntervalId = null;
+
+function readSelectedIndexStructures() {
+    const firstSelect = document.getElementById('cmp-select-index-1');
+    const secondSelect = document.getElementById('cmp-select-index-2');
+    selectedIndexStructure1 = firstSelect ? firstSelect.value : "SWARE";
+    selectedIndexStructure2 = secondSelect ? secondSelect.value : "QuIT";
+}
+
+function getSelectedStructureNames()
+{
+    return [selectedIndexStructure1, selectedIndexStructure2];
+}
+
+function validateSelectedStructures()
+{
+    if (selectedIndexStructure1 === selectedIndexStructure2) {
+        alert("Please select two different index structures.");
+        return false;
+    }
+    return true;
+}
+
+function returnStructurePanelsToStore()
+{
+    const panelStore = document.getElementById("structure-panel-store");
+    if (!panelStore) {
+        return;
+    }
+
+    for (const panelId of Object.values(STRUCTURE_PANEL_IDS)) {
+        const panel = document.getElementById(panelId);
+        if (panel && panel.parentElement !== panelStore) {
+            panelStore.appendChild(panel);
+        }
+    }
+}
+
+function mountSelectedStructurePanels()
+{
+    const leftSlot = document.getElementById("buffer-area");
+    const rightSlot = document.getElementById("quit-area");
+    if (!leftSlot || !rightSlot) {
+        return;
+    }
+
+    returnStructurePanelsToStore();
+    const [leftStructure, rightStructure] = getSelectedStructureNames();
+    const leftPanel = document.getElementById(STRUCTURE_PANEL_IDS[leftStructure]);
+    const rightPanel = document.getElementById(STRUCTURE_PANEL_IDS[rightStructure]);
+
+    if (leftPanel) {
+        leftSlot.appendChild(leftPanel);
+    }
+    if (rightPanel) {
+        rightSlot.appendChild(rightPanel);
+    }
+}
+
+function showSelectedStructureSlots()
+{
+    const leftSlot = document.getElementById("buffer-area");
+    const rightSlot = document.getElementById("quit-area");
+    if (leftSlot) {
+        leftSlot.classList.remove("hidden");
+    }
+    if (rightSlot) {
+        rightSlot.classList.remove("hidden");
+    }
+}
+
+function initializeSelectedStructureVisuals()
+{
+    const uniqueStructures = Array.from(new Set(getSelectedStructureNames()));
+    for (const structureName of uniqueStructures) {
+        if (structureName === "SWARE") {
+            initializeSwareVisualization();
+        }
+        else if (structureName === "QuIT") {
+            initializeQuitVisualization();
+        }
+        else if (structureName === "Tail") {
+            initializeTailVisualization();
+        }
+        else if (structureName === "lil") {
+            initializeLilVisualization();
+        }
+    }
+}
+
+function getStructureDataLength(structureName)
+{
+    if (structureName === "SWARE") {
+        return sware_data.length;
+    }
+    if (structureName === "Tail") {
+        return tail_data.length;
+    }
+    if (structureName === "lil") {
+        return lil_data.length;
+    }
+    if (structureName === "QuIT") {
+        return total_data.length;
+    }
+    return 0;
+}
+
+function getStructurePhaseRunner(structureName)
+{
+    if (structureName === "SWARE") {
+        return animateSwarePhase;
+    }
+    if (structureName === "QuIT") {
+        return runQuitPhase;
+    }
+    if (structureName === "Tail") {
+        return runTailPhase;
+    }
+    if (structureName === "lil") {
+        return runLilPhase;
+    }
+    return null;
+}
+
+function getStructureBoxId(structureName)
+{
+    return STRUCTURE_BOX_IDS[structureName] || null;
+}
+
+function shouldShowResultsPanels()
+{
+    const selectedStructures = new Set(getSelectedStructureNames());
+    return selectedStructures.size === 2 &&
+        selectedStructures.has("SWARE") &&
+        selectedStructures.has("QuIT");
+}
+
+function getStructureExecutionOrder()
+{
+    const selectedStructures = getSelectedStructureNames();
+    if (!selectedStructures.includes("QuIT")) {
+        return selectedStructures.slice();
+    }
+
+    const nonQuitStructures = selectedStructures.filter((name) => name !== "QuIT");
+    if (nonQuitStructures.length === 0) {
+        return selectedStructures.slice();
+    }
+    return nonQuitStructures.concat("QuIT");
+}
+
+function resetComparisonMetrics()
+{
+    sware_sorts = 0;
+    sware_sorts_history = [];
+    sware_flushes = 0;
+    sware_flushes_history = [];
+    pages_flushed = 0;
+    total_pages_flushed = 0;
+    sware_average_pages_per_flush = 0;
+    sware_average_pages_per_flush_history = [];
+    sware_bulk_loads = 0;
+    sware_bulk_loads_history = [];
+    sware_top_inserts = 0;
+    sware_top_inserts_history = [];
+    quit_fast_inserts = 0;
+    quit_fast_inserts_history = [];
+    quit_top_inserts = 0;
+    quit_top_inserts_history = [];
+    quit_pole_resets = 0;
+    quit_pole_resets_history = [];
+    swareComparisonPreview = null;
+    comparisonChartHistory = null;
+}
+
+function getChartMetricValue(metricValue)
+{
+    return typeof metricValue === "number" ? metricValue : 0;
+}
+
+function initializeComparisonChartHistory()
+{
+    const selectedStructures = getSelectedStructureNames();
+    comparisonChartHistory = {
+        leftName: selectedStructures[0],
+        rightName: selectedStructures[1],
+        topInsertsLeft: [],
+        topInsertsRight: [],
+        fastInsertsLeft: [],
+        fastInsertsRight: [],
+        fastPathResetsLeft: [],
+        fastPathResetsRight: []
+    };
+}
+
+function syncSelectedStructureChartHistory()
+{
+    if (!comparisonChartHistory || typeof getComparisonMetricsByStructure !== "function") {
+        return;
+    }
+
+    const metrics = getComparisonMetricsByStructure();
+    const leftMetrics = metrics[comparisonChartHistory.leftName] || null;
+    const rightMetrics = metrics[comparisonChartHistory.rightName] || null;
+
+    comparisonChartHistory.topInsertsLeft.push(getChartMetricValue(leftMetrics ? leftMetrics.topInserts : null));
+    comparisonChartHistory.topInsertsRight.push(getChartMetricValue(rightMetrics ? rightMetrics.topInserts : null));
+    comparisonChartHistory.fastInsertsLeft.push(getChartMetricValue(leftMetrics ? leftMetrics.fastInserts : null));
+    comparisonChartHistory.fastInsertsRight.push(getChartMetricValue(rightMetrics ? rightMetrics.fastInserts : null));
+    comparisonChartHistory.fastPathResetsLeft.push(getChartMetricValue(leftMetrics ? leftMetrics.fastPathResets : null));
+    comparisonChartHistory.fastPathResetsRight.push(getChartMetricValue(rightMetrics ? rightMetrics.fastPathResets : null));
+}
+
+function fastForwardStructureInsert(structureName)
+{
+    if (structureName === "SWARE") {
+        return sware();
+    }
+    if (structureName === "Tail" && Array.isArray(tail_data) && tail_data.length > 0) {
+        tailTree.insert(tail_data[0]);
+        tail_data.shift();
+        return true;
+    }
+    if (structureName === "lil" && Array.isArray(lil_data) && lil_data.length > 0) {
+        lilTree.insert(lil_data[0]);
+        lil_data.shift();
+        return true;
+    }
+    if (structureName === "QuIT" && Array.isArray(total_data) && total_data.length > 0) {
+        quitTree.insert(total_data[0]);
+        total_data.shift();
+        return true;
+    }
+    return null;
+}
+
+function refreshSelectedStructureViews()
+{
+    initializeSelectedStructureVisuals();
+    updateInsertionsPanel(false);
+}
+
+function waitForStepToFinish()
+{
+    if (!nextStepInProgress) {
+        return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+        const poll = () => {
+            if (!nextStepInProgress) {
+                resolve();
+                return;
+            }
+            requestAnimationFrame(poll);
+        };
+        poll();
+    });
+}
+
+async function fast_forward_button(stepCount)
+{
+    if (fastForwardInProgress || !Number.isInteger(stepCount) || stepCount <= 0 || total_data.length === 0) {
+        return;
+    }
+
+    const wasRunning = running;
+    fastForwardInProgress = true;
+    running = false;
+    if (animationIntervalId != null) {
+        clearInterval(animationIntervalId);
+        animationIntervalId = null;
+    }
+    await waitForStepToFinish();
+    nextStepInProgress = true;
+
+    try {
+        const selectedStructures = getSelectedStructureNames();
+        if (selectedStructures.some((structureName) => getStructureDataLength(structureName) === 0)) {
+            return;
+        }
+        const executionOrder = getStructureExecutionOrder();
+        const iterations = Math.min(stepCount, total_data.length);
+
+        for (let i = 0; i < iterations && total_data.length > 0; i++) {
+            if (selectedStructures.some((structureName) => getStructureDataLength(structureName) === 0)) {
+                break;
+            }
+            let insertedQuit = false;
+
+            for (const structureName of executionOrder) {
+                const result = fastForwardStructureInsert(structureName);
+                if (structureName === "QuIT" && result) {
+                    insertedQuit = true;
+                }
+            }
+
+            if (!insertedQuit) {
+                total_data.shift();
+            }
+
+            clearSwareComparisonPreview();
+            syncSelectedStructureChartHistory();
+        }
+
+        if (total_data.length === 0) {
+            running = false;
+        }
+        refreshSelectedStructureViews();
+        update_table();
+        update_charts();
+    }
+    finally {
+        nextStepInProgress = false;
+        fastForwardInProgress = false;
+    }
+
+    if (total_data.length === 0) {
+        stop_button();
+    }
+    else if (wasRunning) {
+        continue_button();
+    }
+    else {
+        stop_button();
+    }
+}
+
+function setSwareComparisonPreview(preview)
+{
+    swareComparisonPreview = preview;
+    if (typeof update_table === "function") {
+        update_table();
+    }
+}
+
+function clearSwareComparisonPreview()
+{
+    swareComparisonPreview = null;
+}
+
+function getSwareTracePageCount(trace)
+{
+    if (!trace || !Array.isArray(trace.flushEvents)) {
+        return 0;
+    }
+
+    const pageIndexes = new Set();
+    for (const event of trace.flushEvents) {
+        if (event && Number.isInteger(event.pageIndex)) {
+            pageIndexes.add(event.pageIndex);
+        }
+    }
+    return pageIndexes.size;
+}
+
+function syncComparisonMetrics(swareTrace)
+{
+    if (!shouldShowResultsPanels()) {
+        return;
+    }
+
+    const previousFlushes = sware_flushes;
+    sware_flushes = swareTree && typeof swareTree.bufferFlushes === "number"
+        ? swareTree.bufferFlushes
+        : sware_flushes;
+    sware_sorts = sware_flushes;
+
+    if (swareTrace && swareTrace.bufferWasFull && sware_flushes > previousFlushes) {
+        pages_flushed = getSwareTracePageCount(swareTrace);
+        total_pages_flushed += pages_flushed;
+    }
+
+    sware_average_pages_per_flush = sware_flushes > 0
+        ? total_pages_flushed / sware_flushes
+        : 0;
+    sware_bulk_loads = swareTree && typeof swareTree.fastInserts === "number"
+        ? swareTree.fastInserts
+        : sware_bulk_loads;
+    sware_top_inserts = swareTree && typeof swareTree.topInserts === "number"
+        ? swareTree.topInserts
+        : sware_top_inserts;
+
+    quit_fast_inserts = quitTree ? quitTree.fastInserts : 0;
+    quit_top_inserts = quitTree ? (quitTree.size - quitTree.fastInserts) : 0;
+    quit_pole_resets = quitTree ? quitTree.poleResets : 0;
+
+    sware_sorts_history.push(sware_sorts);
+    sware_flushes_history.push(sware_flushes);
+    sware_average_pages_per_flush_history.push(sware_average_pages_per_flush);
+    sware_bulk_loads_history.push(sware_bulk_loads);
+    sware_top_inserts_history.push(sware_top_inserts);
+}
 
 /*
  * Gets called after "Generate Workload" button is clicked
@@ -98,6 +509,7 @@ function visualize_workload() {
     selectedL = parseFloat(document.getElementById('cmp-select-L').value);
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
     selectedA = parseFloat(document.getElementById('cmp-select-A').value);
+    readSelectedIndexStructures();
     // selectedE = parseInt(document.getElementById('cmp-select-E').value);
 
     let flag = true; // flag to generate graph when parameters are acceptable
@@ -172,7 +584,6 @@ function visualize_workload() {
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
         klDatasets.push(total_data);
-        // TODO: make exchanges method more randomized
         total_exchanges_data = generateInversion(selectedN, selectedE);
         exchangesDatasets.push(total_exchanges_data);
 
@@ -381,20 +792,6 @@ function visualize_workload() {
         document.getElementById("runBtn").classList.remove("hidden");
         document.getElementById("run-button-contain").classList.remove("hidden");
 
-        // Partition the data    
-        for (let i = 0; i < total_data.length; i += 10) {
-            const part = total_data.slice(i, i + 10);
-            partitioned_data.push(part);
-        }
-
-        // Fill up zones, zones_dict
-        for (let i = 0; i < partitioned_data.length; i++) {
-            const min = Math.min(...partitioned_data[i]);
-            const max = Math.max(...partitioned_data[i]);
-            zones.push([min, max]);
-            zones_dict[max] = partitioned_data[i];
-        }
-
     } else {
         console.log("Invalid parameters detected, visualization aborted");
     }
@@ -413,6 +810,8 @@ function run_operations() {
     selectedL = parseFloat(document.getElementById('cmp-select-L').value);
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
     selectedA = parseFloat(document.getElementById('cmp-select-A').value);
+    readSelectedIndexStructures();
+    nextStepInProgress = false;
 
 
     // Validate all parameters before proceeding
@@ -448,86 +847,192 @@ function run_operations() {
         flag = false;
     }
 
+    if (flag && !validateSelectedStructures()) {
+        flag = false;
+    }
+
 
     if(flag){
+        if (animationIntervalId != null) {
+            clearInterval(animationIntervalId);
+            animationIntervalId = null;
+        }
+        running = true;
+        delay = 1000;
+        quitTree = new QuIT(10);
+        swareTree = new Sware(10);
+        tailTree = new Tail(10);
+        lilTree = new LilTree(10);
+        resetComparisonMetrics();
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
-        // Partition the data    
-        for (let i = 0; i < total_data.length; i += 10) {
-            const part = total_data.slice(i, i + 10);
-            partitioned_data.push(part);
-        }
-
-        // Fill up zones, zones_dict
-        for (let i = 0; i < partitioned_data.length; i++) {
-            const min = Math.min(...partitioned_data[i]);
-            const max = Math.max(...partitioned_data[i]);
-            zones.push([min, max]);
-            zones_dict[max] = partitioned_data[i];
-        }
+        
+        sware_data = [...total_data];
+        tail_data = [...total_data];
+        lil_data = [...total_data];
         console.log("Starting to run the algorithm.");
-
+        //pre-load
+        state = 2;
+        document.getElementById('animations-div').classList.remove("hidden");
+        mountSelectedStructurePanels();
+        showSelectedStructureSlots();
+        const swareTreeArea = document.getElementById('tree-area-step-3+');
+        if (swareTreeArea) {
+            swareTreeArea.classList.toggle("hidden", !getSelectedStructureNames().includes("SWARE"));
+        }
+        initializeQuitVisualization();
+        updateInsertionsPanel(false);
+        initializeSelectedStructureVisuals();
         // Show hidden divs
-        document.getElementById('buffer-area').classList.remove('hidden');
+        //document.getElementById('data-box').classList.remove('hidden');
         document.getElementById('buttons-container-wrapper').classList.remove('hidden');
         document.getElementById('dashed-line').classList.remove('hidden');
-        document.getElementById('quit-area').classList.remove("hidden");
+        document.getElementById('insertions-area').classList.remove("hidden");
         document.getElementById('results-panel').classList.remove("hidden");
         document.getElementById('plots').classList.remove("hidden");
-        document.getElementById('animations-div').classList.remove("hidden");
+        initializeComparisonChartHistory();
+        if (typeof clearComparisonCharts === "function") {
+            clearComparisonCharts();
+        }
+        if (typeof updateComparisonLegends === "function") {
+            updateComparisonLegends();
+        }
+        if (typeof update_table === "function") {
+            update_table();
+        }
 
         document.getElementById("stop-button").disabled = false; // enable stop button
         document.getElementById("continue-button").disabled = true; // disable continue button
-        document.getElementById("nextstep-button").disabled = true; // disable nextstep button
+        const nextstepButton = document.getElementById("nextstep-button");
+        if (nextstepButton) {
+            nextstepButton.disabled = true;
+        }
 
-        state = 2; // SWARE buffer is empty initially
-
-        // The main loop
-        let interval = setInterval(() => {
+        animationIntervalId = setInterval(() => {
             if (running == false) {
-                clearInterval(interval);
+                clearInterval(animationIntervalId);
+                animationIntervalId = null;
+                console.log('test');
                 return;
             }
             next_step();
+            delay = delay+(quitTree.size/10);
         }, delay);
-        }
+        //increase delay for large values inserted
+    }
     else{
         console.log('error');
     }
 }
 
-//Function for the data.html file
-function run2_operations() {
-    console.log("Starting to run the algorithm.");
-
-    // Show hidden divs
-    document.getElementById('plots').classList.remove("hidden");
-
-    document.getElementById("stop-button").disabled = false; // enable stop button
-    document.getElementById("continue-button").disabled = true; // disable continue button
-    document.getElementById("nextstep-button").disabled = true; // disable nextstep button
-
-    state = 2; // SWARE buffer is empty initially
-
-    // The main loop
-    let interval = setInterval(() => {
-        if (running == false) {
-            clearInterval(interval);
-            return;
-        }
-        next_step();
-    }, delay);
-}
-
 /*
  * Runs one step of both algorithms and updates the UI
  */
-function next_step() {
-    sware();
-    quit();
-    update_history();
-    update_table();
-    update_charts();
+function setAlgorithmBoxActive(boxId, active)
+{
+    const box = document.getElementById(boxId);
+    if (!box) {
+        return;
+    }
+    box.classList.toggle("algo-box-active", active);
+}
+
+function setAlgorithmBoxFlushing(boxId, active)
+{
+    const box = document.getElementById(boxId);
+    if (!box) {
+        return;
+    }
+    box.classList.toggle("algo-box-flushing", active);
+}
+
+function runQuitPhase()
+{
+    return new Promise((resolve) => {
+        if (total_data.length === 0) {
+            resolve();
+            return;
+        }
+
+        const beforeLen = total_data.length;
+        quit();
+        const startedAt = Date.now();
+        const maxWaitMs = Math.max(2500, Math.floor(delay * 2));
+
+        const poll = () => {
+            if (total_data.length < beforeLen || (Date.now() - startedAt) > maxWaitMs) {
+                resolve();
+                return;
+            }
+            requestAnimationFrame(poll);
+        };
+        poll();
+    });
+}
+
+async function next_step() {
+    if (nextStepInProgress) {
+        return;
+    }
+    const selectedStructures = getSelectedStructureNames();
+    if (total_data.length === 0) {
+        running = false;
+        return;
+    }
+    for (const structureName of selectedStructures) {
+        if (getStructureDataLength(structureName) === 0) {
+            running = false;
+            return;
+        }
+    }
+
+    nextStepInProgress = true;
+    updateInsertionsPanel(true);
+
+    try {
+        const executionOrder = getStructureExecutionOrder();
+        const phaseResults = {};
+        for (const structureName of executionOrder) {
+            const boxId = getStructureBoxId(structureName);
+            const phaseRunner = getStructurePhaseRunner(structureName);
+            if (!phaseRunner) {
+                continue;
+            }
+
+            if (boxId) {
+                setAlgorithmBoxActive(boxId, true);
+            }
+            phaseResults[structureName] = await phaseRunner();
+            if (boxId) {
+                setAlgorithmBoxActive(boxId, false);
+            }
+        }
+
+        if (!selectedStructures.includes("QuIT")) {
+            total_data.shift();
+            updateInsertionsPanel(false);
+        }
+
+        if (total_data.length === 0) {
+            running = false;
+        }
+
+        clearSwareComparisonPreview();
+        syncSelectedStructureChartHistory();
+        if (typeof update_table === "function") {
+            update_table();
+        }
+        if (typeof update_charts === "function") {
+            update_charts();
+        }
+    }
+    finally {
+        for (const boxId of Object.values(STRUCTURE_BOX_IDS)) {
+            setAlgorithmBoxActive(boxId, false);
+        }
+        setAlgorithmBoxFlushing("sware-box", false);
+        nextStepInProgress = false;
+    }
 }
 
 function generateSources(n, k, taken) {
@@ -586,7 +1091,7 @@ function generate(k, l, n, b, a) {
                 taken.set(firstSwap, false);
                 taken.set(firstSwap + l, false);
                 swappingFirst = false;
-                console.log("firstSwap: " + firstSwap, firstSwap + l);
+                //console.log("firstSwap: " + firstSwap, firstSwap + l);
             }
         }
         else {
@@ -596,16 +1101,15 @@ function generate(k, l, n, b, a) {
                 taken.set(firstSwap, false);
                 taken.set(firstSwap - l, false);
                 swappingFirst = false;
-                console.log("firstSwap: " + firstSwap, firstSwap - l);
+                //console.log("firstSwap: " + firstSwap, firstSwap - l);
             }
         }
     }
     //indexes of elements we will swap
     let regenerateCount = 0;
     sources = generateSources(n, k - 2, taken);
-    console.log(sources.length, n);
+    //console.log(sources.length, n);
     while (sources.length != 0 && regenerateCount < 5000) {
-        console.log("length: " + sources.length);
         for (let j = 0; j < (n / 100) && sources.length != 0; j++) {
             for (let i = 0; i < sources.length; i++) {
                 min = Math.max(0, sources[i] - l);
@@ -627,18 +1131,12 @@ function generate(k, l, n, b, a) {
                 }
             }
         }
-        console.log("regenerate");
+        //console.log("regenerate");
         regenerateCount++;
         for (let i = 0; i < sources.length; i++) {
             taken.set(sources[i], true);
         }
         sources = generateSources(n, (2 * sources.length), taken);
-    }
-    console.log("final: " + sources.length);
-    for (let i = Math.max(0, sources[0] - l); i < Math.min(n - 1, sources[0] + l); i++) {
-        if (taken.get(i)) {
-            console.log("index: ", i, "value: ", array[i]);
-        }
     }
     //if odd n swap element that has already been swapped with an element that hasn't already been swapped
     if (k % 2 == 1) {
@@ -685,7 +1183,7 @@ function generateInversion(n, i) {
     for (let a = 1; a < n + 1; a++) {
         taken.set(a, true);
     }
-
+    //two array to swap
     let sources1 = generateSources(n, 2 * inversions, taken);
     let sources2 = generateSources(n, 2 * inversions, taken);
     for (let a = 0; a < inversions; a++) {
