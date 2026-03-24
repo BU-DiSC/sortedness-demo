@@ -1021,3 +1021,249 @@
 .redesign #results-gap.visible {
     display: block;
 }
+
+/* Publication / Authors / Sponsors styling to match redesign */
+.redesign #publication {
+    max-width: 1100px;
+    margin: 32px auto;
+    padding: 22px 28px 18px 28px;
+    /* leave space for the top accent */
+    background: #fff;
+    /* keep content area white for readability */
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Top title bar accent: slim gradient strip across the top of the publication card */
+.redesign #publication::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 12px;
+    background: linear-gradient(90deg, var(--grn), var(--grn-b));
+}
+
+.redesign #publication .pub-title {
+    margin-top: 8px;
+}
+
+.redesign .pub-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.redesign .pub-title {
+    font-family: var(--disp);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.redesign .pub-authors {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--t2);
+}
+
+.redesign .pub-links a {
+    color: var(--grn);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.redesign #authors {
+    max-width: 1100px;
+    margin: 32px auto;
+    padding: 22px 10px;
+}
+
+.redesign #authors .team-member-box-2 {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 18px;
+    margin: 8px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    /* make boxes slightly wider for better readability */
+    min-width: 170px;
+    max-width: 240px;
+    box-sizing: border-box;
+    transition: transform 220ms cubic-bezier(.2, .9, .2, 1), box-shadow 220ms cubic-bezier(.2, .9, .2, 1);
+    will-change: transform;
+}
+
+.redesign .team-member-box-2 .team-member-img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 999px;
+    border: 2px solid var(--border);
+}
+
+.redesign #authors h2 {
+    font-family: var(--disp);
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+/* Make the Meet The Team heading match the main page title */
+.redesign #authors h1.team-title,
+.redesign h1.team-title {
+    font-family: var(--disp);
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+    color: var(--grn);
+}
+
+/* Center the team title within the page and constrain its width like the main title */
+.redesign #authors .team-title {
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px;
+    max-width: 740px;
+}
+
+/* Add gutter padding for author grid columns inside the redesign so cards have space */
+.redesign #authors .row>[class*="col-"] {
+    padding: 8px 10px;
+    /* center the card inside the column and prevent it from stretching */
+    display: flex;
+    justify-content: center;
+}
+
+/* Hover effect: slightly zoom the whole card and lift shadow */
+.redesign #authors .team-member-box-2:hover {
+    transform: scale(1.06);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+}
+
+/* Make hover gentler on small screens */
+@media (max-width: 576px) {
+    .redesign #authors .team-member-box-2:hover {
+        transform: scale(1.02);
+    }
+}
+
+/* Ensure links (and nested <font> tags) inside team cards transition color */
+.redesign #authors .team-member-box-2 a,
+.redesign #authors .team-member-box-2 a font {
+    transition: color 180ms ease-in-out, transform 180ms ease-in-out;
+}
+
+/* When the card is hovered, make links accent color and slightly bolder */
+.redesign #authors .team-member-box-2:hover a,
+.redesign #authors .team-member-box-2:hover a font {
+    color: var(--grn);
+    font-weight: 600;
+}
+
+.redesign #authors h3,
+.redesign #authors p {
+    margin: 0;
+}
+
+.redesign #authors h3 a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 160ms ease-in-out;
+}
+
+/* Hover state for team card links: accent green */
+.redesign #authors .team-member-box-2 h3 a:hover,
+.redesign #authors .team-member-box-2 a:hover {
+    color: var(--grn);
+}
+
+.redesign #authors p {
+    font-family: var(--mono);
+    color: var(--t2);
+    font-size: 0.9rem;
+}
+
+.redesign #sponsors {
+    /* max-width: 1100px;
+    margin: 32px auto;
+    padding: 18px 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--r); */
+    max-width: 1100px;
+    margin: 32px auto;
+    padding: 22px 28px 18px 28px;
+    /* leave space for the top accent */
+    background: #fff;
+    /* keep content area white for readability */
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Top title bar accent: slim gradient strip across the top of the publication card */
+.redesign #sponsors::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 12px;
+    background: linear-gradient(90deg, var(--grn), var(--grn-b));
+}
+
+.redesign #sponsors .img-logo {
+    max-width: 160px;
+    height: auto;
+    display: inline-block;
+}
+
+.redesign #sponsors .col-lg-6 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Footer adjustments for the legacy footer markup inside redesign */
+.redesign footer.text-center {
+    border-top: 1px solid var(--border);
+    padding: 28px 32px;
+    max-width: 1100px;
+    margin: 36px auto 0;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Normalize section headings inside the redesign to override legacy global rules */
+.redesign section h2,
+.redesign h2 {
+    font-family: var(--disp);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin: 0 0 12px;
+}
+
+.redesign .footer-below .img-logo {
+    max-height: 60px;
+}
+
+.redesign footer .container .row .col-lg-12 {
+    color: var(--t3);
+    font-size: 0.9rem;
+}
