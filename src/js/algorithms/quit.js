@@ -236,7 +236,7 @@ function createQuitNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafN
     const keyColumns = getQuitKeyColumnCount(slotCount);
     const keyRows = Math.max(1, Math.ceil(slotCount / keyColumns));
     const card = document.createElement("div");
-    card.className = "quit-node-card";
+    card.className = "tn quit-node-card";
     card.classList.add(node.leaf ? "leaf" : "internal");
     if (depth === 0) {
         card.classList.add("root");

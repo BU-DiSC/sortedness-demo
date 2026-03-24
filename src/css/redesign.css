@@ -626,7 +626,7 @@
     padding: 10px 14px;
     background: var(--white);
     text-align: center;
-    min-width: 120px;
+    min-width: 100px;
 }
 
 .redesign .tn.root {

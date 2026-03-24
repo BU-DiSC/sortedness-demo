@@ -196,47 +196,62 @@
                         <div id="quit-area" class="hidden container mt-5 animation-column structure-slot"></div>
                     </div>
                 </div>
-                <div id="structure-panel-store" class="hidden">
-                    <div id="structure-panel-sware" class="structure-panel animation-column">
-                        <h4>SWARE</h4>
-                        <div id="sware-box" class="tree-container quit-bplus-tree panel-box sware-box">
-                            <div class="buffer-container panel-box">
-                                <div class="auto overflow-x overflow-y buffer-content">
-                                    <div class="section-labels-sware" id="sware-buffer-grid"></div>
+                <div class="panels">
+                    <div id="structure-panel-store" class="hidden">
+                        <div id="structure-panel-sware" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">SWARE</span>
+                                <span class="tag g">Buffer-based</span>
+                            </div>
+                            <div id="sware-box" class="tree-container quit-bplus-tree panel-box sware-box">
+                                <div class="buffer-container panel-box">
+                                    <div class="auto overflow-x overflow-y buffer-content">
+                                        <div class="section-labels-sware" id="sware-buffer-grid"></div>
+                                    </div>
+                                </div>
+                                <div id="tree-area-step-3+" class="hidden sware-tree-panel">
+                                    <div class="quit-tree-grid" id="sware-tree-grid">
+                                        <svg class="quit-tree-links" id="sware-tree-links"></svg>
+                                    </div>
                                 </div>
                             </div>
-                            <div id="tree-area-step-3+" class="hidden sware-tree-panel">
-                                <div class="quit-tree-grid" id="sware-tree-grid">
-                                    <svg class="quit-tree-links" id="sware-tree-links"></svg>
+                        </div>
+                        <div id="structure-panel-quit" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">QuIT</span>
+                                <span class="tag a">Tree-based</span>
+                            </div>
+                            <div id="quit-box" class="tree-container quit-bplus-tree panel-box">
+                                <div class="quit-tree-grid" id="quit-tree-grid">
+                                    <svg class="quit-tree-links" id="quit-tree-links"></svg>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="structure-panel-quit" class="structure-panel animation-column">
-                        <h4>QuIT Tree</h4>
-                        <div id="quit-box" class="tree-container quit-bplus-tree panel-box">
-                            <div class="quit-tree-grid" id="quit-tree-grid">
-                                <svg class="quit-tree-links" id="quit-tree-links"></svg>
+                        <div id="structure-panel-tail" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">Tail</span>
+                                <span class="tag a">Tree-based</span>
+                            </div>
+                            <div id="tail-box" class="tree-container quit-bplus-tree panel-box">
+                                <div class="quit-tree-grid" id="tail-tree-grid">
+                                    <svg class="quit-tree-links" id="tail-tree-links"></svg>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="structure-panel-tail" class="structure-panel animation-column">
-                        <h4>Tail</h4>
-                        <div id="tail-box" class="tree-container quit-bplus-tree panel-box">
-                            <div class="quit-tree-grid" id="tail-tree-grid">
-                                <svg class="quit-tree-links" id="tail-tree-links"></svg>
+                        <div id="structure-panel-lil" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">lil</span>
+                                <span class="tag a">Tree-based</span>
                             </div>
-                        </div>
-                    </div>
-                    <div id="structure-panel-lil" class="structure-panel animation-column">
-                        <h4>lil</h4>
-                        <div id="lil-box" class="tree-container quit-bplus-tree panel-box">
-                            <div class="quit-tree-grid" id="lil-tree-grid">
-                                <svg class="quit-tree-links" id="lil-tree-links"></svg>
+                            <div id="lil-box" class="tree-container quit-bplus-tree panel-box">
+                                <div class="quit-tree-grid" id="lil-tree-grid">
+                                    <svg class="quit-tree-links" id="lil-tree-links"></svg>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="sep"></div>
                 <!-- Placeholder kept so legacy scripts can query the element without error -->
                 <div id="results-panel" class="hidden" aria-hidden="true"></div>
