@@ -1200,6 +1200,15 @@
     transition: color 160ms ease-in-out;
 }
 
+/* Ensure team member names use the site's sans-serif for consistency */
+.redesign #authors .team-member-box-2 h3,
+.redesign #authors .team-member-box-2 h3 a,
+.redesign #authors .team-member-box-2 h3 a font {
+    font-family: var(--sans);
+    font-weight: 600;
+    color: var(--text);
+}
+
 /* Hover state for team card links: accent green */
 .redesign #authors .team-member-box-2 h3 a:hover,
 .redesign #authors .team-member-box-2 a:hover {
