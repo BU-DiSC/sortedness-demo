@@ -552,6 +552,395 @@
     min-height: 300px;
 }
 
+/* ─── Redesigned Structure Panels ─── */
+.redesign .tree-container {
+    padding: 16px;
+    height: 575px;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    position: relative;
+    background: var(--white);
+}
+
+.redesign .quit-bplus-tree {
+    height: 575px;
+    min-height: 575px;
+    max-height: 575px;
+}
+
+.redesign .animations-layout > .animations-container {
+    width: 110%;
+    max-width: 110%;
+    margin-left: -5%;
+    gap: 12px;
+}
+
+.redesign .animations-layout > .animations-container > .container {
+    max-width: calc(50% - 6px);
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.redesign .sware-box {
+    gap: 12px;
+    overflow: hidden;
+}
+
+.redesign .sware-box .buffer-container {
+    height: 120px;
+    min-height: 120px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+}
+
+.redesign .sware-box .buffer-content {
+    height: 100%;
+    overflow: hidden;
+}
+
+.redesign .sware-tree-panel {
+    overflow: auto;
+}
+
+.redesign .section-labels-sware[data-sware-layout] {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 3px;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+.redesign .sware-buffer-page {
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 3px;
+    background: var(--white);
+    box-shadow: none;
+}
+
+.redesign .sware-buffer-page-label {
+    font-family: var(--mono);
+    font-size: 7px;
+    font-weight: 600;
+    color: var(--t3);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 0 2px;
+    margin-bottom: 2px;
+    border-bottom: none;
+}
+
+.redesign .sware-buffer-page-slots {
+    gap: 2px;
+    padding: 0;
+}
+
+.redesign .sware-buffer-page .buffer-btn {
+    min-height: 7px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--alt);
+    color: var(--t2);
+    box-shadow: none;
+    font-family: var(--mono);
+    font-size: 5px;
+    font-weight: 500;
+}
+
+.redesign .sware-buffer-page .buffer-btn.sware-buffer-empty {
+    color: var(--t3);
+    border-style: dashed;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.redesign .sware-buffer-page.sware-page-sorted {
+    border-style: solid;
+    border-color: var(--border-s);
+    border-left: 3px solid var(--grn-b);
+    background: var(--bg);
+    box-shadow: none;
+}
+
+.redesign .sware-buffer-page.sware-page-sorted .sware-buffer-page-label {
+    color: var(--grn);
+}
+
+.redesign .sware-buffer-page.sware-page-unsorted {
+    border-style: solid;
+    border-color: var(--amb-br);
+    border-left: 3px solid var(--amb);
+    background: #fffdf6;
+    box-shadow: none;
+}
+
+.redesign .sware-buffer-page.sware-page-unsorted .sware-buffer-page-label {
+    color: var(--amb);
+}
+
+.redesign .sware-buffer-page.sware-page-flushing {
+    border-style: solid;
+    border-color: #b9d1ff;
+    border-left: 3px solid #1f5fbf;
+    background: #f4f8ff;
+    box-shadow: 0 0 0 2px rgba(31, 95, 191, 0.1);
+}
+
+.redesign .sware-buffer-page.sware-page-flushing .sware-buffer-page-label {
+    color: #1d4f9b;
+}
+
+.redesign .buffer-btn.sware-buffer-active {
+    border-color: var(--grn);
+    background: var(--grn-p);
+    color: var(--grn);
+    box-shadow: 0 0 0 1px rgba(21, 101, 58, 0.14);
+}
+
+.redesign .buffer-btn.sware-buffer-flushing-slot {
+    border-color: #1f5fbf;
+    background: #e8f1ff;
+    color: #1d4f9b;
+    box-shadow: 0 0 0 1px rgba(31, 95, 191, 0.12);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) {
+    gap: 16px;
+    min-height: 100%;
+    padding: 8px 2px 12px;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-link-path {
+    stroke: var(--border-s);
+    stroke-width: 1;
+    opacity: 1;
+    filter: none;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-link-path.quit-tree-link-fast {
+    stroke: var(--grn);
+    stroke-width: 1.8;
+    filter: none;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-link-path.quit-tree-link-path-active {
+    stroke: var(--red);
+    stroke-width: 1.8;
+    filter: none;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row {
+    gap: 9px;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-slot {
+    width: 82px;
+    min-height: 70px;
+    max-width: 82px;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row.quit-row-layer-ellipsis .quit-node-slot {
+    width: calc((5 * 82px) + (4 * 9px));
+    max-width: calc((5 * 82px) + (4 * 9px));
+    min-height: 74px;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-ellipsis {
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    background: var(--white);
+    color: var(--t3);
+    box-shadow: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-ellipsis.quit-ellipsis-path-active {
+    border-color: var(--red);
+    background: var(--red-l);
+    color: var(--red);
+    box-shadow: 0 0 0 1px rgba(201, 42, 42, 0.14);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-layer-ellipsis {
+    min-height: calc(56px + (var(--quit-layer-span, 1) * 8px));
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-layer-dot-line {
+    letter-spacing: 0.16em;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1.5px solid var(--border);
+    border-radius: var(--rs);
+    padding: 7px 7px 6px;
+    background: var(--white);
+    box-shadow: none;
+    overflow: hidden;
+    text-align: center;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.internal,
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.leaf {
+    border-color: var(--border);
+    background: var(--white);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.root {
+    border-color: var(--grn);
+    border-width: 2px;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node {
+    border-color: var(--amb);
+    background: var(--amb-l);
+    box-shadow: none;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.sware-tail-node {
+    border-color: #7ea3bf;
+    background: #f7fbff;
+    box-shadow: none;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-path-active {
+    border-color: var(--red);
+    box-shadow: 0 0 0 2px rgba(201, 42, 42, 0.12);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-fast-active {
+    border-color: var(--grn);
+    background: var(--grn-p);
+    box-shadow: 0 0 0 2px rgba(21, 101, 58, 0.12);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active {
+    border-color: var(--grn);
+    background: #eef8f2;
+    box-shadow: 0 0 0 2px rgba(21, 101, 58, 0.16);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-header,
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-range,
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-cell,
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-leaf-pointer {
+    color: var(--grn);
+    font-weight: 500;
+    text-shadow: none;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-empty {
+    border-color: var(--grn-br);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--t3);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-header {
+    font-family: var(--mono);
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: var(--t3);
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+    padding: 0;
+    border-bottom: none;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node .quit-node-header {
+    color: var(--amb);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.sware-tail-node .quit-node-header {
+    color: #547c9a;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-fast-active .quit-node-header {
+    color: var(--grn);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-path-active .quit-node-header {
+    color: var(--red);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-range {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: var(--t2);
+    margin-bottom: 4px;
+    padding: 0;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-keys {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+    padding: 0;
+    min-height: 0;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-key-cell {
+    width: auto;
+    min-width: 0;
+    height: auto;
+    line-height: 1.35;
+    padding: 1px 4px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--alt);
+    font-family: var(--mono);
+    font-size: 0.53rem;
+    font-weight: 500;
+    color: var(--t2);
+    overflow: visible;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-key-empty {
+    background: var(--white);
+    border-style: dashed;
+    color: var(--t3);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-fast-active .quit-key-cell {
+    border-color: var(--grn-br);
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-path-active .quit-key-cell {
+    border-color: #f0b6b6;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-leaf-pointer {
+    margin-top: 3px;
+    padding: 0;
+    border-top: none;
+    font-family: var(--mono);
+    font-size: 0.46rem;
+    color: var(--t3);
+    text-transform: uppercase;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .sware-tail-dots-card {
+    border-color: var(--border);
+    background: var(--white);
+    color: var(--t3);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+}
+
+.redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .sware-tail-dots-card.sware-tail-dots-fast {
+    border-color: var(--grn-br);
+    background: var(--grn-p);
+    color: var(--grn);
+    box-shadow: 0 0 0 1px rgba(21, 101, 58, 0.12);
+}
+
 /* SWARE grid */
 .redesign .pgrid {
     display: grid;
@@ -697,6 +1086,34 @@
     font-size: 0.52rem;
     color: var(--t3);
     margin-top: 4px;
+}
+
+@media (max-width: 991px) {
+    .redesign .animations-layout > .animations-container {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+    }
+
+    .redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row {
+        gap: 6px;
+    }
+
+    .redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-slot {
+        width: 74px;
+        min-height: 66px;
+        max-width: 74px;
+    }
+
+    .redesign :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row.quit-row-layer-ellipsis .quit-node-slot {
+        width: calc((5 * 74px) + (4 * 6px));
+        max-width: calc((5 * 74px) + (4 * 6px));
+        min-height: 70px;
+    }
+
+    .redesign .sware-buffer-page .buffer-btn {
+        font-size: 4.5px;
+    }
 }
 
 /* ─── Metrics (full-width 3-col grid) ─── */

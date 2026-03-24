@@ -231,8 +231,7 @@ function getQuitKeyColumnCount(slotCount)
 function createQuitNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafNextPointer, isPoleNode)
 {
     const keys = getQuitNodeKeys(node);
-    const nodeCapacity = getQuitNodeCapacity(node);
-    const slotCount = Math.max(nodeCapacity, keys.length, 1);
+    const slotCount = Math.max(keys.length, 1);
     const keyColumns = getQuitKeyColumnCount(slotCount);
     const keyRows = Math.max(1, Math.ceil(slotCount / keyColumns));
     const card = document.createElement("div");
@@ -267,7 +266,7 @@ function createQuitNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafN
 
     const rangeLabel = document.createElement("div");
     rangeLabel.className = "quit-node-range";
-    rangeLabel.textContent = "Range " + formatQuitRange(range);
+    rangeLabel.textContent = formatQuitRange(range);
 
     const keyRow = document.createElement("div");
     keyRow.className = "quit-node-keys";
@@ -280,7 +279,7 @@ function createQuitNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafN
             keyCell.textContent = keys[i];
         }
         else {
-            keyCell.textContent = ".";
+            keyCell.textContent = "·";
             keyCell.classList.add("quit-key-empty");
         }
         keyRow.appendChild(keyCell);
@@ -293,7 +292,7 @@ function createQuitNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafN
     if (node.leaf && hasLeafNextPointer) {
         const leafPointer = document.createElement("div");
         leafPointer.className = "quit-leaf-pointer";
-        leafPointer.textContent = "next ->";
+        leafPointer.textContent = "NEXT →";
         card.appendChild(leafPointer);
     }
 
@@ -878,8 +877,7 @@ function getAuxiliaryNodeCapacity(tree, node)
 function createAuxiliaryNodeCard(node, depth, range, isPathNode, isFastNode, hasLeafNextPointer, isFocusNode, focusLabel, tree)
 {
     const keys = getAuxiliaryNodeKeys(node);
-    const nodeCapacity = getAuxiliaryNodeCapacity(tree, node);
-    const slotCount = Math.max(nodeCapacity, keys.length, 1);
+    const slotCount = Math.max(keys.length, 1);
     const keyColumns = getQuitKeyColumnCount(slotCount);
     const keyRows = Math.max(1, Math.ceil(slotCount / keyColumns));
     const card = document.createElement("div");
@@ -914,7 +912,7 @@ function createAuxiliaryNodeCard(node, depth, range, isPathNode, isFastNode, has
 
     const rangeLabel = document.createElement("div");
     rangeLabel.className = "quit-node-range";
-    rangeLabel.textContent = "Range " + formatQuitRange(range);
+    rangeLabel.textContent = formatQuitRange(range);
 
     const keyRow = document.createElement("div");
     keyRow.className = "quit-node-keys";
@@ -927,7 +925,7 @@ function createAuxiliaryNodeCard(node, depth, range, isPathNode, isFastNode, has
             keyCell.textContent = keys[i];
         }
         else {
-            keyCell.textContent = ".";
+            keyCell.textContent = "·";
             keyCell.classList.add("quit-key-empty");
         }
         keyRow.appendChild(keyCell);
@@ -940,7 +938,7 @@ function createAuxiliaryNodeCard(node, depth, range, isPathNode, isFastNode, has
     if (node.leaf && hasLeafNextPointer) {
         const leafPointer = document.createElement("div");
         leafPointer.className = "quit-leaf-pointer";
-        leafPointer.textContent = "next ->";
+        leafPointer.textContent = "NEXT →";
         card.appendChild(leafPointer);
     }
 

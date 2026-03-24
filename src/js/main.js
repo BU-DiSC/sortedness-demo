@@ -18,7 +18,8 @@ var total_data = [];            // stores the workload data
 var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
-var delay = 1000;                // delay between animations
+const BASE_ANIMATION_DELAY = 1000;
+var delay = BASE_ANIMATION_DELAY; // delay between animations
 var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
 
@@ -1003,7 +1004,7 @@ function run_operations() {
             animationIntervalId = null;
         }
         running = true;
-        delay = 1000;
+        delay = BASE_ANIMATION_DELAY;
         quitTree = new QuIT(10);
         swareTree = new Sware(10);
         tailTree = new Tail(10);
@@ -1061,9 +1062,7 @@ function run_operations() {
                 return;
             }
             next_step();
-            delay = delay+(quitTree.size/10);
         }, delay);
-        //increase delay for large values inserted
     }
     else{
         console.log('error');
