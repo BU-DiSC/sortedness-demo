@@ -461,6 +461,8 @@
     overflow-x: auto;
     padding-bottom: 4px;
     margin-bottom: 28px;
+    justify-content: center;
+    align-items: center;
 }
 
 .redesign .ins {
