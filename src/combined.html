@@ -257,139 +257,148 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Legacy results-panel removed (replaced by redesigned metrics cards) -->
-            <!-- Placeholder kept so legacy scripts can query the element without error -->
-            <div id="results-panel" class="hidden" aria-hidden="true"></div>
-            <!-- Results — full-width 3-col -->
-            <div class="gap" id="results-gap">
-                <div class="lbl">Results</div>
-                <div class="metrics">
-                    <div class="m-card">
-                        <div class="m-name"># Pages Manually Sorted</div>
-                        <div class="m-row">
-                            <div class="m-col">
-                                <div class="m-al s">SWARE</div>
-                                <div class="m-n">3</div>
+                <div class="sep"></div>
+                <!-- Placeholder kept so legacy scripts can query the element without error -->
+                <div id="results-panel" class="hidden" aria-hidden="true"></div>
+                <!-- Results — full-width 3-col -->
+                <div class="gap" id="results-gap">
+                    <div class="lbl">Results</div>
+                    <div class="metrics">
+                        <div class="m-card">
+                            <div class="m-name"># Pages Manually Sorted</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">3</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n na">—</div>
+                                </div>
                             </div>
-                            <div class="m-vs">vs</div>
-                            <div class="m-col">
-                                <div class="m-al q">QuIT</div>
-                                <div class="m-n na">—</div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name">Avg Pages per Flush</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">4.2</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n na">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Pages Bulk Loaded</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">8</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Fast Inserts</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">8</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">15</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Top Inserts</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">41</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">38</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Fast Path Resets</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n na">—</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">2</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="m-card">
-                        <div class="m-name">Avg Pages per Flush</div>
-                        <div class="m-row">
-                            <div class="m-col">
-                                <div class="m-al s">SWARE</div>
-                                <div class="m-n">4.2</div>
-                            </div>
-                            <div class="m-vs">vs</div>
-                            <div class="m-col">
-                                <div class="m-al q">QuIT</div>
-                                <div class="m-n na">—</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="m-card">
-                        <div class="m-name"># Pages Bulk Loaded</div>
-                        <div class="m-row">
-                            <div class="m-col">
-                                <div class="m-al s">SWARE</div>
-                                <div class="m-n">8</div>
-                            </div>
-                            <div class="m-vs">vs</div>
-                            <div class="m-col">
-                                <div class="m-al q">QuIT</div>
-                                <div class="m-n">-</div>
+                </div>
+                <!-- Plots -->
+                <div id="plots" class="hidden">
+                    <!-- Charts -->
+                    <div class="row no-gutters">
+                        <div class="col-lg-4">
+                            <div class="cc">
+                                <div class="cc-h">
+                                    <div class="cc-t">Number of Top Inserts vs. Operation Steps</div>
+                                    <div class="cc-lg">
+                                        <div class="lg"><span id="top-ld-left" class="ld"></span> <span
+                                                id="top-legend-left-label" class="lg-label">SWARE</span></div>
+                                        <div class="lg"><span id="top-ld-right" class="ld"></span> <span
+                                                id="top-legend-right-label" class="lg-label">QuIT</span></div>
+                                    </div>
+                                </div>
+                                <div id="comparison-top-inserts-chart" class="chart-container"></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="m-card">
-                        <div class="m-name"># Fast Inserts</div>
-                        <div class="m-row">
-                            <div class="m-col">
-                                <div class="m-al s">SWARE</div>
-                                <div class="m-n">8</div>
-                            </div>
-                            <div class="m-vs">vs</div>
-                            <div class="m-col">
-                                <div class="m-al q">QuIT</div>
-                                <div class="m-n">15</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="m-card">
-                        <div class="m-name"># Top Inserts</div>
-                        <div class="m-row">
-                            <div class="m-col">
-                                <div class="m-al s">SWARE</div>
-                                <div class="m-n">41</div>
-                            </div>
-                            <div class="m-vs">vs</div>
-                            <div class="m-col">
-                                <div class="m-al q">QuIT</div>
-                                <div class="m-n">38</div>
+                        <div class="col-lg-4">
+                            <div class="cc">
+                                <div class="cc-h">
+                                    <div class="cc-t">Number of Fast Inserts vs. Operation Steps</div>
+                                    <div class="cc-lg">
+                                        <div class="lg"><span id="fast-ld-left" class="ld"></span> <span
+                                                id="fast-legend-left-label" class="lg-label">SWARE</span></div>
+                                        <div class="lg"><span id="fast-ld-right" class="ld"></span> <span
+                                                id="fast-legend-right-label" class="lg-label">QuIT</span></div>
+                                    </div>
+                                </div>
+                                <div id="comparison-fast-inserts-chart" class="chart-container"></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="m-card">
-                        <div class="m-name"># Fast Path Resets</div>
-                        <div class="m-row">
-                            <div class="m-col">
-                                <div class="m-al s">SWARE</div>
-                                <div class="m-n na">—</div>
-                            </div>
-                            <div class="m-vs">vs</div>
-                            <div class="m-col">
-                                <div class="m-al q">QuIT</div>
-                                <div class="m-n">2</div>
+                        <div class="col-lg-4">
+                            <div class="cc">
+                                <div class="cc-h">
+                                    <div class="cc-t">Number of Fast Path Resets vs. Operation Steps</div>
+                                    <div class="cc-lg">
+                                        <div class="lg"><span id="resets-ld-left" class="ld"></span> <span
+                                                id="resets-legend-left-label" class="lg-label">SWARE</span></div>
+                                        <div class="lg"><span id="resets-ld-right" class="ld"></span> <span
+                                                id="resets-legend-right-label" class="lg-label">QuIT</span></div>
+                                    </div>
+                                </div>
+                                <div id="comparison-fast-path-resets-chart" class="chart-container"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-            <!-- Plots -->
-            <div id="plots" class="hidden">
-                <!-- Color Legends -->
-                <hr>
-                <div id="color-legends" class="row justify-content-center color-legends">
-                    <div class="col-lg-3 d-flex align-items-center justify-content-center">
-                        <div class="d-flex align-items-center">
-                            <div id="comparison-legend-1-box" class="color-legend-box color-legend-sware"></div>
-                            <div id="lsm-cmpct-pp-1-legend">
-                                <b>SWARE</b>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 d-flex align-items-center justify-content-center">
-                        <div class="d-flex align-items-center">
-                            <div id="comparison-legend-2-box" class="color-legend-box color-legend-quit"></div>
-                            <div id="lsm-cmpct-pp-2-legend">
-                                <b>QuIT</b>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts -->
-                <div class="row no-gutters">
-                    <div class="col-lg-4">
-                        <div id="comparison-top-inserts-chart" class="chart-container"></div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div id="comparison-fast-inserts-chart" class="chart-container"></div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div id="comparison-fast-path-resets-chart" class="chart-container"></div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </main>
 

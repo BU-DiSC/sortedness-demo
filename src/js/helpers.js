@@ -819,6 +819,40 @@ function updateComparisonLegends()
         rightBox.style.backgroundColor = rightColor;
         rightBox.style.borderColor = rightColor;
     }
+
+    // Update the small per-card legends inside each chart card (if present)
+    try {
+        const leftColor = getStructureChartColor(selectedStructures[0]);
+        const rightColor = getStructureChartColor(selectedStructures[1]);
+        const prefixIds = [
+            { prefix: 'top' },
+            { prefix: 'fast' },
+            { prefix: 'resets' }
+        ];
+
+        prefixIds.forEach(function (p) {
+            const leftDot = document.getElementById(p.prefix + '-ld-left');
+            const rightDot = document.getElementById(p.prefix + '-ld-right');
+            const leftLbl = document.getElementById(p.prefix + '-legend-left-label');
+            const rightLbl = document.getElementById(p.prefix + '-legend-right-label');
+            if (leftDot) {
+                leftDot.style.backgroundColor = leftColor;
+                leftDot.style.borderColor = leftColor;
+            }
+            if (rightDot) {
+                rightDot.style.backgroundColor = rightColor;
+                rightDot.style.borderColor = rightColor;
+            }
+            if (leftLbl) {
+                leftLbl.textContent = leftName;
+            }
+            if (rightLbl) {
+                rightLbl.textContent = rightName;
+            }
+        });
+    } catch (e) {
+        // non-fatal
+    }
 }
 
 function clearComparisonCharts()
