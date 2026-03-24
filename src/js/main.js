@@ -756,6 +756,12 @@ function visualize_workload() {
                 layout.annotations = [];
             }
 
+            // Diagnostics: log plot_data summary so we can debug empty charts
+            try {
+                const t0 = plot_data[0] || {};
+                console.log('Plot KL i=', i, 'traces=', plot_data.length, 'trace0-xlen=', (t0.x && t0.x.length) || 0, 'sample x0..4=', (t0.x? t0.x.slice(0,5):[]), 'sample y0..4=', (t0.y? t0.y.slice(0,5):[]));
+            } catch(e) {}
+
             // Normalize traces for consistent styling: marker size/opacity and line width
             try {
                 plot_data.forEach(function(trace){
@@ -873,6 +879,11 @@ function visualize_workload() {
                     }
                 });
             } catch(e) { /* safe-guard */ }
+            // Diagnostics: log plot_data summary so we can debug empty inversion charts
+            try {
+                const t0 = plot_data[0] || {};
+                console.log('Plot INV i=', i, 'traces=', plot_data.length, 'trace0-xlen=', (t0.x && t0.x.length) || 0, 'sample x0..4=', (t0.x? t0.x.slice(0,5):[]), 'sample y0..4=', (t0.y? t0.y.slice(0,5):[]));
+            } catch(e) {}
 
             Plotly.newPlot("inversion_chart_div" + i, plot_data, applyRedesignPlotlyLayout(layout), config);
             inversionChartWrapper.appendChild(deleteButton);

@@ -103,6 +103,50 @@
       });
     }
 
+  // Ensure legacy hidden inputs and placeholders exist and are populated from redesigned inputs
+  function ensureLegacyInputs() {
+    const mapping = {
+      'cmp-select-N':'pN',
+      'cmp-select-K':'pK',
+      'cmp-select-L':'pL',
+      'cmp-select-A':'pA',
+      'cmp-select-B':'pB'
+    };
+    Object.keys(mapping).forEach(function(legacyId){
+      const srcId = mapping[legacyId];
+      let legacy = document.getElementById(legacyId);
+      const src = document.querySelector('#'+srcId);
+      const val = src ? src.value : '';
+      if(!legacy){
+        legacy = document.createElement('input');
+        legacy.type = 'hidden';
+        legacy.id = legacyId;
+        document.body.appendChild(legacy);
+      }
+      legacy.value = val;
+    });
+
+    // Ensure run button container and runBtn placeholder exist for main.js
+    if(!document.getElementById('run-button-contain')){
+      const rbc = document.createElement('div');
+      rbc.id = 'run-button-contain'; rbc.className = 'hidden'; document.body.appendChild(rbc);
+    }
+    if(!document.getElementById('runBtn')){
+      const rb = document.createElement('button'); rb.id = 'runBtn'; rb.className = 'hidden'; document.body.appendChild(rb);
+    }
+
+    // Ensure dashed-line exists (main.js toggles this). Keep it hidden visually.
+    if(!document.getElementById('dashed-line')){
+      const dl = document.createElement('div');
+      dl.id = 'dashed-line';
+      dl.style.display = 'none';
+      document.body.appendChild(dl);
+    }
+  }
+
+  // expose for callers that execute before this script is parsed
+  window.ensureLegacyInputs = ensureLegacyInputs;
+
     // Show charts area when Visualize Workload is clicked
     if(btnViz){
       btnViz.addEventListener('click', function(){
@@ -165,7 +209,152 @@
         }
       });
     }
+
+    // Show animations container when the Run button is clicked.
+    // Handle both the redesign's `#btn-run` (in-root) and the legacy `#runBtn` which may be
+    // created dynamically and appended to document.body by the adapter logic.
+    if(btnRun){
+      btnRun.addEventListener('click', function(){
+        const anim = document.getElementById('animations-div') || root.querySelector('#animations-div');
+        if(anim){ anim.classList.remove('hidden'); anim.style.display = ''; anim.scrollIntoView({behavior:'smooth', block:'start'}); }
+        const results = document.getElementById('results-panel') || root.querySelector('#results-panel');
+        if(results){ results.classList.remove('hidden'); results.style.display = ''; }
+        // Ensure legacy inputs exist/populated, then call the core run function to start the animation.
+        try{ ensureLegacyInputs(); if(typeof window.run_operations === 'function'){ window.run_operations(); } }catch(e){ console.warn('run_operations call failed', e); }
+      });
+    }
+
+    // Delegated handler: catches clicks on dynamically-created legacy run elements (id 'runBtn')
+    document.addEventListener('click', function(e){
+      const id = (e && e.target && e.target.id) || '';
+      if(id === 'runBtn' || id === 'btn-run'){
+        const anim = document.getElementById('animations-div') || root.querySelector('#animations-div');
+        if(anim){ anim.classList.remove('hidden'); anim.style.display = ''; }
+        const results = document.getElementById('results-panel') || root.querySelector('#results-panel');
+        if(results){ results.classList.remove('hidden'); results.style.display = ''; }
+        try{ ensureLegacyInputs(); if(typeof window.run_operations === 'function'){ window.run_operations(); } }catch(e){ console.warn('run_operations call failed', e); }
+      }
+    });
+
+    // Attach local click listeners to playback buttons to keep UI state in sync.
+    try{
+      const btnIds = ['stop-button','continue-button','reset-button','nextstep-button'];
+      btnIds.forEach(function(bid){
+        const b = root.querySelector('#'+bid);
+        if(b){
+          b.addEventListener('click', function(){
+            // manage .on state (single selected)
+            btnIds.forEach(function(other){ const ob = root.querySelector('#'+other); if(ob) ob.classList.remove('on'); });
+            b.classList.add('on');
+            // update badge appropriately
+            if(bid === 'stop-button') setPlaybackBadge('paused');
+            if(bid === 'continue-button') setPlaybackBadge('running');
+          });
+        }
+      });
+    }catch(e){/* ignore */}
   }
+
+  // Force Plotly re-render of existing charts (useful when charts were created while ancestors were hidden)
+  function forcePlotlyRedrawAll() {
+    if(!window.Plotly) return;
+    const selector = '[id^="chart_div"], [id^="inversion_chart_div"]';
+    const nodes = Array.prototype.slice.call(document.querySelectorAll(selector));
+
+    function tryRedrawNode(n){
+      if(!n) return;
+      try{
+        // Best-effort: try several common properties where Plotly may have stored data/layout
+        const possibleData = n.data || n._fullData || n._data || n.__data || (n._glplot && n._glplot._fullData) || null;
+        const possibleLayout = n.layout || n._fullLayout || n._layout || null;
+
+        if(possibleData && possibleLayout){
+          try{ Plotly.react(n, possibleData, possibleLayout); console.log('Plotly.react used for', n.id); return; }catch(e){ /* continue to fallbacks */ }
+        }
+
+        // Try relayout/redraw which operate on existing internal plot state
+        try{ Plotly.relayout(n, {}); }catch(e){}
+        try{ Plotly.redraw(n); }catch(e){}
+        try{ Plotly.Plots.resize(n); }catch(e){}
+      }catch(e){ console.warn('tryRedrawNode failed for', n && n.id, e); }
+    }
+
+    // First-pass: immediate attempt
+    nodes.forEach(tryRedrawNode);
+
+    // Second-pass: retry after a short delay (some browsers need a tick for styles to settle)
+    setTimeout(function(){ nodes.forEach(tryRedrawNode); }, 150);
+    // Final attempt after a slightly longer delay
+    setTimeout(function(){ nodes.forEach(tryRedrawNode); }, 500);
+  }
+
+  // expose helper for external shims
+  window.forcePlotlyRedrawAll = forcePlotlyRedrawAll;
+
+  // Playback badge updater and wrappers for pause/play to keep UI in sync
+  function setPlaybackBadge(state){
+    try{
+      const badge = document.querySelector('.redesign #buttons-container .badge');
+      if(!badge) return;
+      if(state === 'running'){
+        badge.classList.remove('paused'); badge.classList.add('running');
+        badge.innerHTML = '<span class="dot"></span> Running';
+      } else if(state === 'paused'){
+        badge.classList.remove('running'); badge.classList.add('paused');
+        badge.innerHTML = '<span class="dot"></span> Paused';
+      }
+    }catch(e){/* ignore */}
+  }
+
+  // Wrap existing handlers so badge updates whenever play/pause are triggered
+  try{
+    if(typeof window.stop_button === 'function'){
+      const _origStop = window.stop_button;
+      window.stop_button = function(){
+        const res = _origStop.apply(this, arguments);
+        setPlaybackBadge('paused');
+        return res;
+      };
+    }
+    if(typeof window.continue_button === 'function'){
+      const _origContinue = window.continue_button;
+      window.continue_button = function(){
+        const res = _origContinue.apply(this, arguments);
+        setPlaybackBadge('running');
+        return res;
+      };
+    }
+  }catch(e){ /* ignore */ }
+
+  // Reveal `#results-gap` when run_operations is invoked, and hide on reset
+  try{
+    if(typeof window.run_operations === 'function'){
+      const _origRun = window.run_operations;
+      window.run_operations = function(){
+        // call original run logic
+        const res = _origRun.apply(this, arguments);
+        try{
+          const rg = document.querySelector('.redesign #results-gap');
+          if(rg){ rg.classList.add('visible'); }
+        }catch(e){}
+        return res;
+      };
+    }
+  }catch(e){ /* ignore */ }
+
+  try{
+    if(typeof window.reset_button === 'function'){
+      const _origReset = window.reset_button;
+      window.reset_button = function(){
+        const res = _origReset.apply(this, arguments);
+        try{
+          const rg = document.querySelector('.redesign #results-gap');
+          if(rg){ rg.classList.remove('visible'); }
+        }catch(e){}
+        return res;
+      };
+    }
+  }catch(e){ /* ignore */ }
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

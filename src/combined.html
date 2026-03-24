@@ -133,52 +133,9 @@
                 </div>
             </div>
 
-            <!-- Visualization area -->
-            <div id="viz">
-                <div class="sep"></div>
+            <!-- Buttons (play/pause/skip) -->
+            <!-- dashed line removed as requested -->
 
-                <div class="play-row">
-                    <div class="pbar">
-                        <button class="pb" title="Reset">↺</button>
-                        <div class="pb-s"></div>
-                        <button class="pb on" title="Pause">❚❚</button>
-                        <button class="pb" title="Play">▶</button>
-                        <button class="pb" title="Step">▸|</button>
-                    </div>
-                    <span class="badge"><span class="dot"></span> Running</span>
-                </div>
-
-                <div class="gap">
-                    <div class="lbl">Insertions</div>
-                    <div class="ins-row" id="ins"></div>
-                </div>
-
-                <div class="gap">
-                    <div class="panels">
-                        <div class="panel">
-                            <div class="panel-h">
-                                <span class="panel-t">SWARE</span>
-                                <span class="tag g">Buffer-based</span>
-                            </div>
-                            <div class="panel-b">
-                                <div class="pgrid" id="sware"></div>
-                            </div>
-                        </div>
-                        <div class="panel">
-                            <div class="panel-h">
-                                <span class="panel-t">QuIT Tree</span>
-                                <span class="tag a">Tree-based</span>
-                            </div>
-                            <div class="panel-b">
-                                <div class="tree" id="quit-tree">
-                                    <!-- Tree visualization placeholder -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
             <!-- Charts (copied from data.html) - hidden by default -->
             <div class="charts" id="charts" style="display:none">
                 <div class="row gx-0 hidden chart-column" id="chart-column">
@@ -212,6 +169,323 @@
                     </div>
                 </div>
             </div>
+            <!-- Buttons (single, redesigned control row) -->
+            <div class="sep"></div>
+            <div id="buttons-container-wrapper" class="hidden">
+                <div class="col text-center" id="buttons-container">
+                    <div class="play-row">
+                        <div class="pbar">
+                            <button class="pb" id="reset-button" title="Reset" onclick="reset_button()">↺</button>
+                            <div class="pb-s"></div>
+                            <button class="pb on" id="stop-button" title="Pause" onclick="stop_button()">❚❚</button>
+                            <button class="pb" id="continue-button" title="Play" onclick="continue_button()">▶</button>
+                            <button class="pb" id="nextstep-button" title="Step" onclick="nextstep_button()">▸|</button>
+                        </div>
+                        <span class="badge"><span class="dot"></span> Running</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden" id="animations-div">
+                <div class="container-fluid mt-5 animations-layout">
+                    <div id="insertions-area" class="insertions-panel hidden">
+                        <h4>Insertions</h4>
+                        <div class="buffer-container panel-box">
+                            <div class="auto overflow-x overflow-y buffer-content" style="position: relative;">
+                                <div class="section-labels-quit">
+                                    <button class="btn btn-primary page-btn" id="page0"></button>
+                                    <button class="btn btn-primary page-btn" id="page1"></button>
+                                    <button class="btn btn-primary page-btn" id="page2"></button>
+                                    <button class="btn btn-primary page-btn" id="page3"></button>
+                                    <button class="btn btn-primary page-btn" id="page4"></button>
+                                    <button class="btn btn-primary page-btn" id="page5"></button>
+                                    <button class="btn btn-primary page-btn" id="page6"></button>
+                                    <button class="btn btn-primary page-btn" id="page7"></button>
+                                    <button class="btn btn-primary page-btn" id="page8"></button>
+                                    <button class="btn btn-primary page-btn" id="page9"></button>
+                                    <button class="btn btn-primary page-btn" id="page10"></button>
+                                    <button class="btn btn-primary page-btn" id="page11"></button>
+                                    <button class="btn btn-primary page-btn" id="page12"></button>
+                                    <button class="btn btn-primary page-btn" id="page13"></button>
+                                    <button class="btn btn-primary page-btn" id="page14"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex animations-container">
+                        <div id="buffer-area" class="hidden container mt-5 animation-column structure-slot"></div>
+                        <div id="quit-area" class="hidden container mt-5 animation-column structure-slot"></div>
+                    </div>
+                </div>
+                <div id="structure-panel-store" class="hidden">
+                    <div id="structure-panel-sware" class="structure-panel animation-column">
+                        <h4>SWARE</h4>
+                        <div id="sware-box" class="tree-container quit-bplus-tree panel-box sware-box">
+                            <div class="buffer-container panel-box">
+                                <div class="auto overflow-x overflow-y buffer-content">
+                                    <div class="section-labels-sware" id="sware-buffer-grid"></div>
+                                </div>
+                            </div>
+                            <div id="tree-area-step-3+" class="hidden sware-tree-panel">
+                                <div class="quit-tree-grid" id="sware-tree-grid">
+                                    <svg class="quit-tree-links" id="sware-tree-links"></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="structure-panel-quit" class="structure-panel animation-column">
+                        <h4>QuIT Tree</h4>
+                        <div id="quit-box" class="tree-container quit-bplus-tree panel-box">
+                            <div class="quit-tree-grid" id="quit-tree-grid">
+                                <svg class="quit-tree-links" id="quit-tree-links"></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="structure-panel-tail" class="structure-panel animation-column">
+                        <h4>Tail</h4>
+                        <div id="tail-box" class="tree-container quit-bplus-tree panel-box">
+                            <div class="quit-tree-grid" id="tail-tree-grid">
+                                <svg class="quit-tree-links" id="tail-tree-links"></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="structure-panel-lil" class="structure-panel animation-column">
+                        <h4>lil</h4>
+                        <div id="lil-box" class="tree-container quit-bplus-tree panel-box">
+                            <div class="quit-tree-grid" id="lil-tree-grid">
+                                <svg class="quit-tree-links" id="lil-tree-links"></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Results Panel -->
+            <div id="results-panel" class="hidden container results-panel">
+                <div id="cost-result" class="container">
+                    <!-- SWARE and QuIT Titles -->
+                    <div class="row">
+                        <div class="col text-right">
+                            <span class="sware-quit-title cost uncertain">SWARE</span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="metric-title"></span>
+                        </div>
+                        <div class="col text-left">
+                            <span class="sware-quit-title cost uncertain">QuIT</span>
+                        </div>
+                    </div>
+
+                    <!-- Number of pages manually sorted -->
+                    <div class="row">
+                        <div class="col text-right">
+                            <span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="metric-title" data-toggle="tooltip" data-placement="left"
+                                title="The number of pages that were manually sorted before insertion.">Number of Pages
+                                Manually Sorted</span>
+                        </div>
+                        <div class="col text-left">
+                            <span class="cost uncertain">N/A</span>
+                        </div>
+                    </div>
+
+                    <!-- Average pages per flush -->
+                    <div class="row">
+                        <div class="col text-right">
+                            <span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="metric-title">Average Pages per Flush</span>
+                        </div>
+                        <div class="col text-left">
+                            <span class="cost uncertain">N/A</span>
+                        </div>
+                    </div>
+
+                    <!-- Number of pages bulkloaded -->
+                    <div class="row">
+                        <div class="col text-right">
+                            <span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="metric-title">Number of Pages Bulkloaded</span>
+                        </div>
+                        <div class="col text-left">
+                            <span class="cost uncertain">N/A</span>
+                        </div>
+                    </div>
+
+                    <!-- #Fast Inserts -->
+                    <div class="row">
+                        <div class="col text-right">
+                            <span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="metric-title" data-toggle="tooltip" data-placement="left"
+                                title="The number of dirty pages written.">Number of Fast Inserts</span>
+                        </div>
+                        <div class="col text-left">
+                            <span class="cost uncertain">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Number of Top Inserts -->
+                    <div class="row">
+                        <div class="col text-right">
+                            <span class="cost uncertain" data-toggle="tooltip" data-placement="right">0</span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="metric-title" data-toggle="tooltip" data-placement="left"
+                                title="The number of pages processed from a workload.">Number of Top Inserts</span>
+                        </div>
+                        <div class="col text-left">
+                            <span class="cost uncertain">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Number of fast path resets -->
+                    <div class="row">
+                        <div class="col text-right">
+                            <span class="cost uncertain" data-toggle="tooltip" data-placement="right">N/A</span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="metric-title">Number of Fast Path Resets</span>
+                        </div>
+                        <div class="col text-left">
+                            <span class="cost uncertain">N/A</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Results — full-width 3-col -->
+            <div class="gap" id="results-gap">
+                <div class="lbl">Results</div>
+                <div class="metrics">
+                    <div class="m-card">
+                        <div class="m-name"># Pages Manually Sorted</div>
+                        <div class="m-row">
+                            <div class="m-col">
+                                <div class="m-al s">SWARE</div>
+                                <div class="m-n">3</div>
+                            </div>
+                            <div class="m-vs">vs</div>
+                            <div class="m-col">
+                                <div class="m-al q">QuIT</div>
+                                <div class="m-n na">—</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-card">
+                        <div class="m-name">Avg Pages per Flush</div>
+                        <div class="m-row">
+                            <div class="m-col">
+                                <div class="m-al s">SWARE</div>
+                                <div class="m-n">4.2</div>
+                            </div>
+                            <div class="m-vs">vs</div>
+                            <div class="m-col">
+                                <div class="m-al q">QuIT</div>
+                                <div class="m-n na">—</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-card">
+                        <div class="m-name"># Pages Bulk Loaded</div>
+                        <div class="m-row">
+                            <div class="m-col">
+                                <div class="m-al s">SWARE</div>
+                                <div class="m-n">8</div>
+                            </div>
+                            <div class="m-vs">vs</div>
+                            <div class="m-col">
+                                <div class="m-al q">QuIT</div>
+                                <div class="m-n">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-card">
+                        <div class="m-name"># Fast Inserts</div>
+                        <div class="m-row">
+                            <div class="m-col">
+                                <div class="m-al s">SWARE</div>
+                                <div class="m-n">8</div>
+                            </div>
+                            <div class="m-vs">vs</div>
+                            <div class="m-col">
+                                <div class="m-al q">QuIT</div>
+                                <div class="m-n">15</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-card">
+                        <div class="m-name"># Top Inserts</div>
+                        <div class="m-row">
+                            <div class="m-col">
+                                <div class="m-al s">SWARE</div>
+                                <div class="m-n">41</div>
+                            </div>
+                            <div class="m-vs">vs</div>
+                            <div class="m-col">
+                                <div class="m-al q">QuIT</div>
+                                <div class="m-n">38</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-card">
+                        <div class="m-name"># Fast Path Resets</div>
+                        <div class="m-row">
+                            <div class="m-col">
+                                <div class="m-al s">SWARE</div>
+                                <div class="m-n na">—</div>
+                            </div>
+                            <div class="m-vs">vs</div>
+                            <div class="m-col">
+                                <div class="m-al q">QuIT</div>
+                                <div class="m-n">2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Plots -->
+            <div id="plots" class="hidden">
+                <!-- Color Legends -->
+                <hr>
+                <div id="color-legends" class="row justify-content-center color-legends">
+                    <div class="col-lg-3 d-flex align-items-center justify-content-center">
+                        <div class="d-flex align-items-center">
+                            <div id="comparison-legend-1-box" class="color-legend-box color-legend-sware"></div>
+                            <div id="lsm-cmpct-pp-1-legend">
+                                <b>SWARE</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 d-flex align-items-center justify-content-center">
+                        <div class="d-flex align-items-center">
+                            <div id="comparison-legend-2-box" class="color-legend-box color-legend-quit"></div>
+                            <div id="lsm-cmpct-pp-2-legend">
+                                <b>QuIT</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row no-gutters">
+                    <div class="col-lg-4">
+                        <div id="comparison-top-inserts-chart" class="chart-container"></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div id="comparison-fast-inserts-chart" class="chart-container"></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div id="comparison-fast-path-resets-chart" class="chart-container"></div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </main>
@@ -231,6 +505,57 @@
     <script type="text/javascript" src="js/algorithms/tail.js"></script>
     <script type="text/javascript" src="js/helpers.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script>
+        // Ensure the animations area is revealed whenever the site's Run action is invoked.
+        (function () {
+            var orig = window.run_operations;
+            function showAnimations() {
+                var anim = document.getElementById('animations-div');
+                if (anim) { anim.classList.remove('hidden'); anim.style.display = ''; anim.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                var ins = document.getElementById('insertions-area'); if (ins) ins.classList.remove('hidden');
+                var buf = document.getElementById('buffer-area'); if (buf) buf.classList.remove('hidden');
+                var q = document.getElementById('quit-area'); if (q) q.classList.remove('hidden');
+                var store = document.getElementById('structure-panel-store'); if (store) store.classList.remove('hidden');
+            }
+
+            if (typeof orig === 'function') {
+                window.run_operations = function () {
+                    showAnimations();
+                    try { if (window.ensureLegacyInputs) window.ensureLegacyInputs(); } catch (e) { }
+                    // If charts/datasets aren't present yet, call visualize_workload to create them
+                    try {
+                        var klEl = document.getElementById('klCharts');
+                        var invEl = document.getElementById('inversionCharts');
+                        var needVisualize = false;
+                        if (klEl && klEl.children.length === 0) needVisualize = true;
+                        if (invEl && invEl.children.length === 0) needVisualize = true;
+                        if (needVisualize && typeof window.visualize_workload === 'function') {
+                            window.visualize_workload();
+                            // Diagnostics: log dataset and created chart elements to help debug empty charts
+                            try {
+                                console.log('Diagnostics after visualize_workload: klDatasets=', window.klDatasets && window.klDatasets.length, 'exchangesDatasets=', window.exchangesDatasets && window.exchangesDatasets.length);
+                                console.log('chart_div count before resize:', document.querySelectorAll('[id^="chart_div"]').length, 'inversion count:', document.querySelectorAll('[id^="inversion_chart_div"]').length);
+                            } catch (e) { }
+                            // allow Plotly to compute sizes after charts are inserted and containers shown
+                            setTimeout(function () {
+                                try {
+                                    const chartNodes = document.querySelectorAll('[id^="chart_div"], [id^="inversion_chart_div"]');
+                                    chartNodes.forEach(function (n) { if (window.Plotly && n) { try { Plotly.Plots.resize(n); } catch (e) { } } });
+                                    window.dispatchEvent(new Event('resize'));
+                                    // Force a full Plotly re-render to avoid blank plots when created while hidden
+                                    try { if (window.forcePlotlyRedrawAll) { window.forcePlotlyRedrawAll(); console.log('forcePlotlyRedrawAll called'); } } catch (e) { console.warn('forcePlotlyRedrawAll failed', e); }
+                                    console.log('chart_div count after resize:', document.querySelectorAll('[id^="chart_div"]').length, 'inversion count:', document.querySelectorAll('[id^="inversion_chart_div"]').length);
+                                } catch (e) { console.warn('resize diagnostics failed', e); }
+                            }, 150);
+                        }
+                    } catch (e) { /* ignore */ }
+                    return orig.apply(this, arguments);
+                };
+            } else {
+                window.run_operations = function () { showAnimations(); };
+            }
+        })();
+    </script>
     <script src="js/redesign.js"></script>
     <script src="js/packages/script.js"></script>
 </body>
