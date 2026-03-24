@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sortedness — Redesign Preview</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-slider.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Redesign scoped styles (must come after base styles) -->
+    <link rel="stylesheet" href="css/redesign.css">
+</head>
+
+<body>
+
+    <main class="redesign">
+        <nav>
+            <div class="nav-l">
+                <a class="nav-brand" href="index.html"><span class="m">S</span>Sortedness</a>
+            </div>
+            <div class="nav-r">
+                <div class="nav-tabs">
+                    <a href="index.html">Home</a>
+                    <a href="background.html">Background</a>
+                    <a href="combined.html#publication">Publications</a>
+                    <a href="combined.html#authors">The Team</a>
+                    <a href="combined.html#sponsors">Sponsors</a>
+                    <a href="combined.html" class="on">Demo</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="wrap">
+            <!-- Header -->
+            <div class="hdr">
+                <h1>Sortedness</h1>
+                <p>
+                    Real-world data ingestion is rarely perfectly sorted — incoming records arrive <em>nearly</em>
+                    sorted, with a small fraction displaced. This demo lets you configure a near-sorted workload and
+                    watch two ingestion algorithms — <strong>SWARE</strong> (buffer-based) and <strong>QuIT</strong>
+                    (tree-based) — process it side by side, comparing their structure and cost in real time.
+                    <a href="#">Read the paper →</a>
+                </p>
+            </div>
+
+            <div class="sep"></div>
+
+            <!-- Config (redesign inputs) -->
+            <div class="config">
+                <div class="lbl">Workload Parameters</div>
+                <div class="fields">
+                    <div class="f">
+                        <span class="f-s">N</span>
+                        <span class="f-t"># of elements</span>
+                        <input class="f-i" id="pN" type="number" value="5000">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">K</span>
+                        <span class="f-t">% out-of-order</span>
+                        <input class="f-i" id="pK" type="number" value="20">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">L</span>
+                        <span class="f-t">% max displacement</span>
+                        <input class="f-i" id="pL" type="number" value="10">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">α</span>
+                        <span class="f-t">Alpha</span>
+                        <input class="f-i" id="pA" type="number" value="0.3" step="0.1">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">β</span>
+                        <span class="f-t">Beta</span>
+                        <input class="f-i" id="pB" type="number" value="0.3" step="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Index Structure selects (keeps original IDs from research.html) -->
+            <div id="index-structure-config" class="config" style="display:none">
+                <div class="lbl">Index Structure</div>
+                <div class="fields">
+                    <div class="f">
+                        <span class="f-s">1</span>
+                        <span class="f-t">Structure 1</span>
+                        <select id="cmp-select-index-1" class="f-i" style="width:140px">
+                            <option value="SWARE" selected>SWARE</option>
+                            <option value="QuIT">QuIT</option>
+                            <option value="Tail">Tail</option>
+                            <option value="lil">lil</option>
+                        </select>
+                    </div>
+                    <div class="f">
+                        <span class="f-s">2</span>
+                        <span class="f-t">Structure 2</span>
+                        <select id="cmp-select-index-2" class="f-i" style="width:140px">
+                            <option value="SWARE">SWARE</option>
+                            <option value="QuIT" selected>QuIT</option>
+                            <option value="Tail">Tail</option>
+                            <option value="lil">lil</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sep"></div>
+
+            <!-- Presets / Actions -->
+            <div class="action-row">
+                <div class="presets">
+                    <span class="presets-label">Presets</span>
+                    <button class="preset on" onclick="applyPreset(5000,20,10,0.3,0.3,this)">Nearly
+                        Sorted</button>
+                    <button class="preset" onclick="applyPreset(5000,50,40,0.5,0.5,this)">Moderately
+                        Random</button>
+                    <button class="preset" onclick="applyPreset(5000,80,80,0.8,0.8,this)">Highly Random</button>
+                    <button class="preset" onclick="applyPreset(5000,15,5,0.2,0.9,this)">Clustered Tail</button>
+                </div>
+                <div class="btns">
+                    <button class="btn-run" id="btn-visualize">Visualize Workload</button>
+                    <button class="btn-run" id="btn-visualize-index">Visualize Index</button>
+                    <button class="btn-run" id="btn-run" style="display:none">Run</button>
+                </div>
+            </div>
+
+            <!-- Buttons (play/pause/skip) -->
+            <!-- dashed line removed as requested -->
+
+            <!-- Charts (copied from data.html) - hidden by default -->
+            <div class="charts" id="charts" style="display:none">
+                <div class="row gx-0 hidden chart-column" id="chart-column">
+                    <!-- Chart 1 (default) -->
+                    <div class="col-6">
+                        <div class="container px-0">
+                            <div class="chart-grid">
+                                <div class="cc">
+                                    <div class="cc-h">
+                                        <div class="cc-t">K-L Metric</div>
+                                        <div class="cc-lg"></div>
+                                    </div>
+                                    <div class="cc-a" id="klCharts"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart 2 (inversions) -->
+                    <div class="col-6">
+                        <div class="container px-0">
+                            <div class="chart-grid">
+                                <div class="cc">
+                                    <div class="cc-h">
+                                        <div class="cc-t">Exchanges</div>
+                                        <div class="cc-lg"></div>
+                                    </div>
+                                    <div class="cc-a" id="inversionCharts"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Buttons (single, redesigned control row) -->
+            <div class="sep"></div>
+            <div id="buttons-container-wrapper" class="hidden">
+                <div class="col text-center" id="buttons-container">
+                    <div class="play-row">
+                        <div class="pbar">
+                            <button class="pb" id="reset-button" title="Reset" onclick="reset_button()">↺</button>
+                            <div class="pb-s"></div>
+                            <button class="pb on" id="stop-button" title="Pause" onclick="stop_button()">❚❚</button>
+                            <button class="pb" id="continue-button" title="Play" onclick="continue_button()">▶</button>
+                            <button class="pb" id="nextstep-button" title="Step" onclick="nextstep_button()">▸|</button>
+                        </div>
+                        <span class="badge"><span class="dot"></span> Running</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden" id="animations-div">
+                <div class="container-fluid mt-5 animations-layout">
+                    <div class="gap hidden" id="insertions-area">
+                        <div class="lbl">Insertions</div>
+                        <div class="ins-row" id="ins"></div>
+                    </div>
+                    <div class="d-flex animations-container">
+                        <div id="buffer-area" class="hidden container mt-5 animation-column structure-slot"></div>
+                        <div id="quit-area" class="hidden container mt-5 animation-column structure-slot"></div>
+                    </div>
+                </div>
+                <div class="panels">
+                    <div id="structure-panel-store" class="hidden">
+                        <div id="structure-panel-sware" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">SWARE</span>
+                                <span class="tag g">Buffer-based</span>
+                            </div>
+                            <div id="sware-box" class="tree-container quit-bplus-tree panel-box sware-box">
+                                <div class="buffer-container panel-box">
+                                    <div class="auto overflow-x overflow-y buffer-content">
+                                        <div class="section-labels-sware" id="sware-buffer-grid"></div>
+                                    </div>
+                                </div>
+                                <div id="tree-area-step-3+" class="hidden sware-tree-panel">
+                                    <div class="quit-tree-grid" id="sware-tree-grid">
+                                        <svg class="quit-tree-links" id="sware-tree-links"></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="structure-panel-quit" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">QuIT</span>
+                                <span class="tag a">Tree-based</span>
+                            </div>
+                            <div id="quit-box" class="tree-container quit-bplus-tree panel-box">
+                                <div class="quit-tree-grid" id="quit-tree-grid">
+                                    <svg class="quit-tree-links" id="quit-tree-links"></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="structure-panel-tail" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">Tail</span>
+                                <span class="tag a">Tree-based</span>
+                            </div>
+                            <div id="tail-box" class="tree-container quit-bplus-tree panel-box">
+                                <div class="quit-tree-grid" id="tail-tree-grid">
+                                    <svg class="quit-tree-links" id="tail-tree-links"></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="structure-panel-lil" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">lil</span>
+                                <span class="tag a">Tree-based</span>
+                            </div>
+                            <div id="lil-box" class="tree-container quit-bplus-tree panel-box">
+                                <div class="quit-tree-grid" id="lil-tree-grid">
+                                    <svg class="quit-tree-links" id="lil-tree-links"></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sep"></div>
+                <!-- Placeholder kept so legacy scripts can query the element without error -->
+                <div id="results-panel" class="hidden" aria-hidden="true"></div>
+                <!-- Results — full-width 3-col -->
+                <div class="gap" id="results-gap">
+                    <div class="lbl">Results</div>
+                    <div class="metrics">
+                        <div class="m-card">
+                            <div class="m-name"># Pages Manually Sorted</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">3</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n na">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name">Avg Pages per Flush</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">4.2</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n na">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Pages Bulk Loaded</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">8</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Fast Inserts</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">8</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">15</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Top Inserts</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n">41</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">38</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-card">
+                            <div class="m-name"># Fast Path Resets</div>
+                            <div class="m-row">
+                                <div class="m-col">
+                                    <div class="m-al s">SWARE</div>
+                                    <div class="m-n na">—</div>
+                                </div>
+                                <div class="m-vs">vs</div>
+                                <div class="m-col">
+                                    <div class="m-al q">QuIT</div>
+                                    <div class="m-n">2</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Plots -->
+                <div id="plots" class="hidden">
+                    <!-- Charts -->
+                    <div class="row no-gutters">
+                        <div class="col-lg-4">
+                            <div class="cc">
+                                <div class="cc-h">
+                                    <div class="cc-t">Number of Top Inserts vs. Operation Steps</div>
+                                    <div class="cc-lg">
+                                        <div class="lg"><span id="top-ld-left" class="ld"></span> <span
+                                                id="top-legend-left-label" class="lg-label">SWARE</span></div>
+                                        <div class="lg"><span id="top-ld-right" class="ld"></span> <span
+                                                id="top-legend-right-label" class="lg-label">QuIT</span></div>
+                                    </div>
+                                </div>
+                                <div id="comparison-top-inserts-chart" class="chart-container"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="cc">
+                                <div class="cc-h">
+                                    <div class="cc-t">Number of Fast Inserts vs. Operation Steps</div>
+                                    <div class="cc-lg">
+                                        <div class="lg"><span id="fast-ld-left" class="ld"></span> <span
+                                                id="fast-legend-left-label" class="lg-label">SWARE</span></div>
+                                        <div class="lg"><span id="fast-ld-right" class="ld"></span> <span
+                                                id="fast-legend-right-label" class="lg-label">QuIT</span></div>
+                                    </div>
+                                </div>
+                                <div id="comparison-fast-inserts-chart" class="chart-container"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="cc">
+                                <div class="cc-h">
+                                    <div class="cc-t">Number of Fast Path Resets vs. Operation Steps</div>
+                                    <div class="cc-lg">
+                                        <div class="lg"><span id="resets-ld-left" class="ld"></span> <span
+                                                id="resets-legend-left-label" class="lg-label">SWARE</span></div>
+                                        <div class="lg"><span id="resets-ld-right" class="ld"></span> <span
+                                                id="resets-legend-right-label" class="lg-label">QuIT</span></div>
+                                    </div>
+                                </div>
+                                <div id="comparison-fast-path-resets-chart" class="chart-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="sep"></div> -->
+        <section id="publication" class="bg-light">
+            <div class="container" style="margin-top:-50px">
+                <div class="row" style="text-align: center">
+                    <div class="col-lg-12">
+                        <h2><br><br><b>For more details check our papers!</b></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p class="content">
+                            <br />
+
+
+                            <!-- Additional Papers from Aneesh Raman's publications (selected) -->
+                            <!-- BoDS -->
+                            <span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Subhadeep Sarkar,
+                                Matthaios Olma, Manos Athanassoulis</span><br>
+                            <a href="https://disc.bu.edu/papers/tpctc22-raman" target="_blank"><b><u>BoDS: A
+                                        Benchmark on Data Sortedness</u></b></a>
+                            <a href="https://cs-people.bu.edu/mathan/publications/tpctc22-raman.pdf" target="_blank">
+                                <font color="Blue"><u>[PDF]</u></font>
+                            </a>
+                            <br />
+                            <span class="pub-conf">In Performance Evaluation and Benchmarking - 14th TPC Technology
+                                Conference (TPCTC), 2022.</span>
+                            <br /><br />
+
+                            <!-- Indexing for Near-Sorted Data -->
+                            <span class="pub-authors">Aneesh Raman, Subhadeep Sarkar, Matthaios Olma, Manos
+                                Athanassoulis</span><br>
+                            <a href="https://disc.bu.edu/papers/icde23-raman" target="_blank"><b><u>Indexing for
+                                        Near-Sorted Data</u></b></a>
+                            <a href="https://cs-people.bu.edu/mathan/publications/icde23-raman.pdf" target="_blank">
+                                <font color="Blue"><u>[PDF]</u></font>
+                            </a>
+                            <br />
+                            <span class="pub-conf">In Proceedings of the 39th IEEE International Conference on Data
+                                Engineering (ICDE), 2023.</span>
+                            <br /><br />
+
+                            <!-- Benchmarking Learned and LSM Indexes for Data Sortedness -->
+                            <span class="pub-authors">Aneesh Raman, Andy Huynh, Jinqi Lu, Manos Athanassoulis</span><br>
+                            <a href="https://disc.bu.edu/papers/dbtest24-bliss" target="_blank"><b><u>Benchmarking
+                                        Learned
+                                        and LSM Indexes for Data Sortedness</u></b></a>
+                            <a href="https://cs-people.bu.edu/mathan/publications/dbtest24-raman.pdf" target="_blank">
+                                <font color="Blue"><u>[PDF]</u></font>
+                            </a>
+                            <br />
+                            <span class="pub-conf">In Proceedings of the 10th International Workshop on Testing
+                                Database Systems (DBTest), 2024.</span>
+                            <br /><br />
+
+                            <!-- QuIT your B+tree -->
+                            <span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Shaolin Xie, Matthaios
+                                Olma, Subhadeep Sarkar, Manos Athanassoulis</span><br>
+                            <a href="https://disc.bu.edu/papers/edbt25-raman" target="_blank"><b><u>QuIT your B+-tree
+                                        for
+                                        the Quick Insertion Tree</u></b></a>
+                            <a href="https://cs-people.bu.edu/mathan/publications/edbt25-raman.pdf" target="_blank">
+                                <font color="Blue"><u>[PDF]</u></font>
+                            </a>
+                            <br />
+                            <span class="pub-conf">In Proceedings of the 28th International Conference on Extending
+                                Database Technology (EDBT), 2025.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="authors" class="" style="padding-top: 10px; padding-bottom: 10px;">
+            <div class="container page-scroll">
+                <div class="row" style="text-align: center">
+                    <h1 class="team-title">Meet The Team</h1>
+                </div>
+                <br />
+                <div class="row">
+
+                    <div class="col-sm"></div>
+                    <div class="col-sm text-center topReveal">
+                        <div class="team-member-box-2">
+                            <div class="team-image-wrapper rotateTopReveal">
+
+                                <a target="_blank" href="">
+                                    <img src="./img/people/philip.jpg" alt="Philip Chindris"
+                                        class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                </a>
+                            </div>
+                            <h3><a target="_blank" href="#">
+                                    <font color="#000"> Philip Chindris</font>
+                                </a></h3>
+                            <p style="text-align:center">High School Intern</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm text-center topReveal">
+                        <div class="team-member-box-2">
+                            <div class="team-image-wrapper rotateTopReveal">
+
+                                <a target="_blank" href="https://cs-people.bu.edu/anwesha/">
+                                    <img src="./img/people/anwesha.jpg" alt="Anwesha Saha"
+                                        class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                </a>
+                            </div>
+                            <h3><a target="_blank" href="https://www.linkedin.com/in/anwesha-sa/">
+                                    <font color="#000"> Anwesha Saha </font>
+                                </a></h3>
+                            <p style="text-align:center">PhD Researcher</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm text-center topReveal">
+                        <div class="team-member-box-2">
+                            <div class="team-image-wrapper rotateTopReveal">
+
+                                <a target="_blank" href="https://cs-people.bu.edu/teona/">
+                                    <img src="img/people/teona.jpg" alt="Teona Bagashvili"
+                                        class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                </a>
+                            </div>
+                            <h3><a target="_blank" href="https://www.linkedin.com/in/teona-bagashvili-6548a3370/">
+                                    <font color="#000"> Teona Bagashvili </font>
+                                </a></h3>
+                            <p style="text-align:center">PhD Researcher</p>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm text-center topReveal">
+                        <div class="team-member-box-2">
+                            <div class="team-image-wrapper rotateTopReveal">
+
+                                <a target="_blank" href="https://aneeshraman.net">
+                                    <img src="./img/people/aneesh.jpg" alt="Aneesh Raman"
+                                        class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                </a>
+                            </div>
+                            <h3> <a target="_blank" href="https://www.linkedin.com/in/aneesh-raman/">
+                                    <font color="#000"> Aneesh Raman</font>
+                                </a></h3>
+                            <p style="text-align:center">PhD Reseacher</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm text-center topReveal">
+                        <div class="team-member-box-2">
+                            <div class="team-image-wrapper rotateTopReveal">
+
+                                <a target="_blank" href="https://cs-people.bu.edu/mathan/">
+                                    <img src="./img/people/manos.jpg" alt="Manos Athanassoulis"
+                                        class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+                                </a>
+                            </div>
+                            <h3><a target="_blank" href="https://cs-people.bu.edu/mathan/">
+                                    <font color="#000"> Manos Athanassoulis</font>
+                                </a></h3>
+                            <p style="text-align:center">Assistant Professor</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm"></div>
+                </div>
+            </div>
+        </section>
+        <div class="sep"></div>
+    </main>
+
+    <footer class="text-center">
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a target="_blank" href="http://www.bu.edu/cs/">
+                            <img class="img-responsive img-centered img-logo" src="./img/BU-logo.png" alt="">
+                        </a>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <a target="_blank" href="https://disc.bu.edu">
+                            <img class="img-responsive img-centered img-logo" src="./img/disc-logo.png" alt="">
+                        </a>
+                        <br>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <a target="_blank" href="http://www.bu.edu/cs/">
+                            <img class="img-responsive img-centered img-logo" src="./img/FB-logo.png" alt="">
+                        </a>
+                        <br>
+                    </div>
+
+                    <div class="col-md-3">
+                        <a target="_blank" href="https://disc.bu.edu">
+                            <img class="img-responsive img-centered img-logo" src="./img/NSF-logo.png" alt="">
+                        </a>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-below">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-lg-12 text-center">
+                        Copyright © 2023. DiSC lab. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Minimal scripts required by the redesign preview -->
+    <script src="js/packages/jquery-3.4.1.min.js"></script>
+    <script src="js/packages/bootstrap.bundle.min.js"></script>
+    <script src="js/packages/bootstrap-slider.js"></script>
+    <script src="js/packages/popper.min.js"></script>
+    <script src="js/packages/plotly.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
+    <script type="text/javascript" src="js/server/server.js"></script>
+    <script type="text/javascript" src="js/server/update.js"></script>
+    <script type="text/javascript" src="js/algorithms/sware.js"></script>
+    <script type="text/javascript" src="js/algorithms/quit.js"></script>
+    <script type="text/javascript" src="js/algorithms/lil.js"></script>
+    <script type="text/javascript" src="js/algorithms/tail.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        if (typeof google !== 'undefined' && google.charts && typeof google.charts.load === 'function') {
+            google.charts.load('current', { 'packages': ['corechart'] });
+        } else if (typeof window !== 'undefined') {
+            // Ensure loader is present; if it hasn't attached yet, call load when ready.
+            window.addEventListener('load', function () {
+                if (window.google && window.google.charts && typeof window.google.charts.load === 'function') {
+                    window.google.charts.load('current', { 'packages': ['corechart'] });
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript" src="js/helpers.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script>
+        // Ensure the animations area is revealed whenever the site's Run action is invoked.
+        (function () {
+            var orig = window.run_operations;
+            function showAnimations() {
+                var anim = document.getElementById('animations-div');
+                if (anim) { anim.classList.remove('hidden'); anim.style.display = ''; anim.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                var ins = document.getElementById('insertions-area'); if (ins) ins.classList.remove('hidden');
+                var buf = document.getElementById('buffer-area'); if (buf) buf.classList.remove('hidden');
+                var q = document.getElementById('quit-area'); if (q) q.classList.remove('hidden');
+                var store = document.getElementById('structure-panel-store'); if (store) store.classList.remove('hidden');
+            }
+
+            if (typeof orig === 'function') {
+                window.run_operations = function () {
+                    showAnimations();
+                    try { if (window.ensureLegacyInputs) window.ensureLegacyInputs(); } catch (e) { }
+                    // If charts/datasets aren't present yet, call visualize_workload to create them
+                    try {
+                        var klEl = document.getElementById('klCharts');
+                        var invEl = document.getElementById('inversionCharts');
+                        var needVisualize = false;
+                        if (klEl && klEl.children.length === 0) needVisualize = true;
+                        if (invEl && invEl.children.length === 0) needVisualize = true;
+                        if (needVisualize && typeof window.visualize_workload === 'function') {
+                            window.visualize_workload();
+                            // Diagnostics: log dataset and created chart elements to help debug empty charts
+                            try {
+                                console.log('Diagnostics after visualize_workload: klDatasets=', window.klDatasets && window.klDatasets.length, 'exchangesDatasets=', window.exchangesDatasets && window.exchangesDatasets.length);
+                                console.log('chart_div count before resize:', document.querySelectorAll('[id^="chart_div"]').length, 'inversion count:', document.querySelectorAll('[id^="inversion_chart_div"]').length);
+                            } catch (e) { }
+                            // allow Plotly to compute sizes after charts are inserted and containers shown
+                            setTimeout(function () {
+                                try {
+                                    const chartNodes = document.querySelectorAll('[id^="chart_div"], [id^="inversion_chart_div"]');
+                                    chartNodes.forEach(function (n) { if (window.Plotly && n) { try { Plotly.Plots.resize(n); } catch (e) { } } });
+                                    window.dispatchEvent(new Event('resize'));
+                                    // Force a full Plotly re-render to avoid blank plots when created while hidden
+                                    try { if (window.forcePlotlyRedrawAll) { window.forcePlotlyRedrawAll(); console.log('forcePlotlyRedrawAll called'); } } catch (e) { console.warn('forcePlotlyRedrawAll failed', e); }
+                                    console.log('chart_div count after resize:', document.querySelectorAll('[id^="chart_div"]').length, 'inversion count:', document.querySelectorAll('[id^="inversion_chart_div"]').length);
+                                } catch (e) { console.warn('resize diagnostics failed', e); }
+                            }, 150);
+                        }
+                    } catch (e) { /* ignore */ }
+                    return orig.apply(this, arguments);
+                };
+            } else {
+                window.run_operations = function () { showAnimations(); };
+            }
+        })();
+    </script>
+    <script src="js/redesign.js"></script>
+    <script src="js/packages/script.js"></script>
+</body>
+
+</html>

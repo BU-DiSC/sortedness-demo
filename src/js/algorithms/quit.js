@@ -693,8 +693,34 @@ function clearInsertionsPanel()
 function updateInsertionsPanel(highlightFirst)
 {
     const slotCount = clearInsertionsPanel();
+
+    // If the redesigned insertions panel (`#ins`) exists, populate it.
+    const insContainer = document.getElementById('ins');
+    if (insContainer) {
+        // Clear any existing content
+        insContainer.innerHTML = '';
+        const count = Math.min(total_data.length, QUIT_MAX_INSERTION_SLOTS);
+        for (let i = 0; i < count; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'ins';
+            btn.id = 'page' + i;
+            btn.textContent = total_data[i];
+            insContainer.appendChild(btn);
+        }
+
+        if (highlightFirst) {
+            const firstSlot = document.getElementById('page0');
+            if (firstSlot && firstSlot.innerHTML !== '') {
+                firstSlot.classList.add('on');
+            }
+        }
+
+        return;
+    }
+
+    // Fallback: populate legacy page elements if present (kept for backward compatibility)
     for (let i = 0; i < total_data.length && i < slotCount; i++) {
-        const pageSlot = document.getElementById("page" + i);
+        const pageSlot = document.getElementById('page' + i);
         if (!pageSlot) {
             continue;
         }
@@ -702,9 +728,9 @@ function updateInsertionsPanel(highlightFirst)
     }
 
     if (highlightFirst) {
-        const firstSlot = document.getElementById("page0");
-        if (firstSlot && firstSlot.innerHTML !== "") {
-            firstSlot.classList.add("glow-green");
+        const firstSlot = document.getElementById('page0');
+        if (firstSlot && firstSlot.innerHTML !== '') {
+            firstSlot.classList.add('on');
         }
     }
 }

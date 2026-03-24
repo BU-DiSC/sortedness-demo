@@ -11,6 +11,10 @@ class Node{
     }
 }
 
+// Keep track of last values shown in the summary cards so we can
+// highlight cards when a value changes.
+var lastSummaryValues = {};
+
 
 function calculate_internal(size)
 {
@@ -562,7 +566,16 @@ function getComparisonMetricsByStructure()
 
 function update_table() {
     const rows = getResultsPanelRows();
+    // Ensure the compact summary cards are updated even if the legacy
+    // `#cost-result` table is absent (we removed it from the redesign).
+    try {
+        updateSummaryCards();
+    } catch (e) {
+        console.warn('updateSummaryCards failed', e);
+    }
+
     if (rows.length < 7) {
+        // No detailed rows available — nothing more to do.
         return;
     }
 
@@ -618,9 +631,171 @@ function update_table() {
     spans = getResultsRowBoundarySpans(rows, 6);
     setResultsSpanValue(spans[0], leftMetrics.fastPathResets);
     setResultsSpanValue(spans[1], rightMetrics.fastPathResets);
-
+    // Also update the compact summary cards shown in the results panel
+    // so they reflect the same values as the detailed table.
+    try {
+        updateSummaryCards();
+    } catch (e) {
+        // don't let this break existing flows
+        console.warn('updateSummaryCards failed', e);
+    }
 }
 
+
+/**
+ * Update the `.m-card` summary cards in the results panel to match
+ * the same metrics used by `update_table()`.
+ */
+function updateSummaryCards()
+{
+    const selectedStructures = typeof getSelectedStructureNames === "function"
+        ? getSelectedStructureNames()
+        : ["SWARE", "QuIT"];
+
+    const metrics = getComparisonMetricsByStructure();
+    const leftMetrics = metrics[selectedStructures[0]] || {};
+    const rightMetrics = metrics[selectedStructures[1]] || {};
+
+    // Find summary cards inside the results panel. If not present, bail out.
+    const cards = document.querySelectorAll('#results-gap .metrics .m-card, .metrics .m-card');
+    if (!cards || cards.length === 0) {
+        return;
+    }
+
+    function normalizeTitle(str) {
+        if (!str || typeof str !== 'string') return '';
+        return str.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+    }
+
+    cards.forEach((card) => {
+        const titleEl = card.querySelector('.m-name');
+        const valueEls = card.querySelectorAll('.m-n');
+        const labelEls = card.querySelectorAll('.m-al');
+        if (!titleEl || !valueEls || valueEls.length < 1) {
+            return;
+        }
+
+        const rawName = titleEl.textContent.trim();
+        const name = normalizeTitle(rawName);
+        let leftVal = null;
+        let rightVal = null;
+        // Determine metric by normalized title (robust to wording changes)
+        if (name.includes('sorted') || name.includes('# pages manually sorted') || name.includes('sort')) {
+            leftVal = leftMetrics.manualSortedPages;
+            rightVal = rightMetrics.manualSortedPages;
+        } else if (name.includes('avg') && name.includes('flush')) {
+            leftVal = leftMetrics.averagePagesPerFlush;
+            rightVal = rightMetrics.averagePagesPerFlush;
+        } else if (name.includes('pages bulk') || name.includes('bulk loaded')) {
+            // Card shows pages bulk loaded. Show number for SWARE; show '-' for QuIT
+            if (selectedStructures[0] === 'SWARE') {
+                leftVal = (typeof leftMetrics.pagesBulkloaded === 'number') ? leftMetrics.pagesBulkloaded : null;
+            } else {
+                leftVal = '-';
+            }
+
+            if (selectedStructures[1] === 'SWARE') {
+                rightVal = (typeof rightMetrics.pagesBulkloaded === 'number') ? rightMetrics.pagesBulkloaded : null;
+            } else {
+                rightVal = '-';
+            }
+        } else if (name.includes('bulk') || (name.includes('fast inserts') && name.includes('bulk'))) {
+            // Show only # Fast Inserts for combined-style cards. For SWARE, compute fast inserts
+            // from pages bulk loaded: fastInserts = pagesBulkloaded * pageSize.
+            const pageSize = (swareTree && typeof swareTree.t === 'number') ? swareTree.t : 10;
+
+            // Left side
+            if (selectedStructures[0] === 'SWARE') {
+                if (typeof leftMetrics.pagesBulkloaded === 'number') {
+                    leftVal = Math.round(leftMetrics.pagesBulkloaded * pageSize);
+                } else if (typeof leftMetrics.fastInserts === 'number') {
+                    leftVal = leftMetrics.fastInserts;
+                } else {
+                    leftVal = null;
+                }
+            } else {
+                leftVal = (typeof leftMetrics.fastInserts === 'number') ? leftMetrics.fastInserts : null;
+            }
+
+            // Right side
+            if (selectedStructures[1] === 'SWARE') {
+                if (typeof rightMetrics.pagesBulkloaded === 'number') {
+                    rightVal = Math.round(rightMetrics.pagesBulkloaded * pageSize);
+                } else if (typeof rightMetrics.fastInserts === 'number') {
+                    rightVal = rightMetrics.fastInserts;
+                } else {
+                    rightVal = null;
+                }
+            } else {
+                rightVal = (typeof rightMetrics.fastInserts === 'number') ? rightMetrics.fastInserts : null;
+            }
+        } else if (name.includes('fast inserts') && !name.includes('bulk')) {
+            leftVal = leftMetrics.fastInserts;
+            rightVal = rightMetrics.fastInserts;
+        } else if (name.includes('top insert') || name.includes('top inserts')) {
+            leftVal = leftMetrics.topInserts;
+            rightVal = rightMetrics.topInserts;
+        } else if (name.includes('fast path') || name.includes('resets') || name.includes('fast path resets')) {
+            leftVal = leftMetrics.fastPathResets;
+            rightVal = rightMetrics.fastPathResets;
+        } else {
+            // Unknown card — do nothing
+            return;
+        }
+
+        // Write values into the card nodes. The markup puts left value first, then right.
+        const displayLeft = (leftVal == null) ? '—' : leftVal;
+        const displayRight = (rightVal == null) ? '—' : rightVal;
+
+        // Update the per-card structure labels (e.g., 'SWARE' / 'QuIT') so they
+        // reflect the currently selected structures and carry the appropriate
+        // styling class. This keeps the compact cards in sync with the selectors.
+        try {
+            if (labelEls && labelEls.length >= 2) {
+                const leftLabelEl = labelEls[0];
+                const rightLabelEl = labelEls[1];
+                leftLabelEl.textContent = selectedStructures[0] || '';
+                rightLabelEl.textContent = selectedStructures[1] || '';
+
+                // normalize styling classes: 's' for SWARE, 'q' for QuIT
+                leftLabelEl.classList.remove('s', 'q');
+                rightLabelEl.classList.remove('s', 'q');
+                if ((selectedStructures[0] || '').toUpperCase() === 'SWARE') leftLabelEl.classList.add('s');
+                if ((selectedStructures[0] || '').toUpperCase() === 'QUIT') leftLabelEl.classList.add('q');
+                if ((selectedStructures[1] || '').toUpperCase() === 'SWARE') rightLabelEl.classList.add('s');
+                if ((selectedStructures[1] || '').toUpperCase() === 'QUIT') rightLabelEl.classList.add('q');
+            }
+        } catch (e) {
+            // non-fatal: if DOM shape changed, skip label sync
+        }
+
+        // Change detection: highlight card if either side changed since last update
+        const key = name; // already normalized
+        const prev = lastSummaryValues[key] || { left: null, right: null };
+        const changed = (prev.left !== displayLeft) || (prev.right !== displayRight);
+
+        if (valueEls[0]) {
+            valueEls[0].textContent = displayLeft;
+        }
+        if (valueEls[1]) {
+            valueEls[1].textContent = displayRight;
+        }
+
+        // If changed, add a transient highlight class and update tracked values
+        if (changed) {
+            try {
+                card.classList.add('metric-updated');
+                // Remove highlight after a short delay so it draws attention
+                window.setTimeout(() => {
+                    try { card.classList.remove('metric-updated'); } catch (e) { }
+                }, 1200);
+            } catch (e) {
+                // ignore
+            }
+            lastSummaryValues[key] = { left: displayLeft, right: displayRight };
+        }
+    });
+}
 function getHistoryMax(history)
 {
     if (!Array.isArray(history) || history.length === 0) {
@@ -666,6 +841,40 @@ function updateComparisonLegends()
         const rightColor = getStructureChartColor(selectedStructures[1]);
         rightBox.style.backgroundColor = rightColor;
         rightBox.style.borderColor = rightColor;
+    }
+
+    // Update the small per-card legends inside each chart card (if present)
+    try {
+        const leftColor = getStructureChartColor(selectedStructures[0]);
+        const rightColor = getStructureChartColor(selectedStructures[1]);
+        const prefixIds = [
+            { prefix: 'top' },
+            { prefix: 'fast' },
+            { prefix: 'resets' }
+        ];
+
+        prefixIds.forEach(function (p) {
+            const leftDot = document.getElementById(p.prefix + '-ld-left');
+            const rightDot = document.getElementById(p.prefix + '-ld-right');
+            const leftLbl = document.getElementById(p.prefix + '-legend-left-label');
+            const rightLbl = document.getElementById(p.prefix + '-legend-right-label');
+            if (leftDot) {
+                leftDot.style.backgroundColor = leftColor;
+                leftDot.style.borderColor = leftColor;
+            }
+            if (rightDot) {
+                rightDot.style.backgroundColor = rightColor;
+                rightDot.style.borderColor = rightColor;
+            }
+            if (leftLbl) {
+                leftLbl.textContent = leftName;
+            }
+            if (rightLbl) {
+                rightLbl.textContent = rightName;
+            }
+        });
+    } catch (e) {
+        // non-fatal
     }
 }
 
