@@ -17,17 +17,17 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google Material Icon-->
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-	<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="js/packages/plotly.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
-	<script type="text/javascript" src="js/server/server.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
+    <script type="text/javascript" src="js/server/server.js"></script>
     <script type="text/javascript" src="js/server/update.js"></script>
     <script type="text/javascript" src="js/data.js"></script>
     <script type="text/javascript" src="js/algorithms/sware.js"></script>
@@ -36,7 +36,7 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
+        google.charts.load('current', { 'packages': ['corechart'] });
     </script>
 </head>
 
@@ -63,6 +63,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#sponsors">Sponsors</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="combined.html">Combined</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -73,20 +76,29 @@
     <div class="fixed">
         <div class="rcorners-1" style="background-color:8288B4">
             <a href="research.html"><span class="rcorners-click"></span></a>
-            <div class="rcorners-text-1"><a href="index.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Home</a></div>
+            <div class="rcorners-text-1"><a href="index.html"
+                    style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Home</a></div>
         </div>
         <div class="rcorners-2" style="background-color:8288B4">
             <a href="research.html"><span class="rcorners-click"></span></a>
-            <div class="rcorners-text-2"><a href="background.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Background</a></div>
+            <div class="rcorners-text-2"><a href="background.html"
+                    style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Background</a></div>
         </div>
         <div class="rcorners-3" style="background-color:8288B4">
             <a href="research.html#problem"><span class="rcorners-click"></span></a>
-            <div class="rcorners-text-3"><a href="research.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a></div>
+            <div class="rcorners-text-3"><a href="research.html"
+                    style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a></div>
             <!-- <img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" /> -->
         </div>
         <div class="rcorners-4" style="background-color:8288B4">
             <a href="data.html"><span class="rcorners-click"></span></a>
-            <div class="rcorners-text-4"><a href="data.html" style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Data</a></div>
+            <div class="rcorners-text-4"><a href="data.html"
+                    style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Data</a></div>
+        </div>
+        <div class="rcorners-5" style="background-color:8288B4">
+            <a href="combined.html"><span class="rcorners-click"></span></a>
+            <div class="rcorners-text-5"><a href="combined.html"
+                    style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Combined</a></div>
         </div>
     </div>
 
@@ -112,11 +124,11 @@
                             <i class="fas"></i>N (# of elements)
                         </label>
                     </div>
-                    <input type="number" id="cmp-select-N" class="cmp-input form-control" 
-                           value="5000" min="20" max="10000" step="1" aria-label="#Entries">
+                    <input type="number" id="cmp-select-N" class="cmp-input form-control" value="5000" min="20"
+                        max="10000" step="1" aria-label="#Entries">
                 </div>
             </div>
-            
+
             <!-- Div of K -->
             <div class="parameter-container">
                 <div class="input-group input-group-sm mb-2">
@@ -125,8 +137,8 @@
                             <i class="fas"></i>K (% out-of-order)
                         </label>
                     </div>
-                    <input type="number" id="cmp-select-K" class="cmp-input form-control" 
-                           value="20" min="0" max="100" aria-label="#Entries" onchange="update()">
+                    <input type="number" id="cmp-select-K" class="cmp-input form-control" value="20" min="0" max="100"
+                        aria-label="#Entries" onchange="update()">
                 </div>
             </div>
 
@@ -138,8 +150,8 @@
                             <i class="fas"></i>L (% max out-of-orderness)
                         </label>
                     </div>
-                    <input type="number" id="cmp-select-L" class="cmp-input form-control" 
-                           value="10" min="0" max="100" aria-label="#Entries" onchange="update()">
+                    <input type="number" id="cmp-select-L" class="cmp-input form-control" value="10" min="0" max="100"
+                        aria-label="#Entries" onchange="update()">
                 </div>
             </div>
         </div>
@@ -155,8 +167,8 @@
                             <i class="fas fa-chart-area"></i> <span class="specialChar">&alpha;</span> (alpha value)
                         </label>
                     </div>
-                    <input type="number" id="cmp-select-A" class="cmp-input form-control" 
-                           value="0.3" min="0.1" max="1" step="0.1" aria-label="#Entries" onchange="update()">
+                    <input type="number" id="cmp-select-A" class="cmp-input form-control" value="0.3" min="0.1" max="1"
+                        step="0.1" aria-label="#Entries" onchange="update()">
                 </div>
             </div>
 
@@ -168,8 +180,8 @@
                             <i class="fas fa-chart-line"></i> <span class="specialChar">&beta;</span> (beta value)
                         </label>
                     </div>
-                    <input type="number" id="cmp-select-B" class="cmp-input form-control" 
-                           value="0.3" min="0.1" max="1" step="0.1" aria-label="#Entries" onchange="update()">
+                    <input type="number" id="cmp-select-B" class="cmp-input form-control" value="0.3" min="0.1" max="1"
+                        step="0.1" aria-label="#Entries" onchange="update()">
                 </div>
             </div>
         </div>
@@ -177,11 +189,12 @@
         <div id="cmp-conf-row4" class="parameter-row">
             <div class="parameter-container">
                 <div class="d-flex justify-content-center">
-                    <button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize Workload</button>
+                    <button onclick="visualize_workload()" type="button" class="btn btn-success">Visualize
+                        Workload</button>
                 </div>
             </div>
         </div>
-        
+
         <!-- Charts -->
         <div class="charts">
             <div class="row gx-0 hidden chart-column" id="chart-column">
@@ -204,4 +217,5 @@
     </section>
 
 </body>
+
 </html>

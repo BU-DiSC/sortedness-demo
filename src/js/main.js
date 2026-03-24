@@ -86,6 +86,65 @@ const STRUCTURE_CHART_COLORS = {
     lil: "#d96c6c"
 };
 
+/**
+ * Apply the redesign plotting theme to a Plotly layout object.
+ * This merges a small set of visual defaults (transparent paper, subtle plot bg,
+ * colorway from STRUCTURE_CHART_COLORS, font color/family, and legend styling)
+ * while preserving any layout properties already provided by the caller.
+ */
+function applyRedesignPlotlyLayout(layout) {
+    const colorway = Object.values(STRUCTURE_CHART_COLORS || {});
+    const theme = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(255,255,255,0.02)',
+        colorway: colorway.length ? colorway : undefined,
+        font: Object.assign({ family: 'DM Sans, Arial, sans-serif', color: '#222' }, (layout && layout.font) || {}),
+        hoverlabel: Object.assign({ bgcolor: '#ffffff', bordercolor: 'rgba(0,0,0,0.06)', font: { color: '#111' } }, (layout && layout.hoverlabel) || {}),
+        xaxis: Object.assign({ showgrid: true, gridcolor: 'rgba(0,0,0,0.04)', zerolinecolor: 'rgba(0,0,0,0.06)', linecolor: 'rgba(0,0,0,0.12)', tickfont: { size: 11, color: '#666' } }, (layout && layout.xaxis) || {}),
+        yaxis: Object.assign({ showgrid: true, gridcolor: 'rgba(0,0,0,0.04)', zerolinecolor: 'rgba(0,0,0,0.06)', linecolor: 'rgba(0,0,0,0.12)', tickfont: { size: 11, color: '#666' } }, (layout && layout.yaxis) || {}),
+    };
+
+    // Merge title font color if a title exists
+    if (layout && layout.title) {
+        theme.title = Object.assign({}, layout.title, {
+            font: Object.assign({ color: '#111' }, (layout.title && layout.title.font) || {})
+        });
+    }
+
+    const merged = Object.assign({}, layout, theme);
+
+    if (merged.legend) {
+        // center legend inside the top of the plot and use the card title font
+        merged.legend = Object.assign({
+            bgcolor: 'rgba(255,255,255,0.0)',
+            borderwidth: 0,
+            orientation: 'h',
+            x: 0.5,
+            xanchor: 'center',
+            y: 1.02,
+            yanchor: 'bottom',
+            font: { family: 'IBM Plex Mono, monospace', size: 12, color: '#1c1c1a' }
+        }, merged.legend);
+    }
+
+    return merged;
+}
+
+// Ensure Plotly charts resize when the window changes size. Use a single listener
+// that attempts to resize all known chart divs created by this file.
+window.addEventListener('resize', () => {
+    try {
+        const chartNodes = document.querySelectorAll('[id^="chart_div"], [id^="inversion_chart_div"]');
+        chartNodes.forEach((node) => {
+            if (typeof Plotly !== 'undefined' && node && node.nodeType === 1) {
+                try { Plotly.Plots.resize(node); } catch (e) { /* ignore individual failures */ }
+            }
+        });
+    } catch (e) {
+        // ignore
+    }
+});
+
 // array that holds the field user inputted
 // order is [n,k,l,b,exchanges]
 var inputedDataE = [];
@@ -618,20 +677,13 @@ function visualize_workload() {
             var plot_data = adjust_for_plotly_plotting(klDatasets[i]);
             // Options for the graph
             const layout = {
-                title: {
-                    text: "K-L Metric",
-                    font: {
-                        size: 14,           // Smaller size (default is usually 17-18)
-                        family: 'Arial',
-                    }
-                },
-                width: 500,
-                height: 500,
+                width: 425,
+                height: 450,
                 margin: {
                     l: 60,
                     r: 40,
-                    t: 40,
-                    b: 100
+                    t: 36,
+                    b: 60
                 },
                 xaxis: {
                     title: 'position',
@@ -689,13 +741,33 @@ function visualize_workload() {
             let klChart = document.createElement("div");
             klChart.id = "chart_div" + i;
             klChart.classList.add("equal-height", "chart_div");
-            klChart.style.width = "100%";
-            klChart.style.height = "500px";
-            klChart.style.minHeight = "500px";
+            klChart.style.width = "425px";
+            klChart.style.height = "450px";
+            klChart.style.minHeight = "450px";
             klChart.style.padding = "0px";
             klChartWrapper.appendChild(klChart);
             document.getElementById("klCharts").appendChild(klChartWrapper);
-            Plotly.newPlot("chart_div" + i, plot_data, layout, config);
+            // Ensure layout doesn't render the old annotation under the x-axis
+            if (layout && layout.annotations) {
+                layout.annotations = [];
+            }
+
+            // Normalize traces for consistent styling: marker size/opacity and line width
+            try {
+                plot_data.forEach(function(trace){
+                    trace.marker = trace.marker || {};
+                    if (!trace.marker.size) trace.marker.size = 6;
+                    if (typeof trace.marker.opacity === 'undefined') trace.marker.opacity = 0.85;
+                    // preserve existing trace colors (do not override marker.color here)
+                    // line styling
+                    if (trace.line) {
+                        trace.line.width = trace.line.width || 1.5;
+                        trace.line.color = trace.line.color || trace.marker.color;
+                    }
+                });
+            } catch(e) { /* safe-guard */ }
+
+            Plotly.newPlot("chart_div" + i, plot_data, applyRedesignPlotlyLayout(layout), config);
             klChartWrapper.appendChild(deleteButton);
         }
         
@@ -705,21 +777,14 @@ function visualize_workload() {
             var plot_data = adjust_for_plotly_plotting(exchangesDatasets[i]);
             // Options for the graph
             const layout = {
-                title: {
-                    text: "Exchanges",
-                    font: {
-                        size: 14,           // Smaller size (default is usually 17-18)
-                        family: 'Arial',
-                    }
-                },
                 //autosize:true,
-                width: 500,
-                height: 500,
+                width: 425,
+                height: 450,
                 margin: {
                     l: 60,
                     r: 40,
-                    t: 40,
-                    b: 100
+                    t: 36,
+                    b: 60
                 },
                 xaxis: {
                     title: 'position',
@@ -779,15 +844,80 @@ function visualize_workload() {
             let inversionChart = document.createElement("div");
             inversionChart.id = "inversion_chart_div" + i;
             inversionChart.classList.add("equal-height", "chart_div");
-            inversionChart.style.width = "100%";
-            inversionChart.style.height = "500px";
-            inversionChart.style.minHeight = "500px";
+            inversionChart.style.width = "425px";
+            inversionChart.style.height = "450px";
+            inversionChart.style.minHeight = "450px";
             inversionChart.style.padding = "0px";
             inversionChartWrapper.appendChild(inversionChart);
             document.getElementById("inversionCharts").appendChild(inversionChartWrapper);
-            Plotly.newPlot("inversion_chart_div" + i, plot_data, layout, config);
+            // Ensure layout doesn't render the old annotation under the x-axis
+            if (layout && layout.annotations) {
+                layout.annotations = [];
+            }
+
+            // Normalize traces for consistent styling: marker size/opacity and line width
+            try {
+                plot_data.forEach(function(trace){
+                    trace.marker = trace.marker || {};
+                    if (!trace.marker.size) trace.marker.size = 6;
+                    if (typeof trace.marker.opacity === 'undefined') trace.marker.opacity = 0.85;
+                    // preserve existing trace colors (do not override marker.color here)
+                    // line styling
+                    if (trace.line) {
+                        trace.line.width = trace.line.width || 1.5;
+                        trace.line.color = trace.line.color || trace.marker.color;
+                    }
+                });
+            } catch(e) { /* safe-guard */ }
+
+            Plotly.newPlot("inversion_chart_div" + i, plot_data, applyRedesignPlotlyLayout(layout), config);
             inversionChartWrapper.appendChild(deleteButton);
         }
+
+        // Update card subtitles with the most recent dataset info (if present)
+        try {
+            // K-L metric subtitle
+            const klContainer = document.getElementById('klCharts');
+            if (klContainer) {
+                const klCard = klContainer.closest('.cc');
+                if (klCard) {
+                    let sub = klCard.querySelector('.cc-sub');
+                    if (!sub) {
+                        sub = document.createElement('div');
+                        sub.className = 'cc-sub';
+                        const hdr = klCard.querySelector('.cc-h');
+                        if (hdr) hdr.appendChild(sub);
+                    }
+                    if (inputedDatakl && inputedDatakl.length > 0) {
+                        const last = inputedDatakl[inputedDatakl.length - 1];
+                        sub.textContent = "(N=" + last[0] + ", K=" + last[1] + ", L=" + last[2] + ", B=" + last[3] + ", A=" + last[5] + ")";
+                    } else {
+                        sub.textContent = '';
+                    }
+                }
+            }
+
+            // Inversions subtitle
+            const invContainer = document.getElementById('inversionCharts');
+            if (invContainer) {
+                const invCard = invContainer.closest('.cc');
+                if (invCard) {
+                    let sub = invCard.querySelector('.cc-sub');
+                    if (!sub) {
+                        sub = document.createElement('div');
+                        sub.className = 'cc-sub';
+                        const hdr = invCard.querySelector('.cc-h');
+                        if (hdr) hdr.appendChild(sub);
+                    }
+                    if (inputedDataE && inputedDataE.length > 0) {
+                        const last = inputedDataE[inputedDataE.length - 1];
+                        sub.textContent = "(N=" + last[0] + ", E=" + last[4] + ")";
+                    } else {
+                        sub.textContent = '';
+                    }
+                }
+            }
+        } catch (e) { /* ignore subtitle failures */ }
 
         document.getElementById("runBtn").classList.remove("hidden");
         document.getElementById("run-button-contain").classList.remove("hidden");

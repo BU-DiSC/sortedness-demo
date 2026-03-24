@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sortedness — Redesign Preview</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-slider.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Redesign scoped styles (must come after base styles) -->
+    <link rel="stylesheet" href="css/redesign.css">
+</head>
+
+<body>
+
+    <main class="redesign">
+        <nav>
+            <div class="nav-l">
+                <a class="nav-brand" href="index.html"><span class="m">S</span>Sortedness</a>
+                <div class="nav-tabs">
+                    <a href="research.html#publication">Publications</a>
+                    <a href="research.html#authors">The Team</a>
+                    <a href="research.html#sponsors">Sponsors</a>
+                    <a href="combined.html" class="on">Combined</a>
+                </div>
+            </div>
+            <div class="nav-r">
+                <a href="data.html">Data</a>
+                <a href="index.html">Home</a>
+            </div>
+        </nav>
+
+        <div class="wrap">
+            <!-- Header -->
+            <div class="hdr">
+                <h1>Sortedness</h1>
+                <p>
+                    Real-world data ingestion is rarely perfectly sorted — incoming records arrive <em>nearly</em>
+                    sorted, with a small fraction displaced. This demo lets you configure a near-sorted workload and
+                    watch two ingestion algorithms — <strong>SWARE</strong> (buffer-based) and <strong>QuIT</strong>
+                    (tree-based) — process it side by side, comparing their structure and cost in real time.
+                    <a href="#">Read the paper →</a>
+                </p>
+            </div>
+
+            <div class="sep"></div>
+
+            <!-- Config (redesign inputs) -->
+            <div class="config">
+                <div class="lbl">Workload Parameters</div>
+                <div class="fields">
+                    <div class="f">
+                        <span class="f-s">N</span>
+                        <span class="f-t"># of elements</span>
+                        <input class="f-i" id="pN" type="number" value="5000">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">K</span>
+                        <span class="f-t">% out-of-order</span>
+                        <input class="f-i" id="pK" type="number" value="20">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">L</span>
+                        <span class="f-t">% max displacement</span>
+                        <input class="f-i" id="pL" type="number" value="10">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">α</span>
+                        <span class="f-t">Alpha</span>
+                        <input class="f-i" id="pA" type="number" value="0.3" step="0.1">
+                    </div>
+                    <div class="f">
+                        <span class="f-s">β</span>
+                        <span class="f-t">Beta</span>
+                        <input class="f-i" id="pB" type="number" value="0.3" step="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Index Structure selects (keeps original IDs from research.html) -->
+            <div id="index-structure-config" class="config" style="display:none">
+                <div class="lbl">Index Structure</div>
+                <div class="fields">
+                    <div class="f">
+                        <span class="f-s">1</span>
+                        <span class="f-t">Structure 1</span>
+                        <select id="cmp-select-index-1" class="f-i" style="width:140px">
+                            <option value="SWARE" selected>SWARE</option>
+                            <option value="QuIT">QuIT</option>
+                            <option value="Tail">Tail</option>
+                            <option value="lil">lil</option>
+                        </select>
+                    </div>
+                    <div class="f">
+                        <span class="f-s">2</span>
+                        <span class="f-t">Structure 2</span>
+                        <select id="cmp-select-index-2" class="f-i" style="width:140px">
+                            <option value="SWARE">SWARE</option>
+                            <option value="QuIT" selected>QuIT</option>
+                            <option value="Tail">Tail</option>
+                            <option value="lil">lil</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sep"></div>
+
+            <!-- Presets / Actions -->
+            <div class="action-row">
+                <div class="presets">
+                    <span class="presets-label">Presets</span>
+                    <button class="preset on" onclick="applyPreset(5000,20,10,0.3,0.3,this)">Nearly
+                        Sorted</button>
+                    <button class="preset" onclick="applyPreset(5000,50,40,0.5,0.5,this)">Moderately
+                        Random</button>
+                    <button class="preset" onclick="applyPreset(5000,80,80,0.8,0.8,this)">Highly Random</button>
+                    <button class="preset" onclick="applyPreset(5000,15,5,0.2,0.9,this)">Clustered Tail</button>
+                </div>
+                <div class="btns">
+                    <button class="btn-g" id="btn-visualize">Visualize Workload</button>
+                    <button class="btn-g" id="btn-visualize-index">Visualize Index</button>
+                    <button class="btn-run" id="btn-run" style="display:none">Run</button>
+                </div>
+            </div>
+
+            <!-- Visualization area -->
+            <div id="viz">
+                <div class="sep"></div>
+
+                <div class="play-row">
+                    <div class="pbar">
+                        <button class="pb" title="Reset">↺</button>
+                        <div class="pb-s"></div>
+                        <button class="pb on" title="Pause">❚❚</button>
+                        <button class="pb" title="Play">▶</button>
+                        <button class="pb" title="Step">▸|</button>
+                    </div>
+                    <span class="badge"><span class="dot"></span> Running</span>
+                </div>
+
+                <div class="gap">
+                    <div class="lbl">Insertions</div>
+                    <div class="ins-row" id="ins"></div>
+                </div>
+
+                <div class="gap">
+                    <div class="panels">
+                        <div class="panel">
+                            <div class="panel-h">
+                                <span class="panel-t">SWARE</span>
+                                <span class="tag g">Buffer-based</span>
+                            </div>
+                            <div class="panel-b">
+                                <div class="pgrid" id="sware"></div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-h">
+                                <span class="panel-t">QuIT Tree</span>
+                                <span class="tag a">Tree-based</span>
+                            </div>
+                            <div class="panel-b">
+                                <div class="tree" id="quit-tree">
+                                    <!-- Tree visualization placeholder -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Charts (copied from data.html) - hidden by default -->
+            <div class="charts" id="charts" style="display:none">
+                <div class="row gx-0 hidden chart-column" id="chart-column">
+                    <!-- Chart 1 (default) -->
+                    <div class="col-6">
+                        <div class="container px-0">
+                            <div class="chart-grid">
+                                <div class="cc">
+                                    <div class="cc-h">
+                                        <div class="cc-t">K-L Metric</div>
+                                        <div class="cc-lg"></div>
+                                    </div>
+                                    <div class="cc-a" id="klCharts"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart 2 (inversions) -->
+                    <div class="col-6">
+                        <div class="container px-0">
+                            <div class="chart-grid">
+                                <div class="cc">
+                                    <div class="cc-h">
+                                        <div class="cc-t">Exchanges</div>
+                                        <div class="cc-lg"></div>
+                                    </div>
+                                    <div class="cc-a" id="inversionCharts"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Minimal scripts required by the redesign preview -->
+    <script src="js/packages/jquery-3.4.1.min.js"></script>
+    <script src="js/packages/bootstrap.bundle.min.js"></script>
+    <script src="js/packages/bootstrap-slider.js"></script>
+    <script src="js/packages/popper.min.js"></script>
+    <script src="js/packages/plotly.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
+    <script type="text/javascript" src="js/server/server.js"></script>
+    <script type="text/javascript" src="js/server/update.js"></script>
+    <script type="text/javascript" src="js/algorithms/sware.js"></script>
+    <script type="text/javascript" src="js/algorithms/quit.js"></script>
+    <script type="text/javascript" src="js/algorithms/lil.js"></script>
+    <script type="text/javascript" src="js/algorithms/tail.js"></script>
+    <script type="text/javascript" src="js/helpers.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script src="js/redesign.js"></script>
+    <script src="js/packages/script.js"></script>
+</body>
+
+</html>
