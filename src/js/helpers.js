@@ -670,6 +670,7 @@ function updateSummaryCards()
     cards.forEach((card) => {
         const titleEl = card.querySelector('.m-name');
         const valueEls = card.querySelectorAll('.m-n');
+        const labelEls = card.querySelectorAll('.m-al');
         if (!titleEl || !valueEls || valueEls.length < 1) {
             return;
         }
@@ -745,6 +746,28 @@ function updateSummaryCards()
         // Write values into the card nodes. The markup puts left value first, then right.
         const displayLeft = (leftVal == null) ? '—' : leftVal;
         const displayRight = (rightVal == null) ? '—' : rightVal;
+
+        // Update the per-card structure labels (e.g., 'SWARE' / 'QuIT') so they
+        // reflect the currently selected structures and carry the appropriate
+        // styling class. This keeps the compact cards in sync with the selectors.
+        try {
+            if (labelEls && labelEls.length >= 2) {
+                const leftLabelEl = labelEls[0];
+                const rightLabelEl = labelEls[1];
+                leftLabelEl.textContent = selectedStructures[0] || '';
+                rightLabelEl.textContent = selectedStructures[1] || '';
+
+                // normalize styling classes: 's' for SWARE, 'q' for QuIT
+                leftLabelEl.classList.remove('s', 'q');
+                rightLabelEl.classList.remove('s', 'q');
+                if ((selectedStructures[0] || '').toUpperCase() === 'SWARE') leftLabelEl.classList.add('s');
+                if ((selectedStructures[0] || '').toUpperCase() === 'QUIT') leftLabelEl.classList.add('q');
+                if ((selectedStructures[1] || '').toUpperCase() === 'SWARE') rightLabelEl.classList.add('s');
+                if ((selectedStructures[1] || '').toUpperCase() === 'QUIT') rightLabelEl.classList.add('q');
+            }
+        } catch (e) {
+            // non-fatal: if DOM shape changed, skip label sync
+        }
 
         // Change detection: highlight card if either side changed since last update
         const key = name; // already normalized
