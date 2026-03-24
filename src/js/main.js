@@ -113,19 +113,23 @@ function applyRedesignPlotlyLayout(layout) {
 
     const merged = Object.assign({}, layout, theme);
 
-    if (merged.legend) {
-        // center legend inside the top of the plot and use the card title font
-        merged.legend = Object.assign({
-            bgcolor: 'rgba(255,255,255,0.0)',
-            borderwidth: 0,
-            orientation: 'h',
-            x: 0.5,
-            xanchor: 'center',
-            y: 1.02,
-            yanchor: 'bottom',
-            font: { family: 'IBM Plex Mono, monospace', size: 12, color: '#1c1c1a' }
-        }, merged.legend);
-    }
+    // Force legend placement and styling so it is centered above the plot area.
+    // Use explicit assignment so any per-chart legend settings don't override centering.
+    merged.legend = Object.assign({}, merged.legend || {}, {
+        bgcolor: 'rgba(255,255,255,0.0)',
+        borderwidth: 0,
+        orientation: 'h',
+        x: 0.5,
+        xanchor: 'center',
+        y: 1.02,
+        yanchor: 'bottom',
+        font: { family: 'IBM Plex Mono, monospace', size: 12, color: '#1c1c1a' }
+    });
+
+    // Ensure there's enough top margin for the legend so it visually centers inside the card
+    merged.margin = merged.margin || {};
+    const MIN_TOP_MARGIN = 56;
+    merged.margin.t = Math.max(merged.margin.t || 0, MIN_TOP_MARGIN);
 
     return merged;
 }
