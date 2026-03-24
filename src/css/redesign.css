@@ -1067,14 +1067,33 @@
 
 .redesign .pub-authors {
     font-family: var(--mono);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--t2);
+}
+
+/* Make publication block text match the site's sans body styling */
+.redesign #publication p,
+.redesign #publication .content {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    color: var(--t2);
+    line-height: 1.6;
+    max-width: 900px;
+    /* wider content pane for publications */
+    margin: 0 auto;
+    /* center within the publication container */
 }
 
 .redesign .pub-links a {
     color: var(--grn);
     font-weight: 600;
     text-decoration: none;
+}
+
+/* Conference/venue lines in publications use accent green */
+.redesign .pub-conf {
+    color: var(--grn);
+    font-family: var(--sans);
 }
 
 .redesign #authors {
