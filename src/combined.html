@@ -406,6 +406,19 @@
     <script type="text/javascript" src="js/algorithms/quit.js"></script>
     <script type="text/javascript" src="js/algorithms/lil.js"></script>
     <script type="text/javascript" src="js/algorithms/tail.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        if (typeof google !== 'undefined' && google.charts && typeof google.charts.load === 'function') {
+            google.charts.load('current', { 'packages': ['corechart'] });
+        } else if (typeof window !== 'undefined') {
+            // Ensure loader is present; if it hasn't attached yet, call load when ready.
+            window.addEventListener('load', function () {
+                if (window.google && window.google.charts && typeof window.google.charts.load === 'function') {
+                    window.google.charts.load('current', { 'packages': ['corechart'] });
+                }
+            });
+        }
+    </script>
     <script type="text/javascript" src="js/helpers.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script>
