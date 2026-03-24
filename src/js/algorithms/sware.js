@@ -341,7 +341,7 @@ async function animateSwarePhase()
 
             if (visualSteps.length === 0) {
                 showSwareVisualState({
-                    activeSlot: trace.nextBufferSlotAfterReset || null,
+                    activeSlot: null,
                     bufferSnapshot: postResetSnapshot,
                     sortedIndex: sortedIndexAfterReset,
                     treeState: swareTree,
@@ -467,7 +467,7 @@ async function animateSwarePhase()
                 }
 
                 showSwareVisualState({
-                    activeSlot: trace.nextBufferSlotAfterReset || null,
+                    activeSlot: null,
                     bufferSnapshot: postResetSnapshot,
                     sortedIndex: sortedIndexAfterReset,
                     treeState: swareTree,
@@ -707,8 +707,7 @@ function getSwareKeyColumnCount(slotCount)
 function createSwareNodeCard(node, depth, range, isPathNode, isTailNode, hasLeafNextPointer, displayKeys, treeState)
 {
     const keys = Array.isArray(displayKeys) ? displayKeys : getSwareDisplayKeys(node);
-    const nodeCapacity = getSwareNodeCapacity(node, treeState);
-    const slotCount = Math.max(nodeCapacity, keys.length, 1);
+    const slotCount = Math.max(keys.length, 1);
     const keyColumns = getSwareKeyColumnCount(slotCount);
     const keyRows = Math.max(1, Math.ceil(slotCount / keyColumns));
 
@@ -727,11 +726,15 @@ function createSwareNodeCard(node, depth, range, isPathNode, isTailNode, hasLeaf
 
     const header = document.createElement("div");
     header.className = "quit-node-header";
-    header.textContent = depth === 0 ? "Root" : (node.leaf ? "Leaf" : "Internal");
+    let headerLabel = depth === 0 ? "Root" : (node.leaf ? "Leaf" : "Internal");
+    if (isTailNode && node.leaf && depth !== 0) {
+        headerLabel += " (tail)";
+    }
+    header.textContent = headerLabel;
 
     const rangeLabel = document.createElement("div");
     rangeLabel.className = "quit-node-range";
-    rangeLabel.textContent = "Range " + formatSwareRange(range);
+    rangeLabel.textContent = formatSwareRange(range);
 
     const keyRow = document.createElement("div");
     keyRow.className = "quit-node-keys";
@@ -744,7 +747,7 @@ function createSwareNodeCard(node, depth, range, isPathNode, isTailNode, hasLeaf
             keyCell.textContent = keys[i];
         }
         else {
-            keyCell.textContent = ".";
+            keyCell.textContent = "·";
             keyCell.classList.add("quit-key-empty");
         }
         keyRow.appendChild(keyCell);
@@ -757,7 +760,7 @@ function createSwareNodeCard(node, depth, range, isPathNode, isTailNode, hasLeaf
     if (node.leaf && hasLeafNextPointer) {
         const leafPointer = document.createElement("div");
         leafPointer.className = "quit-leaf-pointer";
-        leafPointer.textContent = "next ->";
+        leafPointer.textContent = "NEXT →";
         card.appendChild(leafPointer);
     }
     return card;
