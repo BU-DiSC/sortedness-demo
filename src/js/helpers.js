@@ -566,7 +566,16 @@ function getComparisonMetricsByStructure()
 
 function update_table() {
     const rows = getResultsPanelRows();
+    // Ensure the compact summary cards are updated even if the legacy
+    // `#cost-result` table is absent (we removed it from the redesign).
+    try {
+        updateSummaryCards();
+    } catch (e) {
+        console.warn('updateSummaryCards failed', e);
+    }
+
     if (rows.length < 7) {
+        // No detailed rows available — nothing more to do.
         return;
     }
 
