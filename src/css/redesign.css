@@ -58,7 +58,7 @@
 
 .redesign .nav-brand {
     font-family: var(--disp);
-    font-size: 1.2rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: var(--text);
     text-decoration: none;
@@ -92,7 +92,7 @@
     display: flex;
     align-items: center;
     padding: 0 14px;
-    font-size: 0.84rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--t3);
     text-decoration: none;
@@ -115,7 +115,7 @@
 }
 
 .redesign .nav-r a {
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--t2);
     text-decoration: none;
@@ -140,6 +140,7 @@
 .redesign .hdr {
     padding: 44px 0 36px;
     margin-bottom: 28px;
+    text-align: center;
 }
 
 .redesign .hdr h1 {
@@ -172,7 +173,7 @@
 /* ─── Section label ─── */
 .redesign .lbl {
     font-family: var(--mono);
-    font-size: 0.68rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--t3);
     text-transform: uppercase;
@@ -569,14 +570,14 @@
     max-height: 575px;
 }
 
-.redesign .animations-layout > .animations-container {
+.redesign .animations-layout>.animations-container {
     width: 110%;
     max-width: 110%;
     margin-left: -5%;
     gap: 12px;
 }
 
-.redesign .animations-layout > .animations-container > .container {
+.redesign .animations-layout>.animations-container>.container {
     max-width: calc(50% - 6px);
     padding-left: 8px;
     padding-right: 8px;
@@ -1089,7 +1090,7 @@
 }
 
 @media (max-width: 991px) {
-    .redesign .animations-layout > .animations-container {
+    .redesign .animations-layout>.animations-container {
         width: 100%;
         max-width: 100%;
         margin-left: 0;
