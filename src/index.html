@@ -22,142 +22,266 @@
 	<!-- Google Material Icon-->
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-	<script src="js/plotly.js"></script>
 
 	<!-- Redesign scoped styles -->
 	<link rel="stylesheet" href="css/redesign.css">
 </head>
 
 <body>
-	<header id="page-top">
-		<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top bg-dark fixed-top">
-			<div class="container">
-				<a class="navbar-brand" href="#page-top">Sortedness<span class="sr-only">(current)</span></a></a>
-				<button id="navbarToggle" class="navbar-toggler" type="button" data-toggle="collapse"
-					data-target="#collapsable-nav" aria-controls="collapsable-nav" aria-expanded="false"
-					aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-
-				<div id="collapsable-nav" class="collapse navbar-collapse" id="collapsable-nav">
-					<ul class="nav navbar-nav ml-auto">
-						<li class="nav-item">
-							<a class="nav-link" href="research.html#publication">Publications</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="research.html#authors">The Team</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="research.html#sponsors">Sponsors</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="combined.html">Combined</a>
-						</li>
-					</ul>
+	<main class="redesign">
+		<nav>
+			<div class="nav-l">
+				<a class="nav-brand" href="index.html"><span class="m">S</span>Sortedness</a>
+			</div>
+			<div class="nav-r">
+				<div class="nav-tabs">
+					<a href="index.html" class="on">Home</a>
+					<a href="background.html">Background</a>
+					<a href="research.html#publication">Publications</a>
+					<a href="research.html#authors">The Team</a>
+					<a href="research.html#sponsors">Sponsors</a>
+					<a href="combined.html">Combined</a>
 				</div>
 			</div>
 		</nav>
-
-
-		<div class="jumbotron">
-			<a href="#">
-				<img class="img-responsive img-centered" src="./img/intro.gif" alt="" width=102.5% />
-			</a>
-		</div>
-
-
-		<!-- <div class="jumbotron">
-			<video controls width="250">
-
-				<source src="./img/test.mov"
-						type="video/mov">
-
-				Sorry, your browser doesn't support embedded videos.
-			</video>
-		</div> -->
-
-		</div>
-	</header>
-
-
-	<div class="fixed">
-		<div class="rcorners-1" style="background-color:8288B4">
-			<a href="research.html"><span class="rcorners-click"></span></a>
-			<div class="rcorners-text-1"><a href="index.html"
-					style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Home</a></div>
-		</div>
-		<div class="rcorners-5" style="background-color:8288B4">
-			<a href="combined.html"><span class="rcorners-click"></span></a>
-			<div class="rcorners-text-5"><a href="combined.html"
-					style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Combined</a></div>
-		</div>
-
-		<div class="rcorners-2" style="background-color:8288B4">
-			<a href="research.html"><span class="rcorners-click"></span></a>
-			<div class="rcorners-text-2"><a href="background.html"
-					style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Background</a></div>
-		</div>
-		<div class="rcorners-3" style="background-color:8288B4">
-			<a href="research.html#problem"><span class="rcorners-click"></span></a>
-			<div class="rcorners-text-3"><a href="research.html"
-					style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Sortedness&nbsp;</a>
+		<div class="wrap">
+			<div class="jumbotron">
+				<a href="#">
+					<img class="img-responsive img-centered" src="./img/intro.gif" alt="" width=102.5% />
+				</a>
 			</div>
-			<!-- <img class="img-responsive img-left" src="./img/animation.gif" alt="" width="40px" /> -->
-		</div>
-		<div class="rcorners-4" style="background-color:8288B4">
-			<a href="data.html"><span class="rcorners-click"></span></a>
-			<div class="rcorners-text-4"><a href="data.html"
-					style="text-decoration:none; color: rgba(255, 255, 255, 0.88)">Data</a>
+
+			<div class="hdr" style="margin-top:-100px">
+				<h1>Sortedness</h1>
+				<p>
+					Real-world data ingestion is rarely perfectly sorted — incoming records arrive <em>nearly</em>
+					sorted, with a small fraction displaced. This demo lets you configure a near-sorted workload and
+					watch two ingestion algorithms — <strong>SWARE</strong> (buffer-based) and <strong>QuIT</strong>
+					(tree-based) — process it side by side, comparing their structure and cost in real time.
+					<a href="background.html">Read more... →</a>
+				</p>
 			</div>
 		</div>
-	</div>
+		<section id="publication" class="bg-light">
+			<div class="container" style="margin-top:-50px">
+				<div class="row" style="text-align: center">
+					<div class="col-lg-12">
+						<h2><br><br><b>Our Publications about Sortedness</b></h2>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-12">
+						<p class="content">
+							<br />
+							<!-- Additional Papers from Aneesh Raman's publications (selected) -->
+							<!-- BoDS -->
+							<span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Subhadeep Sarkar,
+								Matthaios Olma, Manos Athanassoulis</span><br>
+							<a href="https://disc.bu.edu/papers/tpctc22-raman" target="_blank"><b><u>BoDS: A
+										Benchmark on Data Sortedness</u></b></a>
+							<a href="https://cs-people.bu.edu/mathan/publications/tpctc22-raman.pdf" target="_blank">
+								<font color="Blue"><u>[PDF]</u></font>
+							</a>
+							<br />
+							<span class="pub-conf">In Performance Evaluation and Benchmarking - 14th TPC Technology
+								Conference (TPCTC), 2022.</span>
+							<br /><br />
 
-	<div class="footer-below">
+							<!-- Indexing for Near-Sorted Data -->
+							<span class="pub-authors">Aneesh Raman, Subhadeep Sarkar, Matthaios Olma, Manos
+								Athanassoulis</span><br>
+							<a href="https://disc.bu.edu/papers/icde23-raman" target="_blank"><b><u>Indexing for
+										Near-Sorted Data</u></b></a>
+							<a href="https://cs-people.bu.edu/mathan/publications/icde23-raman.pdf" target="_blank">
+								<font color="Blue"><u>[PDF]</u></font>
+							</a>
+							<br />
+							<span class="pub-conf">In Proceedings of the 39th IEEE International Conference on Data
+								Engineering (ICDE), 2023.</span>
+							<br /><br />
+
+							<!-- Benchmarking Learned and LSM Indexes for Data Sortedness -->
+							<span class="pub-authors">Aneesh Raman, Andy Huynh, Jinqi Lu, Manos
+								Athanassoulis</span><br>
+							<a href="https://disc.bu.edu/papers/dbtest24-bliss" target="_blank"><b><u>Benchmarking
+										Learned
+										and LSM Indexes for Data Sortedness</u></b></a>
+							<a href="https://cs-people.bu.edu/mathan/publications/dbtest24-raman.pdf" target="_blank">
+								<font color="Blue"><u>[PDF]</u></font>
+							</a>
+							<br />
+							<span class="pub-conf">In Proceedings of the 10th International Workshop on Testing
+								Database Systems (DBTest), 2024.</span>
+							<br /><br />
+
+							<!-- QuIT your B+tree -->
+							<span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Shaolin Xie,
+								Matthaios
+								Olma, Subhadeep Sarkar, Manos Athanassoulis</span><br>
+							<a href="https://disc.bu.edu/papers/edbt25-raman" target="_blank"><b><u>QuIT your
+										B+-tree
+										for
+										the Quick Insertion Tree</u></b></a>
+							<a href="https://cs-people.bu.edu/mathan/publications/edbt25-raman.pdf" target="_blank">
+								<font color="Blue"><u>[PDF]</u></font>
+							</a>
+							<br />
+							<span class="pub-conf">In Proceedings of the 28th International Conference on Extending
+								Database Technology (EDBT), 2025.</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section id="authors" class="" style="padding-top: 10px; padding-bottom: 10px;">
+			<div class="container page-scroll">
+				<div class="row" style="text-align: center">
+					<h1 class="team-title">Meet The Team</h1>
+				</div>
+				<br />
+				<div class="row">
+					<!-- <div class="col-sm"></div> -->
+					<div class="col-sm text-center topReveal">
+						<div class="team-member-box-2">
+							<div class="team-image-wrapper rotateTopReveal">
+
+								<a target="_blank" href="">
+									<img src="./img/people/philip.jpg" alt="Philip Chindris"
+										class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+								</a>
+							</div>
+							<h3><a target="_blank" href="#">
+									<font color="#000"> Philip Chindris</font>
+								</a></h3>
+							<p style="text-align:center">High School Intern</p>
+						</div>
+					</div>
+
+					<div class="col-sm text-center topReveal">
+						<div class="team-member-box-2">
+							<div class="team-image-wrapper rotateTopReveal">
+
+								<a target="_blank" href="https://cs-people.bu.edu/anwesha/">
+									<img src="./img/people/anwesha.jpg" alt="Anwesha Saha"
+										class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+								</a>
+							</div>
+							<h3><a target="_blank" href="https://www.linkedin.com/in/anwesha-sa/">
+									<font color="#000"> Anwesha Saha </font>
+								</a></h3>
+							<p style="text-align:center">PhD Researcher</p>
+						</div>
+					</div>
+
+					<div class="col-sm text-center topReveal">
+						<div class="team-member-box-2">
+							<div class="team-image-wrapper rotateTopReveal">
+
+								<a target="_blank" href="https://cs-people.bu.edu/teona/">
+									<img src="img/people/teona.jpg" alt="Teona Bagashvili"
+										class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+								</a>
+							</div>
+							<h3><a target="_blank" href="https://www.linkedin.com/in/teona-bagashvili-6548a3370/">
+									<font color="#000"> Teona Bagashvili </font>
+								</a></h3>
+							<p style="text-align:center">PhD Researcher</p>
+						</div>
+					</div>
+
+
+					<div class="col-sm text-center topReveal">
+						<div class="team-member-box-2">
+							<div class="team-image-wrapper rotateTopReveal">
+
+								<a target="_blank" href="https://aneeshraman.net">
+									<img src="./img/people/aneesh.jpg" alt="Aneesh Raman"
+										class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+								</a>
+							</div>
+							<h3> <a target="_blank" href="https://www.linkedin.com/in/aneesh-raman/">
+									<font color="#000"> Aneesh Raman</font>
+								</a></h3>
+							<p style="text-align:center">PhD Reseacher</p>
+						</div>
+					</div>
+
+					<div class="col-sm text-center topReveal">
+						<div class="team-member-box-2">
+							<div class="team-image-wrapper rotateTopReveal">
+
+								<a target="_blank" href="https://cs-people.bu.edu/mathan/">
+									<img src="./img/people/manos.jpg" alt="Manos Athanassoulis"
+										class="img-fluid rounded-circle team-member-img text-center image-people-toggle-faculty image-shown">
+								</a>
+							</div>
+							<h3><a target="_blank" href="https://cs-people.bu.edu/mathan/">
+									<font color="#000"> Manos Athanassoulis</font>
+								</a></h3>
+							<p style="text-align:center">Assistant Professor</p>
+						</div>
+					</div>
+
+					<div class="col-sm"></div>
+				</div>
+		</section>
+
+	</main>
+	<footer class="text-center">
 		<div class="footer-below">
 			<div class="container">
 				<div class="row">
-					<div class="col-lg-6 text-center">
+					<div class="col-md-3">
 						<a target="_blank" href="http://www.bu.edu/cs/">
 							<img class="img-responsive img-centered img-logo" src="./img/BU-logo.png" alt="">
 						</a>
 						<br>
 					</div>
-
-					<div class="col-lg-6 text-center">
+					<div class="col-md-3">
 						<a target="_blank" href="https://disc.bu.edu">
 							<img class="img-responsive img-centered img-logo" src="./img/disc-logo.png" alt="">
 						</a>
 						<br>
 						<br>
 					</div>
+					<div class="col-md-3">
+						<a target="_blank" href="http://www.bu.edu/cs/">
+							<img class="img-responsive img-centered img-logo" src="./img/FB-logo.png" alt="">
+						</a>
+						<br>
+					</div>
+
+					<div class="col-md-3">
+						<a target="_blank" href="https://disc.bu.edu">
+							<img class="img-responsive img-centered img-logo" src="./img/NSF-logo.png" alt="">
+						</a>
+						<br>
+						<br>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12">
-					Copyright © 2021. DiSC lab. All Rights Reserved.
+
+		<div class="footer-below">
+			<div class="container">
+				<div class="row text-center">
+					<div class="col-lg-12 text-center">
+						Copyright © 2023. DiSC lab. All Rights Reserved.
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	</footer>
 
 
 
 	<!-- jQuery (Bootstrap JS plugins depend on it) -->
-	<script src="js/jquery-3.4.1.min.js"></script>
-	<!-- <script src="js/bootstrap.min.js"></script> -->
-	<script src="js/bootstrap.bundle.min.js"></script>
-	<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {preview: "none", inlineMath: [['$','$'], ['\\(','\\)']]}, "fast-preview": {disabled: true}});
-  </script>
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
-	<script src="js/bootstrap-slider.js"></script>
-	<script src="js/popper.min.js"></script>
+	<script src="js/packages/jquery-3.4.1.min.js"></script>
+	<script src="js/packages/bootstrap.bundle.min.js"></script>
+	<script src="js/packages/bootstrap-slider.js"></script>
+	<script src="js/packages/popper.min.js"></script>
 	<script src="js/redesign.js"></script>
-	<script src="js/script.js"></script>
+	<script src="js/packages/script.js"></script>
 </body>
 
 </html>
