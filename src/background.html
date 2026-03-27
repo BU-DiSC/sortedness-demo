@@ -69,24 +69,83 @@
 			</div>
 		</div>
 		<div class="wrap">
-			<div class="hdr">
-				<h1>Data Sortedness and How do we Quantify It?</h1>
-				<p>
-					Real-world data ingestion is rarely perfectly sorted — incoming records arrive <em>nearly</em>
-					sorted, with a small fraction displaced. This demo lets you configure a near-sorted workload and
-					watch two ingestion algorithms — <strong>SWARE</strong> (buffer-based) and <strong>QuIT</strong>
-					(tree-based) — process it side by side, comparing their structure and cost in real time.
-					<a href="background.html">Read more... →</a>
-				</p>
+			<div class="container">
+				<div class="row" style="text-align: center; margin-top: 100px;">
+					<div class="col-lg-12">
+						<h1>Data sortedness and how do we quantify it?</h1>
+					</div>
+				</div>
+				<div class="row" style="align-items: start;">
+					<div class="col-md-6 hdr">
+						<p>
+							Data sortedness captures the difference between the indexed order
+							and the arrival order of the indexed attribute.
+							A simple way to quantify sortedness is to count the number of entries
+							that are out of order - this metric is widely known in literature as the
+							number of <b><b><em>inversions</em></b></b>. <br><br>
+
+							Meanwhile, the <b><b><em>K-L-sortedness</em></b></b> metric quantifies sortedness with the
+							help
+							of two parameters: <b><b>K</b></b> that counts the number of entries in incorrect order and
+							<b><b>L</b></b> that measures the maximum displacement of any out-of-order entry.
+							Additionally, the K-L-sortedness metric also uses the distribution of
+							sortedness defined by a (&#945;, &#946;)-distribution to model the variability in the
+							displacement of out-of-order entries. <br><br>
+						</p>
+					</div>
+					<div class="col-md-5 text-center" style="margin-top: 100px;margin-left: 50px;">
+						<img src="img/k-l-metric-visual.jpg" alt="K-L metric visualization" class="img-fluid"
+							style="max-height:400px; object-fit:contain;" />
+						<!-- <p class="small mt-2">Figure: K-L metric visualization</p> -->
+					</div>
+				</div>
 			</div>
 			<div class="sep"></div>
 			<section id="sortedness-designspace">
-				<h1><br><br><b>Sortedness Design Space in Indexes</b></h1>
+				<div class="container page-scroll" id="tail-background">
+					<div class="row" style="text-align: center; ">
+						<div class="col-lg-12">
+							<h1>Sortedness Design Space in Indexes</h1>
+						</div>
+					</div>
+					<div class="row" style="align-items: start;">
+						<div class="col-md-5 text-center" style="margin-top: 75px;margin-right: 50px;">
+							<img src="img/read-write-tradeoff-intro.jpg" alt="K-L metric visualization"
+								class="img-fluid" style="max-height:400px; object-fit:contain;" />
+							<!-- <p class="small mt-2">Figure: K-L metric visualization</p> -->
+						</div>
+						<div class="col-md-6 hdr">
+							<p>
+								Every data reorganization technique, including indexing data
+								structures, exhibit a fundamental tradeoff between
+								its read and write costs, along the
+								<b><b>thick black line</b></b>.
+								To achieve <em>logarithmic search time</em>, an index must
+								insert entries in the correct order
+								(i.e., <b><b><em>in-place insertion</em></b></b>, on the bottom
+								right corner).
+								On the other hand, if queries are infrequent and scanning is
+								acceptable, entries can simply be appended (top-left).
+								Indexes like the B+tree and B-epsilon tree navigate this
+								read vs. write tradeoff
+								to offer better read or write performance.
+							</p><br>
+							<p>
+								A <b><b><em>sortedness-adaptive</em></b></b> index achieves better
+								read-write tradeoffs as well as improved space utilization by
+								<b><b><em></em>harnessing intrinsic data order</b></b>.
+								This allows the index to move closer to
+								the origin of the green axis (bottom left corner) when ingesting
+								near-sorted data.
+							</p>
+						</div>
+					</div>
+				</div>
 			</section>
 			<div class="sep"></div>
 			<section id="sortedness-indexes">
 				<div class="container page-scroll" id="tail-background">
-					<div class="row" style="text-align: center">
+					<div class="row" style="text-align: center; margin-top: -100px;">
 						<div class="col-lg-12">
 							<h1><br><br><b>TAIL B+tree</b></h1>
 						</div>
@@ -94,7 +153,7 @@
 				</div>
 				<div class="sep"></div>
 				<div class="container page-scroll" id="sware-background">
-					<div class="row" style="text-align: center">
+					<div class="row" style="text-align: center; margin-top: -100px;">
 						<div class="col-lg-12">
 							<h1><br><br><b>SWARE</b></h1>
 						</div>
@@ -102,7 +161,7 @@
 				</div>
 				<div class="sep"></div>
 				<div class="container page-scroll" id="lil-background">
-					<div class="row" style="text-align: center">
+					<div class="row" style="text-align: center; margin-top: -100px;">
 						<div class="col-lg-12">
 							<h1><br><br><b>LIL</b></h1>
 						</div>
@@ -110,7 +169,7 @@
 				</div>
 				<div class="sep"></div>
 				<div class="container page-scroll" id="quit-background">
-					<div class="row" style="text-align: center">
+					<div class="row" style="text-align: center; margin-top: -100px;">
 						<div class="col-lg-12">
 							<h1><br><br><b>QuIT</b></h1>
 						</div>
