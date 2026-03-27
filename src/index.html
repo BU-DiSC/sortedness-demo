@@ -39,25 +39,29 @@
 					<a href="background.html">Background</a>
 					<a href="combined.html#publication">Publications</a>
 					<a href="combined.html#authors">The Team</a>
-					<a href="combined.html">Combined</a>
+					<a href="combined.html">Demo</a>
 				</div>
 			</div>
 		</nav>
 		<div class="wrap">
 			<div class="jumbotron">
 				<a href="#">
-					<img class="img-responsive img-centered" src="./img/intro.gif" alt="" width=102.5% />
+					<img class="img-responsive img-centered" src="./img/sortedness-intro.gif" alt="" width=102.5% />
 				</a>
 			</div>
 
-			<div class="hdr" style="margin-top:-100px">
-				<h1>Sortedness</h1>
+			<div class="hdr" style="margin-top:-50px">
+				<h1>Near-Sortedness in Indexes</h1>
 				<p>
-					Real-world data ingestion is rarely perfectly sorted — incoming records arrive <em>nearly</em>
-					sorted, with a small fraction displaced. This demo lets you configure a near-sorted workload and
-					watch two ingestion algorithms — <strong>SWARE</strong> (buffer-based) and <strong>QuIT</strong>
-					(tree-based) — process it side by side, comparing their structure and cost in real time.
-					<a href="background.html">Read more... →</a>
+					Real-world data ingestion is rarely perfectly sorted — incoming records often arrive
+					<b><b><em>nearly</b></b></em>
+					sorted, with a small fraction entries displaced.
+					What happens when such workloads are <b><b><em>ingested</b></b></em>
+					into an index? <br>
+					This demo lets you configure near-sorted data using the K-L-sortedness
+					metric, visualize the data, and ingest such near-sorted streams into
+					indexes that adapt to sortedness, as well as classical B+trees. <br>
+				<h2 style="text-align: left;"><a href="background.html">Read more... →</a></h2>
 				</p>
 			</div>
 		</div>
@@ -73,30 +77,20 @@
 						<p class="content">
 							<br />
 							<!-- Additional Papers from Aneesh Raman's publications (selected) -->
-							<!-- BoDS -->
-							<span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Subhadeep Sarkar,
-								Matthaios Olma, Manos Athanassoulis</span><br>
-							<a href="https://disc.bu.edu/papers/tpctc22-raman" target="_blank"><b><u>BoDS: A
-										Benchmark on Data Sortedness</u></b></a>
-							<a href="https://cs-people.bu.edu/mathan/publications/tpctc22-raman.pdf" target="_blank">
+							<!-- QuIT your B+tree -->
+							<span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Shaolin Xie,
+								Matthaios
+								Olma, Subhadeep Sarkar, Manos Athanassoulis</span><br>
+							<a href="https://disc.bu.edu/papers/edbt25-raman" target="_blank"><b><u>QuIT your
+										B+-tree
+										for
+										the Quick Insertion Tree</u></b></a>
+							<a href="https://cs-people.bu.edu/mathan/publications/edbt25-raman.pdf" target="_blank">
 								<font color="Blue"><u>[PDF]</u></font>
 							</a>
 							<br />
-							<span class="pub-conf">In Performance Evaluation and Benchmarking - 14th TPC Technology
-								Conference (TPCTC), 2022.</span>
-							<br /><br />
-
-							<!-- Indexing for Near-Sorted Data -->
-							<span class="pub-authors">Aneesh Raman, Subhadeep Sarkar, Matthaios Olma, Manos
-								Athanassoulis</span><br>
-							<a href="https://disc.bu.edu/papers/icde23-raman" target="_blank"><b><u>Indexing for
-										Near-Sorted Data</u></b></a>
-							<a href="https://cs-people.bu.edu/mathan/publications/icde23-raman.pdf" target="_blank">
-								<font color="Blue"><u>[PDF]</u></font>
-							</a>
-							<br />
-							<span class="pub-conf">In Proceedings of the 39th IEEE International Conference on Data
-								Engineering (ICDE), 2023.</span>
+							<span class="pub-conf">In Proceedings of the 28th International Conference on Extending
+								Database Technology (EDBT), 2025.</span>
 							<br /><br />
 
 							<!-- Benchmarking Learned and LSM Indexes for Data Sortedness -->
@@ -113,20 +107,30 @@
 								Database Systems (DBTest), 2024.</span>
 							<br /><br />
 
-							<!-- QuIT your B+tree -->
-							<span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Shaolin Xie,
-								Matthaios
-								Olma, Subhadeep Sarkar, Manos Athanassoulis</span><br>
-							<a href="https://disc.bu.edu/papers/edbt25-raman" target="_blank"><b><u>QuIT your
-										B+-tree
-										for
-										the Quick Insertion Tree</u></b></a>
-							<a href="https://cs-people.bu.edu/mathan/publications/edbt25-raman.pdf" target="_blank">
+							<!-- Indexing for Near-Sorted Data -->
+							<span class="pub-authors">Aneesh Raman, Subhadeep Sarkar, Matthaios Olma, Manos
+								Athanassoulis</span><br>
+							<a href="https://disc.bu.edu/papers/icde23-raman" target="_blank"><b><u>Indexing for
+										Near-Sorted Data</u></b></a>
+							<a href="https://cs-people.bu.edu/mathan/publications/icde23-raman.pdf" target="_blank">
 								<font color="Blue"><u>[PDF]</u></font>
 							</a>
 							<br />
-							<span class="pub-conf">In Proceedings of the 28th International Conference on Extending
-								Database Technology (EDBT), 2025.</span>
+							<span class="pub-conf">In Proceedings of the 39th IEEE International Conference on Data
+								Engineering (ICDE), 2023.</span>
+							<br /><br />
+
+							<!-- BoDS -->
+							<span class="pub-authors">Aneesh Raman, Konstantinos Karatsenidis, Subhadeep Sarkar,
+								Matthaios Olma, Manos Athanassoulis</span><br>
+							<a href="https://disc.bu.edu/papers/tpctc22-raman" target="_blank"><b><u>BoDS: A
+										Benchmark on Data Sortedness</u></b></a>
+							<a href="https://cs-people.bu.edu/mathan/publications/tpctc22-raman.pdf" target="_blank">
+								<font color="Blue"><u>[PDF]</u></font>
+							</a>
+							<br />
+							<span class="pub-conf">In Performance Evaluation and Benchmarking - 14th TPC Technology
+								Conference (TPCTC), 2022.</span>
 						</p>
 					</div>
 				</div>
