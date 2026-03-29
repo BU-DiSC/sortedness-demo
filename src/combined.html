@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sortedness Demo - Research</title>
+    <title>Indexing For Near-Sorted Data - Demo</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-slider.min.css">
     <link rel="stylesheet" href="css/styles.css">
@@ -25,7 +25,9 @@
     <main class="redesign">
         <nav>
             <div class="nav-l">
-                <a class="nav-brand" href="index.html"><span class="m">S</span>Sortedness</a>
+                <a class="nav-brand" href="index.html">
+                    <!-- <span class="m">S</span> -->
+                    Indexing for Near-Sorted Data</a>
             </div>
             <div class="nav-r">
                 <div class="nav-tabs">
@@ -41,7 +43,7 @@
         <div class="wrap">
             <!-- Header -->
             <div class="hdr">
-                <h1>Sortedness in Action</h1>
+                <h1>Indexing For Near-Sorted Data in Action</h1>
                 <!-- <p>
                     Real-world data ingestion is rarely perfectly sorted — incoming records arrive <em>nearly</em>
                     sorted, with a small fraction displaced. This demo lets you configure a near-sorted workload and
@@ -93,20 +95,20 @@
                         <span class="f-s">1</span>
                         <span class="f-t">Structure 1</span>
                         <select id="cmp-select-index-1" class="f-i" style="width:250px; text-align: left;">
-                            <option value="SWARE" selected>SWARE</option>
-                            <option value="QuIT">QuIT</option>
                             <option value="Tail">Tail leaf optimization</option>
-                            <option value="lil">last-insertion-leaf</option>
+                            <option value="lil">Last-Insertion-Leaf</option>
+                            <option value="QuIT">QuIT</option>
+                            <option value="SWARE" selected>SWARE</option>
                         </select>
                     </div>
                     <div class="f">
                         <span class="f-s">2</span>
                         <span class="f-t">Structure 2</span>
                         <select id="cmp-select-index-2" class="f-i" style="width:250px; text-align: left;">
-                            <option value="SWARE">SWARE</option>
-                            <option value="QuIT" selected>QuIT</option>
                             <option value="Tail">Tail leaf optimization</option>
                             <option value="lil">Last-Insertion-Leaf</option>
+                            <option value="QuIT" selected>QuIT</option>
+                            <option value="SWARE">SWARE</option>
                         </select>
                     </div>
                 </div>
