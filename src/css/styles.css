@@ -2227,7 +2227,7 @@ h4.workload-title::after {
     overflow: hidden;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -2243,7 +2243,7 @@ h4.workload-title::after {
     min-width: 100%;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-links {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-links {
     position: absolute;
     top: 0;
     left: 0;
@@ -2251,7 +2251,7 @@ h4.workload-title::after {
     z-index: 0;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-link-path {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-link-path {
     fill: none;
     stroke: #62798f;
     stroke-width: 1.1;
@@ -2260,7 +2260,7 @@ h4.workload-title::after {
     opacity: 0.9;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-link-path.quit-tree-link-fast {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-link-path.quit-tree-link-fast {
     stroke: #1b9d4d;
     stroke-width: 2.8;
     opacity: 1;
@@ -2268,7 +2268,7 @@ h4.workload-title::after {
     animation: quit-fast-link-pulse 220ms ease-out;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-link-path.quit-tree-link-path-active {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-link-path.quit-tree-link-path-active {
     stroke: #cf2f2f;
     stroke-width: 2.2;
     opacity: 1;
@@ -2287,7 +2287,7 @@ h4.workload-title::after {
     }
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-row {
     display: grid;
     grid-template-columns: repeat(var(--quit-cols, 1), max-content);
     justify-content: center;
@@ -2297,24 +2297,24 @@ h4.workload-title::after {
     z-index: 1;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row.quit-row-layer-ellipsis {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-row.quit-row-layer-ellipsis {
     grid-template-columns: max-content;
     justify-content: center;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-slot {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-slot {
     width: 84px;
     min-height: 62px;
     max-width: 84px;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row.quit-row-layer-ellipsis .quit-node-slot {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-row.quit-row-layer-ellipsis .quit-node-slot {
     width: calc((5 * 84px) + (4 * 8px));
     max-width: calc((5 * 84px) + (4 * 8px));
     min-height: 76px;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-ellipsis {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-ellipsis {
     width: 100%;
     height: 100%;
     border: 1px dashed #7f8fa0;
@@ -2329,19 +2329,19 @@ h4.workload-title::after {
     color: #617487;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-ellipsis.quit-ellipsis-path-active {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-ellipsis.quit-ellipsis-path-active {
     border-color: #cf2f2f;
     background: rgba(255, 244, 244, 0.9);
     color: #8f1f1f;
     box-shadow: 0 0 0 2px rgba(207, 47, 47, 0.45), 0 0 14px rgba(207, 47, 47, 0.3);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-layer-ellipsis {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-layer-ellipsis {
     min-height: calc(42px + (var(--quit-layer-span, 1) * 8px));
     padding: 4px 0;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-layer-dot-stack {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-layer-dot-stack {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2349,11 +2349,11 @@ h4.workload-title::after {
     line-height: 1;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-layer-dot-line {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-layer-dot-line {
     letter-spacing: 1px;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -2364,31 +2364,31 @@ h4.workload-title::after {
     overflow: hidden;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.internal {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.internal {
     border-color: #3e607f;
     background: linear-gradient(180deg, #f4f9ff 0%, #dbe8f5 100%);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.leaf {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.leaf {
     border-color: #3e607f;
     background: linear-gradient(180deg, #f4f9ff 0%, #dbe8f5 100%);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.root {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.root {
     border-width: 2px;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node {
     border-color: #c89a12;
     background: linear-gradient(180deg, #fff9d6 0%, #f3e08a 100%);
     box-shadow: 0 0 0 2px rgba(200, 154, 18, 0.52), 0 0 14px rgba(200, 154, 18, 0.3);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node .quit-node-header {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node .quit-node-header {
     color: #7a5b00;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-header {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-header {
     font-family: "Courier New", Courier, monospace;
     font-size: 8px;
     font-weight: 700;
@@ -2398,7 +2398,7 @@ h4.workload-title::after {
     letter-spacing: 0.1px;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-range {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-range {
     font-family: "Courier New", Courier, monospace;
     font-size: 7px;
     font-weight: 700;
@@ -2406,7 +2406,7 @@ h4.workload-title::after {
     padding: 2px 4px 0 4px;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-keys {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-keys {
     display: grid;
     grid-template-columns: repeat(var(--quit-key-columns, 4), minmax(0, 1fr));
     gap: 2px;
@@ -2415,7 +2415,7 @@ h4.workload-title::after {
     min-height: calc((var(--quit-key-rows, 1) * 12px) + ((var(--quit-key-rows, 1) - 1) * 2px));
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-key-cell {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-key-cell {
     min-width: 0;
     width: 100%;
     height: 12px;
@@ -2433,13 +2433,13 @@ h4.workload-title::after {
     overflow: hidden;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-key-empty {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-key-empty {
     color: #7f8b99;
     border-style: dashed;
     background: rgba(255, 255, 255, 0.55);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-leaf-pointer {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-leaf-pointer {
     margin-top: auto;
     border-top: 1px dashed rgba(58, 93, 126, 0.45);
     padding: 1px 4px 2px 4px;
@@ -2450,15 +2450,15 @@ h4.workload-title::after {
     text-transform: uppercase;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-path-active {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-path-active {
     box-shadow: 0 0 0 2px rgba(207, 47, 47, 0.55), 0 0 16px rgba(207, 47, 47, 0.35);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-fast-active {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-fast-active {
     box-shadow: 0 0 0 2px rgba(37, 156, 78, 0.55), 0 0 16px rgba(37, 156, 78, 0.35);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active {
     border-color: #178f43;
     background: linear-gradient(180deg, #f4fff8 0%, #ddf6e8 100%);
     box-shadow:
@@ -2468,55 +2468,55 @@ h4.workload-title::after {
     animation: quit-fast-pole-pulse 220ms ease-out;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-header,
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-range,
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-cell,
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-leaf-pointer {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-header,
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-range,
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-cell,
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-leaf-pointer {
     color: #0f6a30;
     font-weight: 800;
     text-shadow: 0 0 5px rgba(27, 157, 77, 0.25);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-header {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-node-header {
     border-bottom-color: rgba(23, 143, 67, 0.55);
     box-shadow: inset 0 -1px 0 rgba(23, 143, 67, 0.55);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-cell {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-cell {
     border-color: #1b9d4d;
     box-shadow: inset 0 0 0 1px rgba(27, 157, 77, 0.65);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-empty {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-key-empty {
     border-color: rgba(27, 157, 77, 0.5);
     background: rgba(230, 248, 237, 0.9);
     color: rgba(15, 106, 48, 0.7);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-leaf-pointer {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.quit-pole-node.quit-fast-active .quit-leaf-pointer {
     border-top-color: rgba(23, 143, 67, 0.55);
     box-shadow: inset 0 1px 0 rgba(23, 143, 67, 0.55);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.sware-tail-node {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.sware-tail-node {
     border-color: #2e5f8a;
     box-shadow: 0 0 0 2px rgba(46, 95, 138, 0.55), 0 0 14px rgba(46, 95, 138, 0.34);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.sware-tail-node .quit-node-header {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.sware-tail-node .quit-node-header {
     color: #1f4f79;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.sware-tail-node.quit-path-active {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.sware-tail-node.quit-path-active {
     border-color: #cf2f2f;
     box-shadow: 0 0 0 2px rgba(207, 47, 47, 0.55), 0 0 16px rgba(207, 47, 47, 0.35);
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-card.sware-tail-node.quit-path-active .quit-node-header {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-card.sware-tail-node.quit-path-active .quit-node-header {
     color: #202f3f;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .sware-tail-dots-card {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .sware-tail-dots-card {
     border-color: #7f8fa0;
     background: rgba(247, 250, 255, 0.85);
     color: #617487;
@@ -2524,7 +2524,7 @@ h4.workload-title::after {
     letter-spacing: 1px;
 }
 
-:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .sware-tail-dots-card.sware-tail-dots-fast {
+:is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .sware-tail-dots-card.sware-tail-dots-fast {
     border-color: #178f43;
     background: rgba(235, 251, 241, 0.95);
     color: #178f43;
@@ -2595,24 +2595,24 @@ h4.workload-title::after {
         height: 50px;
     }
 
-    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row {
+    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-row {
         grid-template-columns: repeat(var(--quit-cols, 1), max-content);
         gap: 8px;
     }
 
-    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-slot {
+    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-slot {
         width: 76px;
         min-height: 60px;
         max-width: 76px;
     }
 
-    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-tree-row.quit-row-layer-ellipsis .quit-node-slot {
+    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-tree-row.quit-row-layer-ellipsis .quit-node-slot {
         width: calc((5 * 76px) + (4 * 8px));
         max-width: calc((5 * 76px) + (4 * 8px));
         min-height: 70px;
     }
 
-    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid) .quit-node-ellipsis {
+    :is(#quit-tree-grid, #sware-tree-grid, #tail-tree-grid, #lil-tree-grid, #bplus-tree-grid) .quit-node-ellipsis {
         font-size: 12px;
     }
 }
