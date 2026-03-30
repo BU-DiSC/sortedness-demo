@@ -97,6 +97,7 @@
                         <select id="cmp-select-index-1" class="f-i" style="width:250px; text-align: left;">
                             <option value="Tail">Tail leaf optimization</option>
                             <option value="lil">Last-Insertion-Leaf</option>
+                            <option value="BPlusTree">B+ Tree</option>
                             <option value="QuIT">QuIT</option>
                             <option value="SWARE" selected>SWARE</option>
                         </select>
@@ -107,6 +108,7 @@
                         <select id="cmp-select-index-2" class="f-i" style="width:250px; text-align: left;">
                             <option value="Tail">Tail leaf optimization</option>
                             <option value="lil">Last-Insertion-Leaf</option>
+                            <option value="BPlusTree">B+ Tree</option>
                             <option value="QuIT" selected>QuIT</option>
                             <option value="SWARE">SWARE</option>
                         </select>
@@ -245,6 +247,17 @@
                             <div id="lil-box" class="tree-container quit-bplus-tree panel-box">
                                 <div class="quit-tree-grid" id="lil-tree-grid">
                                     <svg class="quit-tree-links" id="lil-tree-links"></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="structure-panel-bplus" class="panel structure-panel animation-column">
+                            <div class="panel-h">
+                                <span class="panel-t">B+ Tree</span>
+                                <span class="tag a">Tree-based</span>
+                            </div>
+                            <div id="bplus-box" class="tree-container quit-bplus-tree panel-box">
+                                <div class="quit-tree-grid" id="bplus-tree-grid">
+                                    <svg class="quit-tree-links" id="bplus-tree-links"></svg>
                                 </div>
                             </div>
                         </div>
@@ -623,6 +636,7 @@
     <script type="text/javascript" src="js/algorithms/quit.js"></script>
     <script type="text/javascript" src="js/algorithms/lil.js"></script>
     <script type="text/javascript" src="js/algorithms/tail.js"></script>
+    <script type="text/javascript" src="js/algorithms/b_plus_tree.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         if (typeof google !== 'undefined' && google.charts && typeof google.charts.load === 'function') {
