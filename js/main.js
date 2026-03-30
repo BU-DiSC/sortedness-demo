@@ -28,19 +28,22 @@ var running = true;             // flag to check if animation is running
 let sware_data = [];
 let tail_data = [];
 let lil_data = [];
+let bplus_data = [];
 
 const STRUCTURE_PANEL_IDS = {
     SWARE: "structure-panel-sware",
     QuIT: "structure-panel-quit",
     Tail: "structure-panel-tail",
-    lil: "structure-panel-lil"
+    lil: "structure-panel-lil",
+    BPlusTree: "structure-panel-bplus"
 };
 
 const STRUCTURE_BOX_IDS = {
     SWARE: "sware-box",
     QuIT: "quit-box",
     Tail: "tail-box",
-    lil: "lil-box"
+    lil: "lil-box",
+    BPlusTree: "bplus-box"
 };
 
 /* Parameters for the QuIT algorithm */
@@ -84,7 +87,8 @@ const STRUCTURE_CHART_COLORS = {
     SWARE: "#80CBC4",
     QuIT: "#FFB433",
     Tail: "#5b8ecb",
-    lil: "#d96c6c"
+    lil: "#d96c6c",
+    BPlusTree: "#8b6a42"
 };
 
 /**
@@ -161,6 +165,7 @@ var totalCharts = 0;
 let quitTree = new QuIT(10);
 let lilTree = new LilTree(10);
 let tailTree = new Tail(10);
+let bPlusTree = new BTree(10);
 let swareTree = new Sware(10);
 let nextStepInProgress = false;
 let fastForwardInProgress = false;
@@ -251,6 +256,9 @@ function initializeSelectedStructureVisuals()
         else if (structureName === "lil") {
             initializeLilVisualization();
         }
+        else if (structureName === "BPlusTree") {
+            initializeBPlusVisualization();
+        }
     }
 }
 
@@ -264,6 +272,9 @@ function getStructureDataLength(structureName)
     }
     if (structureName === "lil") {
         return lil_data.length;
+    }
+    if (structureName === "BPlusTree") {
+        return bplus_data.length;
     }
     if (structureName === "QuIT") {
         return total_data.length;
@@ -284,6 +295,9 @@ function getStructurePhaseRunner(structureName)
     }
     if (structureName === "lil") {
         return runLilPhase;
+    }
+    if (structureName === "BPlusTree") {
+        return runBPlusPhase;
     }
     return null;
 }
@@ -390,6 +404,11 @@ function fastForwardStructureInsert(structureName)
     if (structureName === "lil" && Array.isArray(lil_data) && lil_data.length > 0) {
         lilTree.insert(lil_data[0]);
         lil_data.shift();
+        return true;
+    }
+    if (structureName === "BPlusTree" && Array.isArray(bplus_data) && bplus_data.length > 0) {
+        bPlusTree.insert(bplus_data[0]);
+        bplus_data.shift();
         return true;
     }
     if (structureName === "QuIT" && Array.isArray(total_data) && total_data.length > 0) {
@@ -1009,6 +1028,7 @@ function run_operations() {
         swareTree = new Sware(10);
         tailTree = new Tail(10);
         lilTree = new LilTree(10);
+        bPlusTree = new BTree(10);
         resetComparisonMetrics();
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
@@ -1016,6 +1036,7 @@ function run_operations() {
         sware_data = [...total_data];
         tail_data = [...total_data];
         lil_data = [...total_data];
+        bplus_data = [...total_data];
         console.log("Starting to run the algorithm.");
         //pre-load
         state = 2;
