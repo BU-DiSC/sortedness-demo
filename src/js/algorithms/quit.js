@@ -945,25 +945,31 @@ function createAuxiliaryNodeCard(node, depth, range, isPathNode, isFastNode, has
     return card;
 }
 
-function getAuxiliaryDisplayRows(tree, levels, insertionPath, pathSet, focusLeaf)
+function getAuxiliaryDisplayRows(tree, levels, insertionPath, pathSet, focusLeaf, options)
 {
     const displayRows = [];
     if (!levels || levels.length === 0) {
         return displayRows;
     }
 
-    const focusPath = getPathFromRoot(focusLeaf || (insertionPath.length > 0 ? insertionPath[insertionPath.length - 1] : null));
+    const renderOptions = options || {};
+    const preferMiddleLeafNodes = renderOptions.preferMiddleLeafNodes === true;
+    const focusPath = preferMiddleLeafNodes
+        ? []
+        : getPathFromRoot(focusLeaf || (insertionPath.length > 0 ? insertionPath[insertionPath.length - 1] : null));
     const visibleLevels = getQuitVisibleLevelIndexes(levels.length);
 
     for (let i = 0; i < visibleLevels.length; i++) {
         const level = visibleLevels[i];
         const nodes = levels[level];
         const isLeafLevel = nodes.length > 0 && nodes[0].leaf;
-        const focusNode = isLeafLevel ? (focusPath[level] || insertionPath[level] || null) : null;
+        const focusNode = (isLeafLevel && !preferMiddleLeafNodes)
+            ? (focusPath[level] || insertionPath[level] || null)
+            : null;
         displayRows.push({
             type: "level",
             levelIndex: level,
-            items: compressQuitLevel(nodes, focusNode, !isLeafLevel)
+            items: compressQuitLevel(nodes, focusNode, !isLeafLevel || preferMiddleLeafNodes)
         });
 
         if (i < visibleLevels.length - 1) {
@@ -992,19 +998,21 @@ function hasVisibleNextLeafAuxiliary(displayItems, currentIndex)
     return false;
 }
 
-function renderAuxiliaryTree(tree, gridId, linksId, focusNode, focusLabel, pathNodes, fastNodes)
+function renderAuxiliaryTree(tree, gridId, linksId, focusNode, focusLabel, pathNodes, fastNodes, options)
 {
     const grid = document.getElementById(gridId);
     if (!grid) {
         return;
     }
 
+    const renderOptions = options || {};
     const levels = collectAuxiliaryLevels(tree);
     const pathSet = new Set(pathNodes || []);
     const fastSet = new Set(fastNodes || []);
-    const displayRows = getAuxiliaryDisplayRows(tree, levels, pathNodes || [], pathSet, focusNode);
+    const displayRows = getAuxiliaryDisplayRows(tree, levels, pathNodes || [], pathSet, focusNode, renderOptions);
     const nodeSlotMap = new Map();
     const visualRows = getAuxiliaryStructureRows(gridId);
+    const showFocusNode = renderOptions.showFocusNode !== false;
 
     const rangeMap = new Map();
     if (tree && tree.root) {
@@ -1089,8 +1097,8 @@ function renderAuxiliaryTree(tree, gridId, linksId, focusNode, focusLabel, pathN
                 pathSet.has(node),
                 fastSet.has(node),
                 isLeafLevel && hasVisibleNextLeafAuxiliary(displayItems, slotIndex),
-                node === focusNode,
-                focusLabel,
+                showFocusNode && node === focusNode,
+                showFocusNode ? focusLabel : null,
                 tree
             );
             slot.appendChild(card);

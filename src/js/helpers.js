@@ -284,6 +284,7 @@ function reset_button() {
     sware_data = [];
     tail_data = [];
     lil_data = [];
+    bplus_data = [];
     total_inversion_data = [];
     running = true; 
     nextStepInProgress = false;
@@ -329,6 +330,7 @@ function reset_button() {
     swareTree = new Sware(5);
     tailTree = new Tail(10);
     lilTree = new LilTree(10);
+    bPlusTree = new BTree(10);
     quit_leaf_dict = [];
     initializeQuitVisualization();
     initializeSwareVisualization();
@@ -337,6 +339,9 @@ function reset_button() {
     }
     if (typeof initializeLilVisualization === "function") {
         initializeLilVisualization();
+    }
+    if (typeof initializeBPlusVisualization === "function") {
+        initializeBPlusVisualization();
     }
     if (typeof returnStructurePanelsToStore === "function") {
         returnStructurePanelsToStore();
@@ -560,6 +565,17 @@ function getComparisonMetricsByStructure()
             fastPathResets: lilTree && typeof lilTree.fastPathResets === "number"
                 ? lilTree.fastPathResets
                 : null
+        },
+        BPlusTree: {
+            title: "B+ Tree",
+            manualSortedPages: null,
+            averagePagesPerFlush: null,
+            pagesBulkloaded: null,
+            fastInserts: bPlusTree && typeof bPlusTree.fastInserts === "number"
+                ? bPlusTree.fastInserts
+                : null,
+            topInserts: getTreeTopInsertCount(bPlusTree),
+            fastPathResets: null
         }
     };
 }
@@ -754,8 +770,8 @@ function updateSummaryCards()
             if (labelEls && labelEls.length >= 2) {
                 const leftLabelEl = labelEls[0];
                 const rightLabelEl = labelEls[1];
-                leftLabelEl.textContent = selectedStructures[0] || '';
-                rightLabelEl.textContent = selectedStructures[1] || '';
+                leftLabelEl.textContent = leftMetrics.title || selectedStructures[0] || '';
+                rightLabelEl.textContent = rightMetrics.title || selectedStructures[1] || '';
 
                 // normalize styling classes: 's' for SWARE, 'q' for QuIT
                 leftLabelEl.classList.remove('s', 'q');
@@ -764,6 +780,10 @@ function updateSummaryCards()
                 if ((selectedStructures[0] || '').toUpperCase() === 'QUIT') leftLabelEl.classList.add('q');
                 if ((selectedStructures[1] || '').toUpperCase() === 'SWARE') rightLabelEl.classList.add('s');
                 if ((selectedStructures[1] || '').toUpperCase() === 'QUIT') rightLabelEl.classList.add('q');
+                if (typeof getStructureChartColor === 'function') {
+                    leftLabelEl.style.color = getStructureChartColor(selectedStructures[0]);
+                    rightLabelEl.style.color = getStructureChartColor(selectedStructures[1]);
+                }
             }
         } catch (e) {
             // non-fatal: if DOM shape changed, skip label sync
