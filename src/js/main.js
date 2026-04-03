@@ -1323,10 +1323,11 @@ function generate(k, l, n, b, a) {
     return array;
 }
 
-//returns array of length n with i inversionss
+// returns array of length n after i random pair exchanges
+//(elements already exchanged can't be exchanged again)
 function generateInversion(n, i) {
     let array = [];
-    let inversions = i;
+    const swapCount = Math.max(0, Math.min(Math.floor(i), Math.floor(n / 2)));
     for (let a = 1; a < n + 1; a++) {
         array.push(a);
     }
@@ -1342,17 +1343,27 @@ function generateInversion(n, i) {
     return array;
     */
     let taken = new Map();
-    //precautionary so no value not in array is swapped
-    taken.set(0, false);
-    taken.set(n + 1, false);
-    for (let a = 1; a < n + 1; a++) {
-        taken.set(a, true);
+    for (let index = 0; index < n; index++) {
+        taken.set(index, true);
     }
-    //two array to swap
-    let sources1 = generateSources(n, 2 * inversions, taken);
-    let sources2 = generateSources(n, 2 * inversions, taken);
-    for (let a = 0; a < inversions; a++) {
-        swapElements(array, sources1[a], sources2[a])
+
+    function generateExchangeSources(count) {
+        const sources = [];
+        while (sources.length < count) {
+            const candidate = Math.floor(Math.random() * n);
+            if (taken.get(candidate) === true) {
+                taken.set(candidate, false);
+                sources.push(candidate);
+            }
+        }
+        return sources;
+    }
+
+    // Pick two groups of valid indexes swap them
+    let sources1 = generateExchangeSources(swapCount);
+    let sources2 = generateExchangeSources(swapCount);
+    for (let a = 0; a < swapCount; a++) {
+        swapElements(array, sources1[a], sources2[a]);
     }
     return array;
 }
