@@ -93,6 +93,7 @@
     var btnVizIdx = root.querySelector('#btn-visualize-index');
     var btnRun = root.querySelector('#btn-run');
     var idxCfg = root.querySelector('#index-structure-config');
+    var secondaryDatasetCfg = root.querySelector('#secondary-dataset-config');
 
     if(btnVizIdx){
       btnVizIdx.addEventListener('click', function(){
@@ -150,6 +151,15 @@
     // Show charts area when Visualize Workload is clicked
     if(btnViz){
       btnViz.addEventListener('click', function(){
+        if(secondaryDatasetCfg && secondaryDatasetCfg.style.display === 'none'){
+          secondaryDatasetCfg.style.display = '';
+          const metricSelect = secondaryDatasetCfg.querySelector('#cmp-select-secondary-metric');
+          if(metricSelect && typeof metricSelect.focus === 'function'){
+            metricSelect.focus();
+          }
+          secondaryDatasetCfg.scrollIntoView({behavior:'smooth', block:'center'});
+          return;
+        }
         var charts = root.querySelector('#charts');
         if(charts) charts.style.display = '';
         // also reveal inner chart column if it had a 'hidden' class
