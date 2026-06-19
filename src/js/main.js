@@ -9,6 +9,7 @@ var selectedB; // stores the B value selected
 var selectedA; // stores the A value selected
 var selectedSecondaryMetricCount; // stores the right-side metric target selected
 var selectedSecondaryMetricType = "exchanges"; // stores the right-side metric type selected
+var selectedIngestionDatasetType = "kl"; // stores which dataset is inserted into selected indexes
 var selectedIndexStructure1 = "SWARE";
 var selectedIndexStructure2 = "QuIT";
 
@@ -173,6 +174,11 @@ function readSelectedSecondaryMetricType() {
     selectedSecondaryMetricType = metricSelect ? metricSelect.value : "exchanges";
 }
 
+function readSelectedIngestionDatasetType() {
+    const ingestionDatasetSelect = document.getElementById('cmp-select-ingestion-dataset');
+    selectedIngestionDatasetType = ingestionDatasetSelect ? ingestionDatasetSelect.value : "kl";
+}
+
 function getSecondaryMetricLabel(metricType) {
     return metricType === "inversions" ? "Inversions" : "Exchanges";
 }
@@ -191,10 +197,12 @@ function updateSecondaryMetricChartTitle() {
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
         readSelectedSecondaryMetricType();
+        readSelectedIngestionDatasetType();
         updateSecondaryMetricChartTitle();
     });
 } else {
     readSelectedSecondaryMetricType();
+    readSelectedIngestionDatasetType();
     updateSecondaryMetricChartTitle();
 }
 
@@ -208,6 +216,20 @@ function getMaximumSecondaryMetricCount(metricType, n) {
 function clampSecondaryMetricCount(metricType, n, metricCount) {
     const normalizedMetricCount = Math.floor(metricCount);
     return Math.max(0, Math.min(normalizedMetricCount, getMaximumSecondaryMetricCount(metricType, n)));
+}
+
+function generateSelectedIngestionDataset(klDataset, kElementCount)
+{
+    if (selectedIngestionDatasetType === "exchanges" || selectedIngestionDatasetType === "inversions") {
+        const metricCount = clampSecondaryMetricCount(
+            selectedIngestionDatasetType,
+            selectedN,
+            getSecondaryMetricTargetCount(selectedIngestionDatasetType, klDataset, kElementCount)
+        );
+        return generateSecondaryMetricDataset(selectedIngestionDatasetType, selectedN, metricCount);
+    }
+
+    return klDataset;
 }
 
 function getSelectedStructureNames()
@@ -1022,6 +1044,7 @@ function run_operations() {
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
     selectedA = parseFloat(document.getElementById('cmp-select-A').value);
     readSelectedIndexStructures();
+    readSelectedIngestionDatasetType();
     nextStepInProgress = false;
 
 
@@ -1076,8 +1099,15 @@ function run_operations() {
         lilTree = new LilTree(10);
         bPlusTree = new BTree(10);
         resetComparisonMetrics();
-        total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
-            selectedN, selectedB, selectedA);
+        const selectedKElementCount = Math.round((selectedN * selectedK) / 100);
+        const klInsertionDataset = generate(
+            selectedKElementCount,
+            Math.round(selectedN * selectedL / 100),
+            selectedN,
+            selectedB,
+            selectedA
+        );
+        total_data = generateSelectedIngestionDataset(klInsertionDataset, selectedKElementCount);
         
         sware_data = [...total_data];
         tail_data = [...total_data];

@@ -92,11 +92,13 @@
     var btnViz = root.querySelector('#btn-visualize');
     var btnVizIdx = root.querySelector('#btn-visualize-index');
     var btnRun = root.querySelector('#btn-run');
+    var ingestionDatasetCfg = root.querySelector('#ingestion-dataset-config');
     var idxCfg = root.querySelector('#index-structure-config');
     var secondaryDatasetCfg = root.querySelector('#secondary-dataset-config');
 
     if(btnVizIdx){
       btnVizIdx.addEventListener('click', function(){
+        if(ingestionDatasetCfg) ingestionDatasetCfg.style.display = '';
         if(idxCfg) idxCfg.style.display = '';
         if(btnRun) btnRun.style.display = '';
         if(btnViz) btnViz.style.display = 'none';
