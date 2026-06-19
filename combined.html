@@ -87,6 +87,22 @@
                 </div>
             </div>
 
+            <div id="ingestion-dataset-config" class="config" style="display:none">
+                <div class="lbl">Insertion Dataset</div>
+                <div class="fields">
+                    <div class="f">
+                        <span class="f-s">D</span>
+                        <span class="f-t">Dataset</span>
+                        <select id="cmp-select-ingestion-dataset" class="f-i" style="width:280px; text-align: left;"
+                            onchange="readSelectedIngestionDatasetType();">
+                            <option value="kl" selected>K-L data</option>
+                            <option value="exchanges">Equivalent exchanges data</option>
+                            <option value="inversions">Equivalent inversions data</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- Index Structure selects (keeps original IDs from research.html) -->
             <div id="index-structure-config" class="config" style="display:none">
                 <div class="lbl">Index Structure</div>
