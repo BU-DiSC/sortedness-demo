@@ -28,19 +28,22 @@ var running = true;             // flag to check if animation is running
 let sware_data = [];
 let tail_data = [];
 let lil_data = [];
+let bplus_data = [];
 
 const STRUCTURE_PANEL_IDS = {
     SWARE: "structure-panel-sware",
     QuIT: "structure-panel-quit",
     Tail: "structure-panel-tail",
-    lil: "structure-panel-lil"
+    lil: "structure-panel-lil",
+    BPlusTree: "structure-panel-bplus"
 };
 
 const STRUCTURE_BOX_IDS = {
     SWARE: "sware-box",
     QuIT: "quit-box",
     Tail: "tail-box",
-    lil: "lil-box"
+    lil: "lil-box",
+    BPlusTree: "bplus-box"
 };
 
 /* Parameters for the QuIT algorithm */
@@ -84,7 +87,8 @@ const STRUCTURE_CHART_COLORS = {
     SWARE: "#80CBC4",
     QuIT: "#FFB433",
     Tail: "#5b8ecb",
-    lil: "#d96c6c"
+    lil: "#d96c6c",
+    BPlusTree: "#8b6a42"
 };
 
 /**
@@ -161,6 +165,7 @@ var totalCharts = 0;
 let quitTree = new QuIT(10);
 let lilTree = new LilTree(10);
 let tailTree = new Tail(10);
+let bPlusTree = new BTree(10);
 let swareTree = new Sware(10);
 let nextStepInProgress = false;
 let fastForwardInProgress = false;
@@ -251,6 +256,9 @@ function initializeSelectedStructureVisuals()
         else if (structureName === "lil") {
             initializeLilVisualization();
         }
+        else if (structureName === "BPlusTree") {
+            initializeBPlusVisualization();
+        }
     }
 }
 
@@ -264,6 +272,9 @@ function getStructureDataLength(structureName)
     }
     if (structureName === "lil") {
         return lil_data.length;
+    }
+    if (structureName === "BPlusTree") {
+        return bplus_data.length;
     }
     if (structureName === "QuIT") {
         return total_data.length;
@@ -284,6 +295,9 @@ function getStructurePhaseRunner(structureName)
     }
     if (structureName === "lil") {
         return runLilPhase;
+    }
+    if (structureName === "BPlusTree") {
+        return runBPlusPhase;
     }
     return null;
 }
@@ -390,6 +404,11 @@ function fastForwardStructureInsert(structureName)
     if (structureName === "lil" && Array.isArray(lil_data) && lil_data.length > 0) {
         lilTree.insert(lil_data[0]);
         lil_data.shift();
+        return true;
+    }
+    if (structureName === "BPlusTree" && Array.isArray(bplus_data) && bplus_data.length > 0) {
+        bPlusTree.insert(bplus_data[0]);
+        bplus_data.shift();
         return true;
     }
     if (structureName === "QuIT" && Array.isArray(total_data) && total_data.length > 0) {
@@ -1009,6 +1028,7 @@ function run_operations() {
         swareTree = new Sware(10);
         tailTree = new Tail(10);
         lilTree = new LilTree(10);
+        bPlusTree = new BTree(10);
         resetComparisonMetrics();
         total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
@@ -1016,6 +1036,7 @@ function run_operations() {
         sware_data = [...total_data];
         tail_data = [...total_data];
         lil_data = [...total_data];
+        bplus_data = [...total_data];
         console.log("Starting to run the algorithm.");
         //pre-load
         state = 2;
@@ -1302,10 +1323,11 @@ function generate(k, l, n, b, a) {
     return array;
 }
 
-//returns array of length n with i inversionss
+// returns array of length n after i random pair exchanges
+//(elements already exchanged can't be exchanged again)
 function generateInversion(n, i) {
     let array = [];
-    let inversions = i;
+    const swapCount = Math.max(0, Math.min(Math.floor(i), Math.floor(n / 2)));
     for (let a = 1; a < n + 1; a++) {
         array.push(a);
     }
@@ -1321,17 +1343,27 @@ function generateInversion(n, i) {
     return array;
     */
     let taken = new Map();
-    //precautionary so no value not in array is swapped
-    taken.set(0, false);
-    taken.set(n + 1, false);
-    for (let a = 1; a < n + 1; a++) {
-        taken.set(a, true);
+    for (let index = 0; index < n; index++) {
+        taken.set(index, true);
     }
-    //two array to swap
-    let sources1 = generateSources(n, 2 * inversions, taken);
-    let sources2 = generateSources(n, 2 * inversions, taken);
-    for (let a = 0; a < inversions; a++) {
-        swapElements(array, sources1[a], sources2[a])
+
+    function generateExchangeSources(count) {
+        const sources = [];
+        while (sources.length < count) {
+            const candidate = Math.floor(Math.random() * n);
+            if (taken.get(candidate) === true) {
+                taken.set(candidate, false);
+                sources.push(candidate);
+            }
+        }
+        return sources;
+    }
+
+    // Pick two groups of valid indexes swap them
+    let sources1 = generateExchangeSources(swapCount);
+    let sources2 = generateExchangeSources(swapCount);
+    for (let a = 0; a < swapCount; a++) {
+        swapElements(array, sources1[a], sources2[a]);
     }
     return array;
 }
