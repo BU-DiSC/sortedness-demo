@@ -7,21 +7,17 @@ var selectedK; // stores the K value selected
 var selectedL; // stores the L value selected
 var selectedB; // stores the B value selected
 var selectedA; // stores the A value selected
-var selectedE; // stores the E value selected
+var selectedSecondaryMetricCount; // stores the right-side metric target selected
+var selectedSecondaryMetricType = "exchanges"; // stores the right-side metric type selected
+var selectedIngestionDatasetType = "kl"; // stores which dataset is inserted into selected indexes
 var selectedIndexStructure1 = "SWARE";
 var selectedIndexStructure2 = "QuIT";
-var selectedA; // stores the A value selected
-var selectedE; // stores the E value selected
 
 var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
 var total_data = [];            // stores the workload data
-var total_exchanges_data = [];  // stores the exchanges data
 var running = true;             // flag to check if animation is running
-var wait = 3;                    // how many iterations we wait before we show index for SWARE algorithm
 const BASE_ANIMATION_DELAY = 1000;
 var delay = BASE_ANIMATION_DELAY; // delay between animations
-var total_exchanges_data = [];  // stores the exchanges data
-var running = true;             // flag to check if animation is running
 
 /* Parameters for the SWARE algorithm */
 
@@ -52,10 +48,6 @@ var leaf_node_size = 10;     // size of the leaf node
 var pole = [];                // current pole
 var pole_prev = [];           // previous pole
 let pole_next = [];           // next pole
-let zones_quit = [];
-let in_pole_next;
-let poleIndex;
-let quit_max = Number.MIN_SAFE_INTEGER; 
 
 
 /* Parameters for the charts */
@@ -79,7 +71,7 @@ var quit_pole_resets = 0;
 var quit_pole_resets_history = [];
 var swareComparisonPreview = null;
 var comparisonChartHistory = null;
-var exchangesDatasets = [];
+var secondaryMetricDatasets = [];
 var klDatasets = [];
 let quit_leaf_dict = [];
 
@@ -155,10 +147,9 @@ window.addEventListener('resize', () => {
 });
 
 // array that holds the field user inputted
-// order is [n,k,l,b,exchanges]
-var inputedDataE = [];
+// order is [n, metricCount, metricType]
+var inputtedSecondaryMetricData = [];
 var inputedDatakl = [];
-var totalCharts = 0;
 
 
 //trees
@@ -176,6 +167,69 @@ function readSelectedIndexStructures() {
     const secondSelect = document.getElementById('cmp-select-index-2');
     selectedIndexStructure1 = firstSelect ? firstSelect.value : "SWARE";
     selectedIndexStructure2 = secondSelect ? secondSelect.value : "QuIT";
+}
+
+function readSelectedSecondaryMetricType() {
+    const metricSelect = document.getElementById('cmp-select-secondary-metric');
+    selectedSecondaryMetricType = metricSelect ? metricSelect.value : "exchanges";
+}
+
+function readSelectedIngestionDatasetType() {
+    const ingestionDatasetSelect = document.getElementById('cmp-select-ingestion-dataset');
+    selectedIngestionDatasetType = ingestionDatasetSelect ? ingestionDatasetSelect.value : "kl";
+}
+
+function getSecondaryMetricLabel(metricType) {
+    return metricType === "inversions" ? "Inversions" : "Exchanges";
+}
+
+function getSecondaryMetricShortLabel(metricType) {
+    return metricType === "inversions" ? "I" : "E";
+}
+
+function updateSecondaryMetricChartTitle() {
+    const titleElement = document.getElementById('secondary-metric-title');
+    if (titleElement) {
+        titleElement.textContent = getSecondaryMetricLabel(selectedSecondaryMetricType);
+    }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+        readSelectedSecondaryMetricType();
+        readSelectedIngestionDatasetType();
+        updateSecondaryMetricChartTitle();
+    });
+} else {
+    readSelectedSecondaryMetricType();
+    readSelectedIngestionDatasetType();
+    updateSecondaryMetricChartTitle();
+}
+
+function getMaximumSecondaryMetricCount(metricType, n) {
+    if (metricType === "inversions") {
+        return Math.floor((n * (n - 1)) / 2);
+    }
+    return Math.max(0, n - 1);
+}
+
+function clampSecondaryMetricCount(metricType, n, metricCount) {
+    const normalizedMetricCount = Math.floor(metricCount);
+    return Math.max(0, Math.min(normalizedMetricCount, getMaximumSecondaryMetricCount(metricType, n)));
+}
+
+function generateSelectedIngestionDataset(klDataset, kElementCount)
+{
+    if (selectedIngestionDatasetType === "exchanges" || selectedIngestionDatasetType === "inversions") {
+        const metricCount = clampSecondaryMetricCount(
+            selectedIngestionDatasetType,
+            selectedN,
+            getSecondaryMetricTargetCount(selectedIngestionDatasetType, klDataset, kElementCount)
+        );
+        return generateSecondaryMetricDataset(selectedIngestionDatasetType, selectedN, metricCount);
+    }
+
+    return klDataset;
 }
 
 function getSelectedStructureNames()
@@ -593,7 +647,8 @@ function visualize_workload() {
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
     selectedA = parseFloat(document.getElementById('cmp-select-A').value);
     readSelectedIndexStructures();
-    // selectedE = parseInt(document.getElementById('cmp-select-E').value);
+    readSelectedSecondaryMetricType();
+    // selectedSecondaryMetricCount = parseInt(document.getElementById('cmp-select-E').value);
 
     let flag = true; // flag to generate graph when parameters are acceptable
 
@@ -637,13 +692,13 @@ function visualize_workload() {
     }
 
     /*
-    if (isNaN(selectedE) || selectedE !== parseInt(selectedE)) {
+    if (isNaN(selectedSecondaryMetricCount) || selectedSecondaryMetricCount !== parseInt(selectedSecondaryMetricCount)) {
         alert("E should be an integer");
         flag = false;
     }
     // verification to make sure data generation won't break
     if (flag) {
-        if (selectedE > (selectedN / 2)) {
+        if (selectedSecondaryMetricCount > (selectedN / 2)) {
             alert("Exchange value is too large for the N value");
             flag = false;
         }
@@ -653,22 +708,32 @@ function visualize_workload() {
     // If all parameters are valid, generate the visualization
     if (flag) {
         console.log("All parameters valid, generating visualization.");
+        updateSecondaryMetricChartTitle();
 
         // Show chart elements
         document.getElementById('chart-column').classList.remove('hidden');
 
         // Get the data from the imitated server
         running = true;
-        selectedE = Math.round((selectedN * selectedK) / 200);
-        let title = "N" + selectedN + "_K" + selectedK + "_L" + selectedL + "_B" + selectedB;
-        var tempArray = [selectedN, selectedK, selectedL, selectedB, selectedE, selectedA];
-        inputedDataE.push(tempArray);
-        inputedDatakl.push(tempArray);
-        total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
+        const selectedKElementCount = Math.round((selectedN * selectedK) / 100);
+        total_data = generate(selectedKElementCount, Math.round(selectedN * selectedL / 100),
             selectedN, selectedB, selectedA);
+        selectedSecondaryMetricCount = clampSecondaryMetricCount(
+            selectedSecondaryMetricType,
+            selectedN,
+            getSecondaryMetricTargetCount(selectedSecondaryMetricType, total_data, selectedKElementCount)
+        );
+        var klParameters = [selectedN, selectedK, selectedL, selectedB, selectedSecondaryMetricCount, selectedA];
+        var secondaryMetricParameters = [selectedN, selectedSecondaryMetricCount, selectedSecondaryMetricType];
+        inputtedSecondaryMetricData.push(secondaryMetricParameters);
+        inputedDatakl.push(klParameters);
         klDatasets.push(total_data);
-        total_exchanges_data = generateInversion(selectedN, selectedE);
-        exchangesDatasets.push(total_exchanges_data);
+        const secondaryMetricDataset = generateSecondaryMetricDataset(
+            selectedSecondaryMetricType,
+            selectedN,
+            selectedSecondaryMetricCount
+        );
+        secondaryMetricDatasets.push(secondaryMetricDataset);
 
         // Draw charts
         const tickCount = 10;
@@ -801,10 +866,11 @@ function visualize_workload() {
             klChartWrapper.appendChild(deleteButton);
         }
         
-        //draw inversions charts, most recently created chart is drawn first
-        for (let i = exchangesDatasets.length - 1; i >= 0; i--) {
+        // draw secondary-metric charts, most recently created chart is drawn first
+        for (let i = secondaryMetricDatasets.length - 1; i >= 0; i--) {
             // Adjust data for plotting, k-l data
-            var plot_data = adjust_for_plotly_plotting(exchangesDatasets[i]);
+            var plot_data = adjust_for_plotly_plotting(secondaryMetricDatasets[i]);
+            const metricParameters = inputtedSecondaryMetricData[i];
             // Options for the graph
             const layout = {
                 //autosize:true,
@@ -838,7 +904,8 @@ function visualize_workload() {
                 },
                 showlegend: true,
                 annotations: [{
-                    text: "(N=" + inputedDataE[i][0] + ", E=" + inputedDataE[i][4] + ")",
+                    text: "(N=" + metricParameters[0] + ", "
+                        + getSecondaryMetricShortLabel(metricParameters[2]) + "=" + metricParameters[1] + ")",
                     xref: 'paper',
                     yref: 'paper',
                     x: 0.5,
@@ -863,23 +930,23 @@ function visualize_workload() {
             deleteButton.textContent = "✖";
             deleteButton.onclick = function() {
                 let wrapper = deleteButton.parentNode;
-                exchangesDatasets.splice(parseInt(wrapper.id), 1);
-                inputedDataE.splice(parseInt(wrapper.id), 1);
+                secondaryMetricDatasets.splice(parseInt(wrapper.id), 1);
+                inputtedSecondaryMetricData.splice(parseInt(wrapper.id), 1);
                 wrapper.remove();
             };
 
-            let inversionChartWrapper = document.createElement("div");
-            inversionChartWrapper.style.position = "relative";
-            inversionChartWrapper.id = i;
-            let inversionChart = document.createElement("div");
-            inversionChart.id = "inversion_chart_div" + i;
-            inversionChart.classList.add("equal-height", "chart_div");
-            inversionChart.style.width = "425px";
-            inversionChart.style.height = "450px";
-            inversionChart.style.minHeight = "450px";
-            inversionChart.style.padding = "0px";
-            inversionChartWrapper.appendChild(inversionChart);
-            document.getElementById("inversionCharts").appendChild(inversionChartWrapper);
+            let secondaryMetricChartWrapper = document.createElement("div");
+            secondaryMetricChartWrapper.style.position = "relative";
+            secondaryMetricChartWrapper.id = i;
+            let secondaryMetricChart = document.createElement("div");
+            secondaryMetricChart.id = "inversion_chart_div" + i;
+            secondaryMetricChart.classList.add("equal-height", "chart_div");
+            secondaryMetricChart.style.width = "425px";
+            secondaryMetricChart.style.height = "450px";
+            secondaryMetricChart.style.minHeight = "450px";
+            secondaryMetricChart.style.padding = "0px";
+            secondaryMetricChartWrapper.appendChild(secondaryMetricChart);
+            document.getElementById("inversionCharts").appendChild(secondaryMetricChartWrapper);
             // Ensure layout doesn't render the old annotation under the x-axis
             if (layout && layout.annotations) {
                 layout.annotations = [];
@@ -899,14 +966,14 @@ function visualize_workload() {
                     }
                 });
             } catch(e) { /* safe-guard */ }
-            // Diagnostics: log plot_data summary so we can debug empty inversion charts
+            // Diagnostics: log plot_data summary so we can debug empty right-side metric charts
             try {
                 const t0 = plot_data[0] || {};
-                console.log('Plot INV i=', i, 'traces=', plot_data.length, 'trace0-xlen=', (t0.x && t0.x.length) || 0, 'sample x0..4=', (t0.x? t0.x.slice(0,5):[]), 'sample y0..4=', (t0.y? t0.y.slice(0,5):[]));
+                console.log('Plot secondary metric i=', i, 'traces=', plot_data.length, 'trace0-xlen=', (t0.x && t0.x.length) || 0, 'sample x0..4=', (t0.x? t0.x.slice(0,5):[]), 'sample y0..4=', (t0.y? t0.y.slice(0,5):[]));
             } catch(e) {}
 
             Plotly.newPlot("inversion_chart_div" + i, plot_data, applyRedesignPlotlyLayout(layout), config);
-            inversionChartWrapper.appendChild(deleteButton);
+            secondaryMetricChartWrapper.appendChild(deleteButton);
         }
 
         // Update card subtitles with the most recent dataset info (if present)
@@ -932,7 +999,7 @@ function visualize_workload() {
                 }
             }
 
-            // Inversions subtitle
+            // Secondary metric subtitle
             const invContainer = document.getElementById('inversionCharts');
             if (invContainer) {
                 const invCard = invContainer.closest('.cc');
@@ -944,9 +1011,10 @@ function visualize_workload() {
                         const hdr = invCard.querySelector('.cc-h');
                         if (hdr) hdr.appendChild(sub);
                     }
-                    if (inputedDataE && inputedDataE.length > 0) {
-                        const last = inputedDataE[inputedDataE.length - 1];
-                        sub.textContent = "(N=" + last[0] + ", E=" + last[4] + ")";
+                    if (inputtedSecondaryMetricData && inputtedSecondaryMetricData.length > 0) {
+                        const last = inputtedSecondaryMetricData[inputtedSecondaryMetricData.length - 1];
+                        sub.textContent = "(N=" + last[0] + ", "
+                            + getSecondaryMetricShortLabel(last[2]) + "=" + last[1] + ")";
                     } else {
                         sub.textContent = '';
                     }
@@ -976,6 +1044,7 @@ function run_operations() {
     selectedB = parseFloat(document.getElementById('cmp-select-B').value);
     selectedA = parseFloat(document.getElementById('cmp-select-A').value);
     readSelectedIndexStructures();
+    readSelectedIngestionDatasetType();
     nextStepInProgress = false;
 
 
@@ -1030,8 +1099,15 @@ function run_operations() {
         lilTree = new LilTree(10);
         bPlusTree = new BTree(10);
         resetComparisonMetrics();
-        total_data = generate(Math.round((selectedN * selectedK) / 100), Math.round(selectedN * selectedL / 100),
-            selectedN, selectedB, selectedA);
+        const selectedKElementCount = Math.round((selectedN * selectedK) / 100);
+        const klInsertionDataset = generate(
+            selectedKElementCount,
+            Math.round(selectedN * selectedL / 100),
+            selectedN,
+            selectedB,
+            selectedA
+        );
+        total_data = generateSelectedIngestionDataset(klInsertionDataset, selectedKElementCount);
         
         sware_data = [...total_data];
         tail_data = [...total_data];
@@ -1323,47 +1399,304 @@ function generate(k, l, n, b, a) {
     return array;
 }
 
-// returns array of length n after i random pair exchanges
-//(elements already exchanged can't be exchanged again)
-function generateInversion(n, i) {
-    let array = [];
-    const swapCount = Math.max(0, Math.min(Math.floor(i), Math.floor(n / 2)));
-    for (let a = 1; a < n + 1; a++) {
-        array.push(a);
+function getRandomInteger(min, max) {
+    if (max <= min) {
+        return min;
     }
-    /*
-    let insertPos;
-    for(let i = n;i>0;i--)
-    {
-        insertPos = Math.min(array.length,inversions);
-        //add element to array
-        array.splice(insertPos,0,i);
-        inversions-=insertPos;
-    }
-    return array;
-    */
-    let taken = new Map();
-    for (let index = 0; index < n; index++) {
-        taken.set(index, true);
-    }
+    return min + Math.floor(Math.random() * (max - min + 1));
+}
 
-    function generateExchangeSources(count) {
-        const sources = [];
-        while (sources.length < count) {
-            const candidate = Math.floor(Math.random() * n);
-            if (taken.get(candidate) === true) {
-                taken.set(candidate, false);
-                sources.push(candidate);
+function createSortedDataset(n) {
+    let dataset = [];
+    for (let value = 1; value <= n; value++) {
+        dataset.push(value);
+    }
+    return dataset;
+}
+
+function countDatasetInversions(dataset) {
+    let inversionCount = 0;
+
+    for (let currentIndex = 0; currentIndex < dataset.length; currentIndex++) {
+        for (let previousIndex = 0; previousIndex < currentIndex; previousIndex++) {
+            if (dataset[previousIndex] > dataset[currentIndex]) {
+                inversionCount++;
             }
         }
-        return sources;
     }
 
-    // Pick two groups of valid indexes swap them
-    let sources1 = generateExchangeSources(swapCount);
-    let sources2 = generateExchangeSources(swapCount);
-    for (let a = 0; a < swapCount; a++) {
-        swapElements(array, sources1[a], sources2[a]);
+    return inversionCount;
+}
+
+function getSecondaryMetricTargetCount(metricType, dataset, kElementCount) {
+    if (metricType === "inversions") {
+        return countDatasetInversions(dataset);
     }
-    return array;
+    return Math.round(kElementCount / 2);
+}
+
+function createMaximumInversionsByPosition(n) {
+    let maximumInversionsByPosition = new Array(n).fill(0);
+    for (let position = 0; position < n; position++) {
+        maximumInversionsByPosition[position] = n - position - 1;
+    }
+    return maximumInversionsByPosition;
+}
+
+function buildDatasetFromInversionCountsByPosition(inversionCountsByPosition) {
+    let dataset = new Array(inversionCountsByPosition.length);
+    let remainingValues = createSortedDataset(inversionCountsByPosition.length);
+
+    for (let position = 0; position < inversionCountsByPosition.length; position++) {
+        let remainingValueIndex = inversionCountsByPosition[position];
+        let value = remainingValues[remainingValueIndex];
+        dataset[position] = value;
+        remainingValues.splice(remainingValueIndex, 1);
+    }
+
+    return dataset;
+}
+
+function createTrackedPositionSet(size, positions) {
+    let trackedPositionSet = {
+        positions: positions.slice(),
+        positionIndexes: new Array(size).fill(-1)
+    };
+
+    for (let trackedIndex = 0; trackedIndex < trackedPositionSet.positions.length; trackedIndex++) {
+        trackedPositionSet.positionIndexes[trackedPositionSet.positions[trackedIndex]] = trackedIndex;
+    }
+
+    return trackedPositionSet;
+}
+
+function addTrackedPosition(trackedPositionSet, position) {
+    if (trackedPositionSet.positionIndexes[position] !== -1) {
+        return;
+    }
+
+    trackedPositionSet.positionIndexes[position] = trackedPositionSet.positions.length;
+    trackedPositionSet.positions.push(position);
+}
+
+function removeTrackedPosition(trackedPositionSet, position) {
+    let trackedIndex = trackedPositionSet.positionIndexes[position];
+    if (trackedIndex === -1) {
+        return;
+    }
+
+    let lastTrackedPosition = trackedPositionSet.positions[trackedPositionSet.positions.length - 1];
+    trackedPositionSet.positions[trackedIndex] = lastTrackedPosition;
+    trackedPositionSet.positionIndexes[lastTrackedPosition] = trackedIndex;
+    trackedPositionSet.positions.pop();
+    trackedPositionSet.positionIndexes[position] = -1;
+}
+
+function chooseRandomTrackedPosition(trackedPositionSet) {
+    let trackedIndex = Math.floor(Math.random() * trackedPositionSet.positions.length);
+    return trackedPositionSet.positions[trackedIndex];
+}
+
+function createTrackedInversionPositionSets(inversionCountsByPosition, maximumInversionsByPosition) {
+    let positionsWithInversions = [];
+    let positionsWithRemainingCapacity = [];
+
+    for (let position = 0; position < inversionCountsByPosition.length; position++) {
+        if (inversionCountsByPosition[position] > 0) {
+            positionsWithInversions.push(position);
+        }
+        if (inversionCountsByPosition[position] < maximumInversionsByPosition[position]) {
+            positionsWithRemainingCapacity.push(position);
+        }
+    }
+
+    return {
+        trackedPositionsWithInversions: createTrackedPositionSet(inversionCountsByPosition.length, positionsWithInversions),
+        trackedPositionsWithRemainingCapacity: createTrackedPositionSet(
+            inversionCountsByPosition.length,
+            positionsWithRemainingCapacity
+        )
+    };
+}
+
+function updateTrackedInversionPosition(
+    inversionCountsByPosition,
+    maximumInversionsByPosition,
+    trackedPositionsWithInversions,
+    trackedPositionsWithRemainingCapacity,
+    position,
+    inversionCountChange
+) {
+    inversionCountsByPosition[position] += inversionCountChange;
+
+    if (inversionCountsByPosition[position] > 0) {
+        addTrackedPosition(trackedPositionsWithInversions, position);
+    } else {
+        removeTrackedPosition(trackedPositionsWithInversions, position);
+    }
+
+    if (inversionCountsByPosition[position] < maximumInversionsByPosition[position]) {
+        addTrackedPosition(trackedPositionsWithRemainingCapacity, position);
+    } else {
+        removeTrackedPosition(trackedPositionsWithRemainingCapacity, position);
+    }
+}
+
+function generateRandomInversionCountsByPosition(n, targetInversionCount) {
+    let inversionCountsByPosition = new Array(n).fill(0);
+    let maximumInversionsByPosition = createMaximumInversionsByPosition(n);
+    let trackedPositionSets = createTrackedInversionPositionSets(
+        inversionCountsByPosition,
+        maximumInversionsByPosition
+    );
+    let trackedPositionsWithInversions = trackedPositionSets.trackedPositionsWithInversions;
+    let trackedPositionsWithRemainingCapacity = trackedPositionSets.trackedPositionsWithRemainingCapacity;
+    let remainingInversions = targetInversionCount;
+
+    while (remainingInversions > 0 && trackedPositionsWithRemainingCapacity.positions.length > 0) {
+        let position = chooseRandomTrackedPosition(trackedPositionsWithRemainingCapacity);
+        let maximumIncreaseAtPosition = Math.min(
+            remainingInversions,
+            maximumInversionsByPosition[position] - inversionCountsByPosition[position]
+        );
+        let inversionIncrease = getRandomInteger(1, maximumIncreaseAtPosition);
+
+        updateTrackedInversionPosition(
+            inversionCountsByPosition,
+            maximumInversionsByPosition,
+            trackedPositionsWithInversions,
+            trackedPositionsWithRemainingCapacity,
+            position,
+            inversionIncrease
+        );
+        remainingInversions -= inversionIncrease;
+    }
+
+    mixInversionCountsByPosition(
+        inversionCountsByPosition,
+        maximumInversionsByPosition,
+        trackedPositionsWithInversions,
+        trackedPositionsWithRemainingCapacity
+    );
+
+    return inversionCountsByPosition;
+}
+
+function mixInversionCountsByPosition(
+    inversionCountsByPosition,
+    maximumInversionsByPosition,
+    trackedPositionsWithInversions,
+    trackedPositionsWithRemainingCapacity
+) {
+    let mixingRoundCount = Math.min(20000, inversionCountsByPosition.length * 2);
+
+    for (let mixingRound = 0; mixingRound < mixingRoundCount; mixingRound++) {
+        if (
+            trackedPositionsWithInversions.positions.length === 0
+            || trackedPositionsWithRemainingCapacity.positions.length === 0
+        ) {
+            break;
+        }
+
+        let sourcePosition = chooseRandomTrackedPosition(trackedPositionsWithInversions);
+        let targetPosition = chooseRandomTrackedPosition(trackedPositionsWithRemainingCapacity);
+
+        if (sourcePosition === targetPosition) {
+            continue;
+        }
+
+        let maximumTransferCount = Math.min(
+            inversionCountsByPosition[sourcePosition],
+            maximumInversionsByPosition[targetPosition] - inversionCountsByPosition[targetPosition]
+        );
+
+        if (maximumTransferCount <= 0) {
+            continue;
+        }
+
+        let inversionTransferCount = getRandomInteger(1, maximumTransferCount);
+        updateTrackedInversionPosition(
+            inversionCountsByPosition,
+            maximumInversionsByPosition,
+            trackedPositionsWithInversions,
+            trackedPositionsWithRemainingCapacity,
+            sourcePosition,
+            -inversionTransferCount
+        );
+        updateTrackedInversionPosition(
+            inversionCountsByPosition,
+            maximumInversionsByPosition,
+            trackedPositionsWithInversions,
+            trackedPositionsWithRemainingCapacity,
+            targetPosition,
+            inversionTransferCount
+        );
+    }
+}
+
+function generateDatasetWithInversionCount(n, inversionCount) {
+    const targetInversionCount = clampSecondaryMetricCount("inversions", n, inversionCount);
+    let inversionCountsByPosition = generateRandomInversionCountsByPosition(n, targetInversionCount);
+    return buildDatasetFromInversionCountsByPosition(inversionCountsByPosition);
+}
+
+function generatePositiveIntegerComposition(total, parts) {
+    let composition = new Array(parts).fill(1);
+    for (let remaining = total - parts; remaining > 0; remaining--) {
+        composition[Math.floor(Math.random() * parts)]++;
+    }
+    return composition;
+}
+
+function shuffleArrayInPlace(array) {
+    for (let index = array.length - 1; index > 0; index--) {
+        let swapIndex = Math.floor(Math.random() * (index + 1));
+        swapElements(array, index, swapIndex);
+    }
+}
+
+function chooseRandomDistinctValues(n, count) {
+    let values = createSortedDataset(n);
+    for (let index = 0; index < count; index++) {
+        let swapIndex = index + Math.floor(Math.random() * (n - index));
+        swapElements(values, index, swapIndex);
+    }
+    return values.slice(0, count);
+}
+
+function generateDatasetWithExchangeCount(n, exchangeCount) {
+    const targetExchangeCount = clampSecondaryMetricCount("exchanges", n, exchangeCount);
+    let dataset = createSortedDataset(n);
+
+    if (targetExchangeCount === 0) {
+        return dataset;
+    }
+
+    let maxCycleCount = Math.min(targetExchangeCount, n - targetExchangeCount);
+    let cycleCount = getRandomInteger(1, maxCycleCount);
+    let cycleSizes = generatePositiveIntegerComposition(targetExchangeCount, cycleCount)
+        .map((cycleContribution) => cycleContribution + 1);
+    let touchedValues = chooseRandomDistinctValues(n, targetExchangeCount + cycleCount);
+
+    let offset = 0;
+    for (let cycleSizeIndex = 0; cycleSizeIndex < cycleSizes.length; cycleSizeIndex++) {
+        let cycleSize = cycleSizes[cycleSizeIndex];
+        let cycleValues = touchedValues.slice(offset, offset + cycleSize);
+        shuffleArrayInPlace(cycleValues);
+        for (let valueIndex = 0; valueIndex < cycleValues.length; valueIndex++) {
+            let currentValue = cycleValues[valueIndex];
+            let nextValue = cycleValues[(valueIndex + 1) % cycleValues.length];
+            dataset[currentValue - 1] = nextValue;
+        }
+        offset += cycleSize;
+    }
+
+    return dataset;
+}
+
+function generateSecondaryMetricDataset(metricType, n, metricCount) {
+    if (metricType === "inversions") {
+        return generateDatasetWithInversionCount(n, metricCount);
+    }
+    return generateDatasetWithExchangeCount(n, metricCount);
 }

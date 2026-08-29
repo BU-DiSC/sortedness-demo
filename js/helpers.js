@@ -355,11 +355,18 @@ function reset_button() {
     resetDropdown(document.getElementById("cmp-select-I"), "I");
     const indexStructure1 = document.getElementById("cmp-select-index-1");
     const indexStructure2 = document.getElementById("cmp-select-index-2");
+    const ingestionDataset = document.getElementById("cmp-select-ingestion-dataset");
     if (indexStructure1) {
         indexStructure1.value = "SWARE";
     }
     if (indexStructure2) {
         indexStructure2.value = "QuIT";
+    }
+    if (ingestionDataset) {
+        ingestionDataset.value = "kl";
+    }
+    if (typeof selectedIngestionDatasetType !== "undefined") {
+        selectedIngestionDatasetType = "kl";
     }
 
     // Hide elements that should not be visible initially
