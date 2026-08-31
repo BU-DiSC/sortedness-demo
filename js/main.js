@@ -18,6 +18,11 @@ var total_data = [];            // stores the workload data
 var running = true;             // flag to check if animation is running
 const BASE_ANIMATION_DELAY = 1000;
 var delay = BASE_ANIMATION_DELAY; // delay between animations
+const MIN_ELEMENT_COUNT = 20;
+const MAX_ELEMENT_COUNT = 50000;
+const MIN_PERCENT_VALUE = 0;
+const MAX_PERCENT_VALUE = 100;
+const MIN_DISTRIBUTION_PARAMETER_VALUE = 0;
 
 /* Parameters for the SWARE algorithm */
 
@@ -192,6 +197,75 @@ function updateSecondaryMetricChartTitle() {
     if (titleElement) {
         titleElement.textContent = getSecondaryMetricLabel(selectedSecondaryMetricType);
     }
+}
+
+function getNumericInputValue(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input || input.value.trim() === "") {
+        return NaN;
+    }
+    return Number(input.value);
+}
+
+function readSelectedWorkloadParameters() {
+    selectedN = getNumericInputValue('cmp-select-N');
+    selectedK = getNumericInputValue('cmp-select-K');
+    selectedL = getNumericInputValue('cmp-select-L');
+    selectedB = getNumericInputValue('cmp-select-B');
+    selectedA = getNumericInputValue('cmp-select-A');
+}
+
+function abortActiveAnimation() {
+    running = false;
+    nextStepInProgress = false;
+    if (animationIntervalId != null) {
+        clearInterval(animationIntervalId);
+        animationIntervalId = null;
+    }
+}
+
+function validateWorkloadParameters() {
+    if (!Number.isInteger(selectedN)) {
+        alert("N should be an integer");
+        return false;
+    } else if (selectedN < MIN_ELEMENT_COUNT || selectedN > MAX_ELEMENT_COUNT) {
+        alert("N should be between " + MIN_ELEMENT_COUNT + " and " + MAX_ELEMENT_COUNT);
+        return false;
+    }
+
+    if (!Number.isFinite(selectedK)) {
+        alert("K should be a number");
+        return false;
+    } else if (selectedK < MIN_PERCENT_VALUE || selectedK > MAX_PERCENT_VALUE) {
+        alert("K should be between " + MIN_PERCENT_VALUE + " and " + MAX_PERCENT_VALUE);
+        return false;
+    }
+
+    if (!Number.isFinite(selectedL)) {
+        alert("L should be a number");
+        return false;
+    } else if (selectedL < MIN_PERCENT_VALUE || selectedL > MAX_PERCENT_VALUE) {
+        alert("L should be between " + MIN_PERCENT_VALUE + " and " + MAX_PERCENT_VALUE);
+        return false;
+    }
+
+    if (!Number.isFinite(selectedA)) {
+        alert("Alpha should be a number");
+        return false;
+    } else if (selectedA < MIN_DISTRIBUTION_PARAMETER_VALUE) {
+        alert("Alpha should be non-negative");
+        return false;
+    }
+
+    if (!Number.isFinite(selectedB)) {
+        alert("Beta should be a number");
+        return false;
+    } else if (selectedB < MIN_DISTRIBUTION_PARAMETER_VALUE) {
+        alert("Beta should be non-negative");
+        return false;
+    }
+
+    return true;
 }
 
 if (document.readyState === "loading") {
@@ -636,60 +710,20 @@ function syncComparisonMetrics(swareTrace)
 function visualize_workload() {
     console.log("Visualising workload:");
 
-    // parameters
-    const minN = 20;
-    const maxN = 100000;
-
     // Get the inputs
-    selectedN = parseInt(document.getElementById('cmp-select-N').value);
-    selectedK = parseFloat(document.getElementById('cmp-select-K').value);
-    selectedL = parseFloat(document.getElementById('cmp-select-L').value);
-    selectedB = parseFloat(document.getElementById('cmp-select-B').value);
-    selectedA = parseFloat(document.getElementById('cmp-select-A').value);
+    readSelectedWorkloadParameters();
     readSelectedIndexStructures();
     readSelectedSecondaryMetricType();
     // selectedSecondaryMetricCount = parseInt(document.getElementById('cmp-select-E').value);
 
-    let flag = true; // flag to generate graph when parameters are acceptable
+    let flag = validateWorkloadParameters(); // flag to generate graph when parameters are acceptable
 
     // Show the inputs in console
     console.log("Input N:", selectedN);
     console.log("Input K:", selectedK);
     console.log("Input L:", selectedL);
+    console.log("Input A:", selectedA);
     console.log("Input B:", selectedB);
-
-    // Validate all parameters before proceeding
-    if (isNaN(selectedN) || selectedN !== parseInt(selectedN)) {
-        alert("N should be an integer");
-        flag = false;
-    } else if (selectedN < minN || selectedN > maxN) {
-        alert("N should be between " + minN + " and " + maxN);
-        flag = false;
-    }
-
-    if (isNaN(selectedK)) {
-        alert("K should be a number");
-        flag = false;
-    } else if (selectedK < 0 || selectedK > 100) {
-        alert("K should be between 0 and 100");
-        flag = false;
-    }
-
-    if (isNaN(selectedL)) {
-        alert("L should be a number");
-        flag = false;
-    } else if (selectedL < 0 || selectedL > 100) {
-        alert("L should be between 0 and 100");
-        flag = false;
-    }
-
-    if (isNaN(selectedB) || selectedB !== parseFloat(selectedB)) {
-        alert("B should be a float");
-        flag = false;
-    } else if (selectedB < 0) {
-        alert("B should be greater than 0");
-        flag = false;
-    }
 
     /*
     if (isNaN(selectedSecondaryMetricCount) || selectedSecondaryMetricCount !== parseInt(selectedSecondaryMetricCount)) {
@@ -1028,58 +1062,20 @@ function visualize_workload() {
     } else {
         console.log("Invalid parameters detected, visualization aborted");
     }
+
+    return flag;
 }
 
 /*
  * Gets called after "Run" button is clicked
  */
 function run_operations() {
-    // parameters
-    const minN = 20;
-    const maxN = 100000;
-    let flag = true; // flag to generate graph when parameters are acceptable
-    selectedN = parseInt(document.getElementById('cmp-select-N').value);
-    selectedK = parseFloat(document.getElementById('cmp-select-K').value);
-    selectedL = parseFloat(document.getElementById('cmp-select-L').value);
-    selectedB = parseFloat(document.getElementById('cmp-select-B').value);
-    selectedA = parseFloat(document.getElementById('cmp-select-A').value);
+    readSelectedWorkloadParameters();
     readSelectedIndexStructures();
     readSelectedIngestionDatasetType();
     nextStepInProgress = false;
 
-
-    // Validate all parameters before proceeding
-    if (isNaN(selectedN) || selectedN !== parseInt(selectedN)) {
-        alert("N should be an integer");
-        flag = false;
-    } else if (selectedN < minN || selectedN > maxN) {
-        alert("N should be between " + minN + " and " + maxN);
-        flag = false;
-    }
-
-    if (isNaN(selectedK)) {
-        alert("K should be a number");
-        flag = false;
-    } else if (selectedK < 0 || selectedK > 100) {
-        alert("K should be between 0 and 100");
-        flag = false;
-    }
-
-    if (isNaN(selectedL)) {
-        alert("L should be a number");
-        flag = false;
-    } else if (selectedL < 0 || selectedL > 100) {
-        alert("L should be between 0 and 100");
-        flag = false;
-    }
-
-    if (isNaN(selectedB) || selectedB !== parseFloat(selectedB)) {
-        alert("B should be a float");
-        flag = false;
-    } else if (selectedB < 0) {
-        alert("B should be greater than 0");
-        flag = false;
-    }
+    let flag = validateWorkloadParameters(); // flag to generate graph when parameters are acceptable
 
     if (flag && !validateSelectedStructures()) {
         flag = false;
@@ -1160,9 +1156,12 @@ function run_operations() {
             }
             next_step();
         }, delay);
+        return true;
     }
     else{
+        abortActiveAnimation();
         console.log('error');
+        return false;
     }
 }
 

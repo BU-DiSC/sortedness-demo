@@ -82,6 +82,7 @@
     const root = document.querySelector('.redesign');
     if(!root) return;
     window.applyPreset = applyPreset; // keep global for inline onclick handlers in markup
+    setRedesignInputLimits(root);
     populateIns();
     populateSware();
     function redraw(){ draw('c1','kl'); draw('c2','ex'); }
@@ -107,6 +108,47 @@
     }
 
   // Ensure legacy hidden inputs and placeholders exist and are populated from redesigned inputs
+  function setInputBounds(input, min, max, step) {
+    if(!input) return;
+    input.min = min;
+    if(max == null) input.removeAttribute('max');
+    else input.max = max;
+    if(step != null) input.step = step;
+  }
+
+  function setRedesignInputLimits(root) {
+    setInputBounds(root.querySelector('#pN'), '20', '50000', '1');
+    setInputBounds(root.querySelector('#pK'), '0', '100', null);
+    setInputBounds(root.querySelector('#pL'), '0', '100', null);
+    setInputBounds(root.querySelector('#pA'), '0', null, '0.1');
+    setInputBounds(root.querySelector('#pB'), '0', null, '0.1');
+  }
+
+  function validateRedesignInputs() {
+    ensureLegacyInputs();
+    if(typeof window.readSelectedWorkloadParameters === 'function'){
+      window.readSelectedWorkloadParameters();
+    }
+    if(typeof window.validateWorkloadParameters === 'function'){
+      return window.validateWorkloadParameters();
+    }
+    return true;
+  }
+
+  function revealRunUi(root, scrollToAnimation) {
+    const anim = document.getElementById('animations-div') || root.querySelector('#animations-div');
+    if(anim){
+      anim.classList.remove('hidden');
+      anim.style.display = '';
+      if(scrollToAnimation) anim.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    const results = document.getElementById('results-panel') || root.querySelector('#results-panel');
+    if(results){
+      results.classList.remove('hidden');
+      results.style.display = '';
+    }
+  }
+
   function ensureLegacyInputs() {
     const mapping = {
       'cmp-select-N':'pN',
@@ -128,6 +170,11 @@
       }
       legacy.value = val;
     });
+    setInputBounds(document.getElementById('cmp-select-N'), '20', '50000', '1');
+    setInputBounds(document.getElementById('cmp-select-K'), '0', '100', null);
+    setInputBounds(document.getElementById('cmp-select-L'), '0', '100', null);
+    setInputBounds(document.getElementById('cmp-select-A'), '0', null, '0.1');
+    setInputBounds(document.getElementById('cmp-select-B'), '0', null, '0.1');
 
     // Ensure run button container and runBtn placeholder exist for main.js
     if(!document.getElementById('run-button-contain')){
@@ -162,6 +209,9 @@
           secondaryDatasetCfg.scrollIntoView({behavior:'smooth', block:'center'});
           return;
         }
+        if(!validateRedesignInputs()){
+          return;
+        }
         var charts = root.querySelector('#charts');
         if(charts) charts.style.display = '';
         // also reveal inner chart column if it had a 'hidden' class
@@ -173,41 +223,10 @@
         if(typeof window.visualize_workload === 'function'){
           // Ensure legacy inputs expected by main.js exist and are populated from redesigned inputs
           try{
-            const mapping = {
-              'cmp-select-N':'pN',
-              'cmp-select-K':'pK',
-              'cmp-select-L':'pL',
-              'cmp-select-A':'pA',
-              'cmp-select-B':'pB'
-            };
-            Object.keys(mapping).forEach(function(legacyId){
-              const srcId = mapping[legacyId];
-              let legacy = document.getElementById(legacyId);
-              const src = root.querySelector('#'+srcId);
-              const val = src ? src.value : '';
-              if(!legacy){
-                legacy = document.createElement('input');
-                legacy.type = 'hidden';
-                legacy.id = legacyId;
-                // append to body so main.js can find via document.getElementById
-                document.body.appendChild(legacy);
-              }
-              legacy.value = val;
-            });
-            // Ensure run button containers expected by main.js exist (so .classList can be used)
-            if(!document.getElementById('runBtn')){
-              const rb = document.createElement('button');
-              rb.id = 'runBtn';
-              rb.className = 'hidden';
-              document.body.appendChild(rb);
+            ensureLegacyInputs();
+            if(window.visualize_workload() === false){
+              return;
             }
-            if(!document.getElementById('run-button-contain')){
-              const rbc = document.createElement('div');
-              rbc.id = 'run-button-contain';
-              rbc.className = 'hidden';
-              document.body.appendChild(rbc);
-            }
-            window.visualize_workload();
         // Allow Plotly to recompute sizes after the charts are visible
         setTimeout(function(){
           try{
@@ -227,24 +246,28 @@
     // created dynamically and appended to document.body by the adapter logic.
     if(btnRun){
       btnRun.addEventListener('click', function(){
-        const anim = document.getElementById('animations-div') || root.querySelector('#animations-div');
-        if(anim){ anim.classList.remove('hidden'); anim.style.display = ''; anim.scrollIntoView({behavior:'smooth', block:'start'}); }
-        const results = document.getElementById('results-panel') || root.querySelector('#results-panel');
-        if(results){ results.classList.remove('hidden'); results.style.display = ''; }
         // Ensure legacy inputs exist/populated, then call the core run function to start the animation.
-        try{ ensureLegacyInputs(); if(typeof window.run_operations === 'function'){ window.run_operations(); } }catch(e){ console.warn('run_operations call failed', e); }
+        try{
+          ensureLegacyInputs();
+          const result = typeof window.run_operations === 'function' ? window.run_operations() : false;
+          if(result !== false){
+            revealRunUi(root, true);
+          }
+        }catch(e){ console.warn('run_operations call failed', e); }
       });
     }
 
     // Delegated handler: catches clicks on dynamically-created legacy run elements (id 'runBtn')
     document.addEventListener('click', function(e){
       const id = (e && e.target && e.target.id) || '';
-      if(id === 'runBtn' || id === 'btn-run'){
-        const anim = document.getElementById('animations-div') || root.querySelector('#animations-div');
-        if(anim){ anim.classList.remove('hidden'); anim.style.display = ''; }
-        const results = document.getElementById('results-panel') || root.querySelector('#results-panel');
-        if(results){ results.classList.remove('hidden'); results.style.display = ''; }
-        try{ ensureLegacyInputs(); if(typeof window.run_operations === 'function'){ window.run_operations(); } }catch(e){ console.warn('run_operations call failed', e); }
+      if(id === 'runBtn'){
+        try{
+          ensureLegacyInputs();
+          const result = typeof window.run_operations === 'function' ? window.run_operations() : false;
+          if(result !== false){
+            revealRunUi(root, false);
+          }
+        }catch(e){ console.warn('run_operations call failed', e); }
       }
     });
 
@@ -347,7 +370,7 @@
         const res = _origRun.apply(this, arguments);
         try{
           const rg = document.querySelector('.redesign #results-gap');
-          if(rg){ rg.classList.add('visible'); }
+          if(rg && res !== false){ rg.classList.add('visible'); }
         }catch(e){}
         return res;
       };
