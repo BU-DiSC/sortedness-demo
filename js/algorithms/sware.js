@@ -499,6 +499,60 @@ function initializeSwareVisualization()
     renderCurrentSwareView();
 }
 
+// Number of leading buffer pages that are genuinely sorted with respect to the
+// buffer, i.e. a page is "blue" only if it can be flushed as-is: the leading
+// prefix must be non-overlapping and its max must sit below the min of every
+// remaining populated page. Returns 0 when nothing is sorted (so no page is
+// painted blue by default). Computed straight from the rendered buffer so the
+// coloring stays correct without depending on the flush-time bookkeeping.
+function computeSwareSortedPrefixFromBuffer(bufferSource, pageCount)
+{
+    const mins = [];
+    const maxs = [];
+    for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+        const row = Array.isArray(bufferSource[pageIndex]) ? bufferSource[pageIndex] : [];
+        let mn = null;
+        let mx = null;
+        for (const value of row) {
+            if (value == null) {
+                continue;
+            }
+            if (mn == null || value < mn) {
+                mn = value;
+            }
+            if (mx == null || value > mx) {
+                mx = value;
+            }
+        }
+        if (mn == null) {
+            break;
+        }
+        mins.push(mn);
+        maxs.push(mx);
+    }
+
+    const populated = mins.length;
+    if (populated === 0) {
+        return 0;
+    }
+
+    const minAfter = new Array(populated);
+    let running = Infinity;
+    for (let i = populated - 1; i >= 0; i--) {
+        minAfter[i] = running;
+        running = Math.min(running, mins[i]);
+    }
+
+    let prefix = 0;
+    for (let k = 0; k < populated; k++) {
+        if (maxs[k] > minAfter[k]) {
+            break;
+        }
+        prefix = k + 1;
+    }
+    return prefix;
+}
+
 function renderSwareBuffer(activeSlot, bufferSnapshot, sortedIndexSnapshot)
 {
     const bufferGrid = document.getElementById("sware-buffer-grid");
@@ -513,9 +567,17 @@ function renderSwareBuffer(activeSlot, bufferSnapshot, sortedIndexSnapshot)
     const bufferSource = Array.isArray(bufferSnapshot)
         ? bufferSnapshot
         : (visualState && Array.isArray(visualState.bufferSnapshot) ? visualState.bufferSnapshot : swareTree.buffer);
-    const sortedIndex = Number.isInteger(sortedIndexSnapshot)
+    // Flush-animation frames pass an explicit sortedIndex so their scripted
+    // coloring is preserved; otherwise (live per-insert render) recompute the
+    // blue prefix from the buffer so an all-unsorted buffer shows no blue page.
+    const explicitSortedIndex = Number.isInteger(sortedIndexSnapshot)
         ? sortedIndexSnapshot
-        : (visualState && Number.isInteger(visualState.sortedIndex) ? visualState.sortedIndex : swareTree.lastSortedIndex);
+        : (visualState && Number.isInteger(visualState.sortedIndex) ? visualState.sortedIndex : null);
+    const sortedIndex = explicitSortedIndex !== null ? explicitSortedIndex : swareTree.lastSortedIndex;
+    const useComputedPrefix = explicitSortedIndex === null;
+    const computedSortedPrefix = useComputedPrefix
+        ? computeSwareSortedPrefixFromBuffer(bufferSource, pageCount)
+        : 0;
 
     bufferGrid.setAttribute("data-sware-layout", "grid");
     bufferGrid.innerHTML = "";
@@ -527,7 +589,10 @@ function renderSwareBuffer(activeSlot, bufferSnapshot, sortedIndexSnapshot)
         const row = Array.isArray(bufferSource[pageIndex]) ? bufferSource[pageIndex] : [];
         const hasValues = row.some((value) => value != null);
         if (hasValues) {
-            if (pageIndex <= sortedIndex) {
+            const isSorted = useComputedPrefix
+                ? (pageIndex < computedSortedPrefix)
+                : (pageIndex <= sortedIndex);
+            if (isSorted) {
                 page.classList.add("sware-page-sorted");
             }
             else {
@@ -1235,6 +1300,13 @@ class Sware {
             console.log("tail leaf:", JSON.stringify(this.tail.keys));
             console.log(JSON.stringify(this.buffer));
             console.log("fast inserts:", this.fastInserts);
+            // Nothing is genuinely sorted: sort the whole buffer first so a
+            // sorted prefix exists, then the branches below flush its leading
+            // half. This keeps unsorted outliers out of the tree.
+            if(this.lastSortedIndex < 0)
+            {
+                this.manualSortWholeBuffer();
+            }
             this.insertIndexX = this.t-Math.min(this.lastSortedIndex,Math.floor((this.t/2)-1))-1;
             this.insertIndexY = 0;
             this.full = false;
@@ -1621,25 +1693,18 @@ class Sware {
     }
     insertInOrder(page,array)
     {
-        let temp;
-        let stop = false;
-        if(page<array[0])
+        // Insert before the first element strictly greater than page. This
+        // keeps duplicates in order (page lands after equal keys, before
+        // larger ones) instead of falling through to the end of the array,
+        // which previously misplaced both leaf keys and split separators.
+        let temp = array.length;
+        for(let i = 0; i < array.length; i++)
         {
-            stop = true;
-            temp = 0;
-        }
-        for(let i = 0; i < array.length - 1 && !stop; i++)
-        {
-            if(page > array[i] && page < array[i+1])
+            if(page < array[i])
             {
-                stop = true;
-                temp = i + 1;
+                temp = i;
+                break;
             }
-           
-        }
-        if(!stop)
-        {
-            temp = array.length;
         }
         array.splice(temp, 0, page);
         return temp;
@@ -1661,21 +1726,49 @@ class Sware {
         }
         this.sort();
     }
+    // Length of the leading run of buffer pages that are genuinely sorted with
+    // respect to the buffer: each page is non-overlapping with its neighbours
+    // and the prefix max stays below the min of every remaining populated page.
+    // 0 when nothing is sorted. Recomputed each insert from bufferDict.
+    computeSortedPrefix()
+    {
+        let populated = 0;
+        while(populated < this.t &&
+              Array.isArray(this.bufferDict[populated]) &&
+              this.bufferDict[populated].length === 2)
+        {
+            populated++;
+        }
+        if(populated === 0)
+        {
+            return 0;
+        }
+
+        const minAfter = new Array(populated);
+        let running = Infinity;
+        for(let i = populated - 1; i >= 0; i--)
+        {
+            minAfter[i] = running;
+            running = Math.min(running, this.bufferDict[i][0]);
+        }
+
+        let prefix = 0;
+        for(let k = 0; k < populated; k++)
+        {
+            if(this.bufferDict[k][1] > minAfter[k])
+            {
+                break;
+            }
+            prefix = k + 1;
+        }
+        return prefix;
+    }
+
     sort()
     {
-        let min = this.bufferDict[this.insertIndexX][0];
-        if(this.insertIndexX-1==this.lastSortedIndex)
-        {
-            if(min>=this.bufferDict[this.lastSortedIndex][1])
-                this.lastSortedIndex++;
-        }
-        for(let i = this.lastSortedIndex;i>0;i--)
-        {
-            if(min<this.bufferDict[i][1]&&this.insertIndexX!=i)
-            {
-                this.lastSortedIndex = i-1;
-            }
-        }
+        // lastSortedIndex is the index of the last sorted page; -1 means no page
+        // is sorted yet (the empty sentinel). Recomputed every insert.
+        this.lastSortedIndex = this.computeSortedPrefix() - 1;
         if(this.insertIndexY==this.t)
         {
             this.insertIndexX++;
@@ -1685,6 +1778,37 @@ class Sware {
         {
             this.full = true;
         }
+    }
+
+    // Nothing in the buffer is sorted, but the buffer is full and we must free
+    // space. Sort the entire buffer into one clean run so a sorted prefix
+    // exists; the caller then flushes the (now sorted) leading half. The whole
+    // buffer counts as manually sorted.
+    manualSortWholeBuffer()
+    {
+        const all = [];
+        for(let i = 0; i < this.t; i++)
+        {
+            for(let j = 0; j < this.t; j++)
+            {
+                if(this.buffer[i][j] != null)
+                {
+                    all.push(this.buffer[i][j]);
+                }
+            }
+        }
+        all.sort((a,b)=>a-b);
+        for(let i = 0; i < this.t; i++)
+        {
+            const slice = all.slice(i*this.t, (i*this.t)+this.t);
+            this.buffer[i] = slice;
+            this.bufferDict[i] = slice.length > 0
+                ? [slice[0], slice[slice.length-1]]
+                : [];
+            this.sortPages++;
+        }
+        this.lastSortedIndex = this.t - 1;
+        this._resortedWholeBuffer = true;
     }
 
     resetBuffer()
@@ -1700,7 +1824,12 @@ class Sware {
         }
         for(let i = flushed+1;i<this.t;i++)
         {
-            this.sortPages++;
+            // Skip counting when the whole buffer was just manually sorted for
+            // this flush (those pages are already counted and only moved here).
+            if(!this._resortedWholeBuffer)
+            {
+                this.sortPages++;
+            }
             for(let j = 0;j<this.t;j++)
             {
                 this.tempArray.push(this.buffer[i][j]);
@@ -1722,6 +1851,7 @@ class Sware {
             this.bufferDict[i].length = 0;
         }
         this.lastSortedIndex = this.t-(flushed)-2;
+        this._resortedWholeBuffer = false;
     }
 
     split(pageLeaf)

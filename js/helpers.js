@@ -327,7 +327,7 @@ function reset_button() {
     quit_pole_resets = 0;
     quit_pole_resets_history = [];
     quitTree = new QuIT(15);
-    swareTree = new Sware(5);
+    swareTree = new Sware(10);
     tailTree = new Tail(10);
     lilTree = new LilTree(10);
     bPlusTree = new BTree(10);
