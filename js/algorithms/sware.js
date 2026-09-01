@@ -201,6 +201,7 @@ function setSwareVisualState(state)
     swareTree.visualState = {
         activeSlot: Object.prototype.hasOwnProperty.call(state, "activeSlot") ? state.activeSlot : null,
         bufferSnapshot: Object.prototype.hasOwnProperty.call(state, "bufferSnapshot") ? state.bufferSnapshot : null,
+        bufferStatus: Object.prototype.hasOwnProperty.call(state, "bufferStatus") ? state.bufferStatus : null,
         sortedIndex: Object.prototype.hasOwnProperty.call(state, "sortedIndex") ? state.sortedIndex : null,
         treeState: Object.prototype.hasOwnProperty.call(state, "treeState") ? state.treeState : null,
         pathNodes: Object.prototype.hasOwnProperty.call(state, "pathNodes") ? state.pathNodes : [],
@@ -340,14 +341,42 @@ async function animateSwarePhase()
                 || cloneSwareTreeState(swareTree);
 
             if (visualSteps.length === 0) {
+                if (sortedIndexBeforeReset < 0) {
+                    showSwareVisualState({
+                        activeSlot: null,
+                        bufferSnapshot: workingSnapshot,
+                        bufferStatus: "No sorted pages - 0 pages bulk loaded",
+                        sortedIndex: sortedIndexBeforeReset,
+                        treeState: initialTreeState,
+                        pathNodes: [],
+                        highlightFastTailDots: false
+                    });
+                    await sleepSware(Math.max(260, Math.floor(flushDelay * 0.42)));
+
+                    showSwareVisualState({
+                        activeSlot: {
+                            mode: "buffer-resort"
+                        },
+                        bufferSnapshot: workingSnapshot,
+                        bufferStatus: "Buffer pages stay in the buffer and are re-sorted",
+                        sortedIndex: sortedIndexBeforeReset,
+                        treeState: initialTreeState,
+                        pathNodes: [],
+                        highlightFastTailDots: false
+                    });
+                    await sleepSware(Math.max(320, Math.floor(flushDelay * 0.5)));
+                }
                 showSwareVisualState({
                     activeSlot: null,
                     bufferSnapshot: postResetSnapshot,
+                    bufferStatus: sortedIndexBeforeReset < 0 ? "Re-sorted buffer" : null,
                     sortedIndex: sortedIndexAfterReset,
                     treeState: swareTree,
                     pathNodes: [],
                     highlightFastTailDots: false
                 });
+                previewSortPages = Number.isInteger(trace.sortPagesAfter) ? trace.sortPagesAfter : previewSortPages;
+                updateSwareMetricPreview();
                 await sleepSware(flushDelay);
             }
             else {
@@ -516,9 +545,26 @@ function renderSwareBuffer(activeSlot, bufferSnapshot, sortedIndexSnapshot)
     const sortedIndex = Number.isInteger(sortedIndexSnapshot)
         ? sortedIndexSnapshot
         : (visualState && Number.isInteger(visualState.sortedIndex) ? visualState.sortedIndex : swareTree.lastSortedIndex);
+    const bufferStatus = visualState && typeof visualState.bufferStatus === "string"
+        ? visualState.bufferStatus
+        : null;
+    const hasBufferedValues = bufferSource.some((row) => Array.isArray(row) && row.some((value) => value != null));
+    const hasNoSortedPages = hasBufferedValues && sortedIndex < 0;
+    const isBufferResort = !!resolvedActiveSlot && resolvedActiveSlot.mode === "buffer-resort";
 
     bufferGrid.setAttribute("data-sware-layout", "grid");
+    bufferGrid.classList.toggle("sware-no-sorted-pages", hasNoSortedPages);
+    bufferGrid.classList.toggle("sware-buffer-resorting", isBufferResort);
+    bufferGrid.classList.toggle("sware-has-status", hasNoSortedPages || !!bufferStatus);
     bufferGrid.innerHTML = "";
+
+    if (hasNoSortedPages || bufferStatus) {
+        const status = document.createElement("div");
+        status.className = "sware-buffer-status";
+        status.textContent = bufferStatus || "No sorted pages - 0 pages bulk loaded";
+        status.setAttribute("aria-live", "polite");
+        bufferGrid.appendChild(status);
+    }
 
     for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
         const page = document.createElement("div");
@@ -527,11 +573,22 @@ function renderSwareBuffer(activeSlot, bufferSnapshot, sortedIndexSnapshot)
         const row = Array.isArray(bufferSource[pageIndex]) ? bufferSource[pageIndex] : [];
         const hasValues = row.some((value) => value != null);
         if (hasValues) {
-            if (pageIndex <= sortedIndex) {
+            if (sortedIndex >= 0 && pageIndex <= sortedIndex) {
                 page.classList.add("sware-page-sorted");
+                page.title = "Sorted page - eligible for bulk load";
             }
             else {
                 page.classList.add("sware-page-unsorted");
+                page.title = sortedIndex < 0
+                    ? "No sorted pages - this page will not be bulk loaded"
+                    : "Unsorted page - not eligible for bulk load yet";
+            }
+            page.setAttribute("aria-label", page.title);
+            if (hasNoSortedPages) {
+                page.classList.add("sware-page-no-bulk");
+            }
+            if (isBufferResort) {
+                page.classList.add("sware-page-buffer-resort");
             }
         }
 
@@ -1207,7 +1264,36 @@ class Sware {
     }
     insert(page)
     {
+        const insertTrace = {
+            inputPage: page,
+            bufferSlot: {
+                pageIndex: this.insertIndexX,
+                slotIndex: this.insertIndexY
+            },
+            bufferWasFull: false,
+            flushEvents: [],
+            flushVisualSteps: [],
+            fastInsertOccurred: false,
+            topInsertOccurred: false,
+            bufferSnapshotBeforeReset: null,
+            lastSortedIndexBeforeReset: this.lastSortedIndex
+        };
         this.size++;
+        this.load(page);
+        if(this.full)
+        {
+            this.lastInsertInfo = this.bufferFlush(page);
+            if(this.full)
+            {
+                this.lastInsertInfo = this.bufferFlush(page);
+            }
+        }
+        else
+            this.lastInsertInfo = insertTrace;
+
+    }
+    bufferFlush(page)
+    {
         const insertTrace = {
             inputPage: page,
             bufferSlot: {
@@ -1228,30 +1314,165 @@ class Sware {
         let tempNode;
         let testNode;
         let newTail;
-        this.load(page);
-        if(this.full)
-        {
-            insertTrace.bufferWasFull = true;
-            console.log("tail leaf:", JSON.stringify(this.tail.keys));
-            console.log(JSON.stringify(this.buffer));
-            console.log("fast inserts:", this.fastInserts);
-            this.insertIndexX = this.t-Math.min(this.lastSortedIndex,Math.floor((this.t/2)-1))-1;
-            this.insertIndexY = 0;
+        insertTrace.bufferWasFull = true;
+        console.log("tail leaf:", JSON.stringify(this.tail.keys));
+        console.log(JSON.stringify(this.buffer));
+        console.log("fast inserts:", this.fastInserts);
+        this.insertIndexX = this.t-Math.min(this.lastSortedIndex,Math.floor((this.t/2)-1))-1;
+        this.insertIndexY = 0;
+        if(this.lastSortedIndex!=-1)
             this.full = false;
-            if(!this.root.leaf)
+        if(!this.root.leaf)
+        {
+            for(let i = 0;i<=this.lastSortedIndex&&i<=Math.floor((this.t/2)-1);i++)
             {
-                for(let i = 0;i<=this.lastSortedIndex&&i<=Math.floor((this.t/2)-1);i++)
+                // fast insert check
+                if(this.bufferDict[i][0]>=this.tail.keys[this.tail.n-1])
                 {
-                    // fast insert check
-                    if(this.bufferDict[i][0]>=this.tail.keys[this.tail.n-1])
+                    insertTrace.fastInsertOccurred = true;
+                    insertTrace.flushEvents.push({
+                        type: "fast",
+                        pageIndex: i,
+                        page: this.buffer[i][0]
+                    });
+                    console.log("test");
+                    this.buffer[i].sort((a,b)=>a-b);
+                    this.tail.parent.keys.push(this.buffer[i][0]);
+                    newTail = new Node(this.t,true);
+                    this.leafs++;
+                    //this.size+=this.t;
+                    newTail.n=this.t;
+                    newTail.keys = [...this.buffer[i]];
+                    this.tail.next = newTail;
+                    newTail.parent = this.tail.parent;
+                    this.tail.parent.children.push(newTail);
+                    this.tail.parent.n++;
+                    tempNode = this.tail.parent;
+                    while(tempNode.n>tempNode.t)
+                        tempNode = this.split(tempNode);
+                    pageLeaf = this.root;
+                    this.tail = newTail;
+                    this.fastInserts+=10;
+                    this.fastInserted = true;
+                    pushSwareFastVisualStep(insertTrace, this, i);
+                }
+                else
+                {
+                    this.fastInserted = false;
+                    //break page up and top insert
+                    for(let j = 0;j<this.t;j++)
                     {
+                        this.topInserts++;
+                        //this.size++;
+                        page = this.buffer[i][j];
+                        insertTrace.topInsertOccurred = true;
+                        const topTreeBefore = cloneSwareTreeState(this);
+                        insertTrace.flushEvents.push({
+                            type: "top",
+                            pageIndex: i,
+                            slotIndex: j,
+                            page: page
+                        });
+                        pageLeaf = this.root;
+                        while(!(pageLeaf.leaf))
+                        {
+                            stop = false;
+                            for(let i = 0;i<pageLeaf.keys.length&&!stop;i++)
+                            {
+                                if(page<pageLeaf.keys[i])
+                                {
+                                    stop = true;
+                                    temp = i;
+                                }
+                            }
+                            if(!stop)
+                            {
+                                temp = pageLeaf.keys.length;
+                            }
+                            pageLeaf = pageLeaf.children[temp];
+                        }
+                        if(pageLeaf.n<this.t)
+                        {
+                            this.insertInOrder(page,pageLeaf.keys);
+                            pageLeaf.n++;
+                        }
+                        else{
+                            this.insertInOrder(page,pageLeaf.keys);
+                            pageLeaf.n++;
+                            do
+                            {
+                                tempNode = this.split(pageLeaf);
+                                pageLeaf = tempNode;
+                            }
+                            while(pageLeaf.n>pageLeaf.t);
+                        }
+                        pushSwareTopVisualStep(
+                            insertTrace,
+                            topTreeBefore,
+                            cloneSwareTreeState(this),
+                            i,
+                            j,
+                            page
+                        );
+                    }
+                }
+            }
+        }
+        else if(this.lastSortedIndex>=0)
+        {
+            if(this.root.keys.length==0)
+            {
+                //can create non-leaf root node
+                if(this.lastSortedIndex>0)
+                {
+                    let newRoot = new Node(this.internalSize, false);
+                    let firstLeaf = new Node(this.t, true);
+                    let secondLeaf = new Node(this.t ,true);
+                    this.buffer[0].sort((a,b)=>a-b);
+                    this.buffer[1].sort((a,b)=>a-b);
+                    newRoot.children = [firstLeaf, secondLeaf];
+                    newRoot.keys = [this.buffer[1][0]];
+                    newRoot.n=1;
+                    firstLeaf.keys = [...this.buffer[0]];
+                    secondLeaf.keys = [...this.buffer[1]];
+                    firstLeaf.next = secondLeaf;
+                    firstLeaf.parent = newRoot;
+                    secondLeaf.parent = newRoot;
+                    firstLeaf.n = this.t;
+                    secondLeaf.n = this.t;
+                    this.tail = secondLeaf;
+                    this.leafs=2;
+                    //this.size = 2*this.t;
+                    this.root = newRoot;
+                    this.fastInserted = true;
+                    insertTrace.fastInsertOccurred = true;
+                    insertTrace.flushEvents.push({
+                        type: "fast",
+                        pageIndex: 0,
+                        page: this.buffer[0][0]
+                    });
+                    insertTrace.flushEvents.push({
+                        type: "fast",
+                        pageIndex: 1,
+                        page: this.buffer[1][0]
+                    });
+                    pushSwareFastVisualStep(
+                        insertTrace,
+                        buildSwareSingleLeafVisualState(this.t, this.buffer[0]),
+                        0
+                    );
+                    pushSwareFastVisualStep(insertTrace, this, 1);
+                    this.fastInserts+=20;
+                    for(let i = 2;i<=this.lastSortedIndex&&i<=Math.floor((this.t/2)-1);i++)
+                    {
+                        //can fast insert everything because we will only 
+                        // flush sorted part of buffer
                         insertTrace.fastInsertOccurred = true;
                         insertTrace.flushEvents.push({
                             type: "fast",
                             pageIndex: i,
                             page: this.buffer[i][0]
                         });
-                        console.log("test");
                         this.buffer[i].sort((a,b)=>a-b);
                         this.tail.parent.keys.push(this.buffer[i][0]);
                         newTail = new Node(this.t,true);
@@ -1266,7 +1487,148 @@ class Sware {
                         tempNode = this.tail.parent;
                         while(tempNode.n>tempNode.t)
                             tempNode = this.split(tempNode);
+                        this.tail = newTail;
+                        this.fastInserts+=10;
+                        this.fastInserted = true;
+                        pushSwareFastVisualStep(insertTrace, this, i);
+                    }
+                }
+                else
+                {
+                    //can only fill up root node
+                    this.buffer[0].sort((a,b)=>a-b);
+                    this.root.keys = [...this.buffer[0]];
+                    this.root.n = this.t;
+                    //this.size = this.t;
+                    insertTrace.fastInsertOccurred = true;
+                    insertTrace.flushEvents.push({
+                        type: "fast",
+                        pageIndex: 0,
+                        page: this.buffer[0][0]
+                    });
+                    pushSwareFastVisualStep(insertTrace, this, 0);
+                    this.fastInserts+=10;
+                    this.fastInserted = true;
+                }
+            }
+            else if(this.root.keys.length==this.t)
+            {
+                this.buffer[0].sort((a,b)=>a-b);
+                //fast insert check
+                if(this.buffer[0][0]>this.root.keys[this.root.keys.length-1])
+                {
+                    let newRoot = new Node(this.internalSize, false);
+                    let firstLeaf = new Node(this.t, true);
+                    let secondLeaf = new Node(this.t ,true);
+                    newRoot.children = [firstLeaf, secondLeaf];
+                    newRoot.keys = [this.buffer[0][0]];
+                    newRoot.n=1;
+                    firstLeaf.keys = this.root.keys;
+                    secondLeaf.keys = [...this.buffer[0]];
+                    firstLeaf.next = secondLeaf;
+                    firstLeaf.parent = newRoot;
+                    secondLeaf.parent = newRoot;
+                    firstLeaf.n = this.t;
+                    secondLeaf.n = this.t;
+                    this.tail = secondLeaf;
+                    this.leafs=2;
+                    //this.size = 2*this.t;
+                    this.root = newRoot;
+                    insertTrace.fastInsertOccurred = true;
+                    insertTrace.flushEvents.push({
+                        type: "fast",
+                        pageIndex: 0,
+                        page: this.buffer[0][0]
+                    });
+                    pushSwareFastVisualStep(insertTrace, this, 0);
+                    this.fastInserted = true;
+                    this.fastInserts+=10;
+                }
+                else
+                {
+                    //break page up and top insert
+                    this.fastInserted = false;
+                    for(let i = 0;i<this.buffer[0].length;i++)
+                    {
+                        this.topInserts++;
+                        //this.size++;
+                        page = this.buffer[0][i];
+                        insertTrace.topInsertOccurred = true;
+                        const topTreeBefore = cloneSwareTreeState(this);
+                        insertTrace.flushEvents.push({
+                            type: "top",
+                            pageIndex: 0,
+                            slotIndex: i,
+                            page: page
+                        });
                         pageLeaf = this.root;
+                        while(!(pageLeaf.leaf))
+                        {
+                            stop = false;
+                            for(let i = 0;i<pageLeaf.keys.length&&!stop;i++)
+                            {
+                                if(page<pageLeaf.keys[i])
+                                {
+                                    stop = true;
+                                    temp = i;
+                                }
+                            }
+                            if(!stop)
+                            {
+                                temp = pageLeaf.keys.length;
+                            }
+                            pageLeaf = pageLeaf.children[temp];
+                        }
+                        if(pageLeaf.n<this.t)
+                        {
+                            this.insertInOrder(page,pageLeaf.keys);
+                            pageLeaf.n++;
+                        }
+                        else{
+                            this.insertInOrder(page,pageLeaf.keys);
+                            pageLeaf.n++;
+                            do
+                            {
+                                tempNode = this.split(pageLeaf);
+                                pageLeaf = tempNode;
+                            }
+                            while(pageLeaf.n>pageLeaf.t);
+                        }
+                        pushSwareTopVisualStep(
+                            insertTrace,
+                            topTreeBefore,
+                            cloneSwareTreeState(this),
+                            0,
+                            i,
+                            page
+                        );
+                    }
+                }
+                for(let i = 1;i<=this.lastSortedIndex&&i<=Math.floor((this.t/2)-1);i++)
+                {
+                    //fast insert check
+                    if(this.bufferDict[i][0]>=this.tail.keys[this.tail.n-1])
+                    {
+                        insertTrace.fastInsertOccurred = true;
+                        insertTrace.flushEvents.push({
+                            type: "fast",
+                            pageIndex: i,
+                            page: this.buffer[i][0]
+                        });
+                        this.buffer[i].sort((a,b)=>a-b);
+                        this.tail.parent.keys.push(this.buffer[i][0]);
+                        newTail = new Node(this.t,true);
+                        this.leafs++;
+                        //this.size+=this.t;
+                        newTail.n=this.t;
+                        newTail.keys = [...this.buffer[i]];
+                        this.tail.next = newTail;
+                        newTail.parent = this.tail.parent;
+                        this.tail.parent.children.push(newTail);
+                        this.tail.parent.n++;
+                        tempNode = this.tail.parent;
+                        while(tempNode.n>tempNode.t)
+                            tempNode = this.split(tempNode);
                         this.tail = newTail;
                         this.fastInserts+=10;
                         this.fastInserted = true;
@@ -1307,7 +1669,7 @@ class Sware {
                                 }
                                 pageLeaf = pageLeaf.children[temp];
                             }
-                            if(pageLeaf.n<this.t)
+                            if(pageLeaf.n<pageLeaf.t)
                             {
                                 this.insertInOrder(page,pageLeaf.keys);
                                 pageLeaf.n++;
@@ -1334,290 +1696,12 @@ class Sware {
                     }
                 }
             }
-            else{
-                if(this.root.keys.length==0)
-                {
-                    //can create non-leaf root node
-                    if(this.lastSortedIndex>0)
-                    {
-                        let newRoot = new Node(this.internalSize, false);
-                        let firstLeaf = new Node(this.t, true);
-                        let secondLeaf = new Node(this.t ,true);
-                        this.buffer[0].sort((a,b)=>a-b);
-                        this.buffer[1].sort((a,b)=>a-b);
-                        newRoot.children = [firstLeaf, secondLeaf];
-                        newRoot.keys = [this.buffer[1][0]];
-                        newRoot.n=1;
-                        firstLeaf.keys = [...this.buffer[0]];
-                        secondLeaf.keys = [...this.buffer[1]];
-                        firstLeaf.next = secondLeaf;
-                        firstLeaf.parent = newRoot;
-                        secondLeaf.parent = newRoot;
-                        firstLeaf.n = this.t;
-                        secondLeaf.n = this.t;
-                        this.tail = secondLeaf;
-                        this.leafs=2;
-                        //this.size = 2*this.t;
-                        this.root = newRoot;
-                        this.fastInserted = true;
-                        insertTrace.fastInsertOccurred = true;
-                        insertTrace.flushEvents.push({
-                            type: "fast",
-                            pageIndex: 0,
-                            page: this.buffer[0][0]
-                        });
-                        insertTrace.flushEvents.push({
-                            type: "fast",
-                            pageIndex: 1,
-                            page: this.buffer[1][0]
-                        });
-                        pushSwareFastVisualStep(
-                            insertTrace,
-                            buildSwareSingleLeafVisualState(this.t, this.buffer[0]),
-                            0
-                        );
-                        pushSwareFastVisualStep(insertTrace, this, 1);
-                        this.fastInserts+=20;
-                        for(let i = 2;i<=this.lastSortedIndex&&i<=Math.floor((this.t/2)-1);i++)
-                        {
-                            //can fast insert everything because we will only 
-                            // flush sorted part of buffer
-                            insertTrace.fastInsertOccurred = true;
-                            insertTrace.flushEvents.push({
-                                type: "fast",
-                                pageIndex: i,
-                                page: this.buffer[i][0]
-                            });
-                            this.buffer[i].sort((a,b)=>a-b);
-                            this.tail.parent.keys.push(this.buffer[i][0]);
-                            newTail = new Node(this.t,true);
-                            this.leafs++;
-                            //this.size+=this.t;
-                            newTail.n=this.t;
-                            newTail.keys = [...this.buffer[i]];
-                            this.tail.next = newTail;
-                            newTail.parent = this.tail.parent;
-                            this.tail.parent.children.push(newTail);
-                            this.tail.parent.n++;
-                            tempNode = this.tail.parent;
-                            while(tempNode.n>tempNode.t)
-                                tempNode = this.split(tempNode);
-                            this.tail = newTail;
-                            this.fastInserts+=10;
-                            this.fastInserted = true;
-                            pushSwareFastVisualStep(insertTrace, this, i);
-                        }
-                    }
-                    else
-                    {
-                        //can only fill up root node
-                        this.buffer[0].sort((a,b)=>a-b);
-                        this.root.keys = [...this.buffer[0]];
-                        this.root.n = this.t;
-                        //this.size = this.t;
-                        insertTrace.fastInsertOccurred = true;
-                        insertTrace.flushEvents.push({
-                            type: "fast",
-                            pageIndex: 0,
-                            page: this.buffer[0][0]
-                        });
-                        pushSwareFastVisualStep(insertTrace, this, 0);
-                        this.fastInserts+=10;
-                        this.fastInserted = true;
-                    }
-                }
-                else if(this.root.keys.length==this.t)
-                {
-                    this.buffer[0].sort((a,b)=>a-b);
-                    //fast insert check
-                    if(this.buffer[0][0]>this.root.keys[this.root.keys.length-1])
-                    {
-                        let newRoot = new Node(this.internalSize, false);
-                        let firstLeaf = new Node(this.t, true);
-                        let secondLeaf = new Node(this.t ,true);
-                        newRoot.children = [firstLeaf, secondLeaf];
-                        newRoot.keys = [this.buffer[0][0]];
-                        newRoot.n=1;
-                        firstLeaf.keys = this.root.keys;
-                        secondLeaf.keys = [...this.buffer[0]];
-                        firstLeaf.next = secondLeaf;
-                        firstLeaf.parent = newRoot;
-                        secondLeaf.parent = newRoot;
-                        firstLeaf.n = this.t;
-                        secondLeaf.n = this.t;
-                        this.tail = secondLeaf;
-                        this.leafs=2;
-                        //this.size = 2*this.t;
-                        this.root = newRoot;
-                        insertTrace.fastInsertOccurred = true;
-                        insertTrace.flushEvents.push({
-                            type: "fast",
-                            pageIndex: 0,
-                            page: this.buffer[0][0]
-                        });
-                        pushSwareFastVisualStep(insertTrace, this, 0);
-                        this.fastInserted = true;
-                        this.fastInserts+=10;
-                    }
-                    else
-                    {
-                        //break page up and top insert
-                        this.fastInserted = false;
-                        for(let i = 0;i<this.buffer[0].length;i++)
-                        {
-                            this.topInserts++;
-                            //this.size++;
-                            page = this.buffer[0][i];
-                            insertTrace.topInsertOccurred = true;
-                            const topTreeBefore = cloneSwareTreeState(this);
-                            insertTrace.flushEvents.push({
-                                type: "top",
-                                pageIndex: 0,
-                                slotIndex: i,
-                                page: page
-                            });
-                            pageLeaf = this.root;
-                            while(!(pageLeaf.leaf))
-                            {
-                                stop = false;
-                                for(let i = 0;i<pageLeaf.keys.length&&!stop;i++)
-                                {
-                                    if(page<pageLeaf.keys[i])
-                                    {
-                                        stop = true;
-                                        temp = i;
-                                    }
-                                }
-                                if(!stop)
-                                {
-                                    temp = pageLeaf.keys.length;
-                                }
-                                pageLeaf = pageLeaf.children[temp];
-                            }
-                            if(pageLeaf.n<this.t)
-                            {
-                                this.insertInOrder(page,pageLeaf.keys);
-                                pageLeaf.n++;
-                            }
-                            else{
-                                this.insertInOrder(page,pageLeaf.keys);
-                                pageLeaf.n++;
-                                do
-                                {
-                                    tempNode = this.split(pageLeaf);
-                                    pageLeaf = tempNode;
-                                }
-                                while(pageLeaf.n>pageLeaf.t);
-                            }
-                            pushSwareTopVisualStep(
-                                insertTrace,
-                                topTreeBefore,
-                                cloneSwareTreeState(this),
-                                0,
-                                i,
-                                page
-                            );
-                        }
-                    }
-                    for(let i = 1;i<=this.lastSortedIndex&&i<=Math.floor((this.t/2)-1);i++)
-                    {
-                        //fast insert check
-                        if(this.bufferDict[i][0]>=this.tail.keys[this.tail.n-1])
-                        {
-                            insertTrace.fastInsertOccurred = true;
-                            insertTrace.flushEvents.push({
-                                type: "fast",
-                                pageIndex: i,
-                                page: this.buffer[i][0]
-                            });
-                            this.buffer[i].sort((a,b)=>a-b);
-                            this.tail.parent.keys.push(this.buffer[i][0]);
-                            newTail = new Node(this.t,true);
-                            this.leafs++;
-                            //this.size+=this.t;
-                            newTail.n=this.t;
-                            newTail.keys = [...this.buffer[i]];
-                            this.tail.next = newTail;
-                            newTail.parent = this.tail.parent;
-                            this.tail.parent.children.push(newTail);
-                            this.tail.parent.n++;
-                            tempNode = this.tail.parent;
-                            while(tempNode.n>tempNode.t)
-                                tempNode = this.split(tempNode);
-                            this.tail = newTail;
-                            this.fastInserts+=10;
-                            this.fastInserted = true;
-                            pushSwareFastVisualStep(insertTrace, this, i);
-                        }
-                        else
-                        {
-                            this.fastInserted = false;
-                            //break page up and top insert
-                            for(let j = 0;j<this.t;j++)
-                            {
-                                this.topInserts++;
-                                //this.size++;
-                                page = this.buffer[i][j];
-                                insertTrace.topInsertOccurred = true;
-                                const topTreeBefore = cloneSwareTreeState(this);
-                                insertTrace.flushEvents.push({
-                                    type: "top",
-                                    pageIndex: i,
-                                    slotIndex: j,
-                                    page: page
-                                });
-                                pageLeaf = this.root;
-                                while(!(pageLeaf.leaf))
-                                {
-                                    stop = false;
-                                    for(let i = 0;i<pageLeaf.keys.length&&!stop;i++)
-                                    {
-                                        if(page<pageLeaf.keys[i])
-                                        {
-                                            stop = true;
-                                            temp = i;
-                                        }
-                                    }
-                                    if(!stop)
-                                    {
-                                        temp = pageLeaf.keys.length;
-                                    }
-                                    pageLeaf = pageLeaf.children[temp];
-                                }
-                                if(pageLeaf.n<pageLeaf.t)
-                                {
-                                    this.insertInOrder(page,pageLeaf.keys);
-                                    pageLeaf.n++;
-                                }
-                                else{
-                                    this.insertInOrder(page,pageLeaf.keys);
-                                    pageLeaf.n++;
-                                    do
-                                    {
-                                        tempNode = this.split(pageLeaf);
-                                        pageLeaf = tempNode;
-                                    }
-                                    while(pageLeaf.n>pageLeaf.t);
-                                }
-                                pushSwareTopVisualStep(
-                                    insertTrace,
-                                    topTreeBefore,
-                                    cloneSwareTreeState(this),
-                                    i,
-                                    j,
-                                    page
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-            insertTrace.bufferSnapshotBeforeReset = this.buffer.map((row) => row.slice());
-            insertTrace.lastSortedIndexBeforeReset = this.lastSortedIndex;
-            this.bufferFlushes++;
-            this.resetBuffer();
         }
-        this.lastInsertInfo = insertTrace;
+        insertTrace.bufferSnapshotBeforeReset = this.buffer.map((row) => row.slice());
+        insertTrace.lastSortedIndexBeforeReset = this.lastSortedIndex;
+        this.bufferFlushes++;
+        this.resetBuffer();
+        return insertTrace;
     }
     insertInOrder(page,array)
     {
@@ -1646,34 +1730,44 @@ class Sware {
     }
     load(page)
     {
-        this.buffer[this.insertIndexX][this.insertIndexY]= page;
-        this.insertIndexY++;
-        if(this.insertIndexY==1)
+        if(this.insertIndexX==this.t)
         {
-            this.bufferDict[this.insertIndexX] = [page, page];
+            this.full = true;
         }
-        else 
+        else
         {
-            if(page>this.bufferDict[this.insertIndexX][1])
-                this.bufferDict[this.insertIndexX][1] = page;
-            else if(page<this.bufferDict[this.insertIndexX][0])
-                this.bufferDict[this.insertIndexX][0] = page;
+            this.buffer[this.insertIndexX][this.insertIndexY]= page;
+            this.insertIndexY++;
+            if(this.insertIndexY==1)
+            {
+                this.bufferDict[this.insertIndexX] = [page, page];
+            }
+            else 
+            {
+                if(page>this.bufferDict[this.insertIndexX][1])
+                    this.bufferDict[this.insertIndexX][1] = page;
+                else if(page<this.bufferDict[this.insertIndexX][0])
+                    this.bufferDict[this.insertIndexX][0] = page;
+            }
+            this.sort();
         }
-        this.sort();
     }
     sort()
     {
         let min = this.bufferDict[this.insertIndexX][0];
-        if(this.insertIndexX-1==this.lastSortedIndex)
+        if(this.lastSortedIndex!=-1)
         {
-            if(min>=this.bufferDict[this.lastSortedIndex][1])
-                this.lastSortedIndex++;
-        }
-        for(let i = this.lastSortedIndex;i>0;i--)
-        {
-            if(min<this.bufferDict[i][1]&&this.insertIndexX!=i)
+            if(this.insertIndexX-1==this.lastSortedIndex)
             {
-                this.lastSortedIndex = i-1;
+                if(min>=this.bufferDict[this.lastSortedIndex][1])
+                    this.lastSortedIndex++;
+            }
+            for(let i = this.lastSortedIndex;i>=0;i--)
+            {
+                if(min<this.bufferDict[i][1]&&this.insertIndexX!=i)
+                {
+                    this.lastSortedIndex = i-1;
+                }
             }
         }
         if(this.insertIndexY==this.t)

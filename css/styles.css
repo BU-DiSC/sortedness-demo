@@ -901,6 +901,25 @@ div.fixed {
     padding: 1px 0;
 }
 
+.section-labels-sware[data-sware-layout].sware-has-status {
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.sware-buffer-status {
+    grid-column: 1 / -1;
+    min-width: 0;
+    padding: 2px 4px;
+    border: 1px solid #b7791f;
+    border-radius: 2px;
+    background: #fff7e6;
+    color: #7a4a00;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 7px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+}
+
 .sware-buffer-page {
     display: flex;
     flex-direction: column;
@@ -985,6 +1004,21 @@ div.fixed {
     border-bottom-color: rgba(191, 59, 45, 0.4);
 }
 
+.sware-buffer-page.sware-page-no-bulk {
+    border-color: #b7791f;
+    background: linear-gradient(180deg, #fffaf0 0%, #f8e7bd 100%);
+    box-shadow: 0 0 0 1px rgba(183, 121, 31, 0.28), 0 0 8px rgba(183, 121, 31, 0.16);
+}
+
+.sware-buffer-page.sware-page-no-bulk .sware-buffer-page-label {
+    color: #7a4a00;
+    border-bottom-color: rgba(183, 121, 31, 0.35);
+}
+
+.sware-buffer-page.sware-page-buffer-resort {
+    animation: sware-buffer-resort-pulse 650ms ease-in-out infinite alternate;
+}
+
 .sware-buffer-page.sware-page-flushing {
     border-color: #1f5fbf;
     background: linear-gradient(180deg, #eef5ff 0%, #d4e4ff 100%);
@@ -1038,6 +1072,18 @@ div.fixed {
     border-color: #1f5fbf;
     background: #e8f1ff;
     box-shadow: 0 0 0 2px rgba(31, 95, 191, 0.55), 0 0 14px rgba(31, 95, 191, 0.35);
+}
+
+@keyframes sware-buffer-resort-pulse {
+    0% {
+        border-color: #b7791f;
+        box-shadow: 0 0 0 1px rgba(183, 121, 31, 0.28), 0 0 8px rgba(183, 121, 31, 0.16);
+    }
+
+    100% {
+        border-color: #8f5c13;
+        box-shadow: 0 0 0 2px rgba(183, 121, 31, 0.38), 0 0 12px rgba(183, 121, 31, 0.24);
+    }
 }
 
 @keyframes sware-flush-head-pulse {
